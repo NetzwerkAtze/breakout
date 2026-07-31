@@ -1,4 +1,4 @@
-package pong;
+package breakout;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

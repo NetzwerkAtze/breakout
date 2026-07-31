@@ -1,4 +1,4 @@
-package pong.gameObject;
+package breakout.gameObject;
 
 import javafx.scene.paint.Color;
 
@@ -16,6 +16,10 @@ public class GameObject {
         this.width = width;
         this.height = height;
         this.color = color;
+    }
+
+    public boolean collidesWith(GameObject other) {
+        return !(x + width < other.x || x > other.x + other.width || y + height < other.y || y > other.y + other.height);
     }
 
     public int getX() {
