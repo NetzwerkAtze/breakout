@@ -29,4 +29,30 @@ public class Ball extends GameObject {
         x += vx;
         y += vy;
     }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public int getVx() {
+        return vx;
+    }
+
+    public void setVx(int vx) {
+        this.vx = vx;
+    }
+
+    public int getVy() {
+        return vy;
+    }
+
+    public void setVy(int vy) {
+        this.vy = vy;
+    }
+    public int getCenterX() {
+        return x + radius;
+    }
+    public int getCenterY() {
+        return y + radius;
+    }
 }
