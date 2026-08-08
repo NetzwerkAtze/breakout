@@ -10,7 +10,7 @@ public class Brick extends GameObject {
         super(x, y, width, height, color);
         isDestroyed = false;
     }
-    public void hit() {
+    public void destroy() {
         isDestroyed = true;
     }
     public boolean isDestroyed(){
