@@ -55,12 +55,9 @@ public class Ball extends GameObject {
     public int getCenterY() {
         return y + radius;
     }
-    public boolean overlapX(GameObject other) {
-        int overlapX = Math.min(x + width, other.getX() + other.getWidth()) - Math.max(x, other.getX());
-        int overlapY = Math.min(y + height, other.getY() + other.height) - Math.max(y, other.getY());
-        if (overlapX > overlapY)
-            return true;
-        else
-            return false;
+    public boolean hitsOnY(GameObject other) {
+        int overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
+        int overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
+        return overlapX > overlapY;
     }
 }
