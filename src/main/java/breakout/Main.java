@@ -11,6 +11,8 @@
     import javafx.scene.paint.Color;
     import javafx.scene.shape.Circle;
     import javafx.scene.shape.Rectangle;
+    import javafx.scene.text.Font;
+    import javafx.scene.text.Text;
     import javafx.stage.Stage;
 
     import java.util.ArrayList;
@@ -24,12 +26,26 @@
         private boolean moveRight = false;
         private int lives = 2;
         private boolean won = false;
+        private boolean idle = true;
 
         @Override
         public void start(Stage primaryStage) {
             Pane root = new Pane();
             Scene scene = new Scene(root, 900, 600, Color.BLACK);
-            Ball ball = new Ball(300, 200, 4, -4, 5, Color.WHITE);
+
+            Text wonText = new Text("YOU WON!");
+            wonText.setY(scene.getHeight() / 2 - wonText.getLayoutBounds().getCenterY());
+            wonText.setX(scene.getWidth() / 2 - wonText.getLayoutBounds().getCenterX());
+            wonText.setFont(new Font(20));
+            wonText.setFill(Color.TRANSPARENT);
+
+            Text loseText = new Text("YOU LOST!");
+            loseText.setY(scene.getHeight() / 2 - loseText.getLayoutBounds().getCenterY());
+            loseText.setX(scene.getWidth() / 2 - loseText.getLayoutBounds().getCenterX());
+            loseText.setFont(new Font(20));
+            loseText.setFill(Color.TRANSPARENT);
+
+            Ball ball = new Ball(300, 200, 3, -3, 5, Color.WHITE);
             Paddle paddle = new Paddle((int) ((scene.getWidth()) - 80) / 2, (int) scene.getHeight() - 20, 5, 80, 15, Color.WHITE, (int) scene.getWidth());
             List<Brick> bricks = new ArrayList<>();
             Map<Brick, Rectangle> rectangleMap = new HashMap<>();
@@ -54,13 +70,16 @@
             paddleShape.setY(paddle.getY());
             root.getChildren().add(ballShape);
             root.getChildren().add(paddleShape);
+            root.getChildren().add(wonText);
+            root.getChildren().add(loseText);
 
             scene.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.LEFT) {
                     moveLeft = true;
                 } else if (event.getCode() == KeyCode.RIGHT) {
                     moveRight = true;
-
+                } else if (event.getCode() == KeyCode.SPACE) {
+                    idle = false;
                 }
             });
             scene.setOnKeyReleased(event -> {
@@ -73,7 +92,8 @@
             AnimationTimer timer = new AnimationTimer() {
                 @Override
                 public void handle(long l) {
-                    ball.update();
+                    if (!idle)
+                        ball.update();
                     for (Brick brick : bricks) {
                         if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                             if (ball.hitsOnY(brick))
@@ -87,6 +107,7 @@
                     }
                     if (bricks.stream().allMatch(Brick::isDestroyed)) {
                         won = true;
+                        wonText.setFill(Color.WHITE);
                         this.stop();
                         }
                     if (ball.getX() < 0 || ball.getX() + ball.getWidth() > scene.getWidth())
@@ -107,12 +128,15 @@
                     paddleShape.setY(paddle.getY());
                     if (ball.getY() > scene.getHeight()) {
                         lives--;
+                        idle = true;
                         ball.setY((int) scene.getHeight() / 2);
                         ball.setX((int) scene.getWidth() / 2);
                         ball.setVy(-ball.getVy());
                     }
-                    if (lives == 0)
+                    if (lives == 0) {
+                        loseText.setFill(Color.WHITE);
                         this.stop();
+                    }
                 }
             };
             timer.start();
