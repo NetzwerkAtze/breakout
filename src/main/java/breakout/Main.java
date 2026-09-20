@@ -14,7 +14,6 @@
     import javafx.scene.text.Font;
     import javafx.scene.text.Text;
     import javafx.stage.Stage;
-
     import java.util.ArrayList;
     import java.util.HashMap;
     import java.util.List;
@@ -27,11 +26,17 @@
         private int lives = 2;
         private boolean won = false;
         private boolean idle = true;
+        private int menuBarHeight = 30;
+        private int score = 0;
+        private int ballMaxVx = 3;
 
         @Override
         public void start(Stage primaryStage) {
             Pane root = new Pane();
             Scene scene = new Scene(root, 900, 600, Color.BLACK);
+            Text scoreText = new Text(15,20, "Score: " + Integer.toString(score));
+            scoreText.setFont(new Font(20));
+            scoreText.setFill(Color.WHITE);
 
             Text wonText = new Text("YOU WON!");
             wonText.setY(scene.getHeight() / 2 - wonText.getLayoutBounds().getCenterY());
@@ -45,17 +50,18 @@
             loseText.setFont(new Font(20));
             loseText.setFill(Color.TRANSPARENT);
 
-            Ball ball = new Ball(300, 200, 3, -3, 5, Color.WHITE);
+            Ball ball = new Ball((int) scene.getWidth() / 2, (int) scene.getHeight() / 2, ballMaxVx, -3, 5, Color.WHITE);
             Paddle paddle = new Paddle((int) ((scene.getWidth()) - 80) / 2, (int) scene.getHeight() - 20, 5, 80, 15, Color.WHITE, (int) scene.getWidth());
             List<Brick> bricks = new ArrayList<>();
             Map<Brick, Rectangle> rectangleMap = new HashMap<>();
             int maxCol = 10;
-            int maxRows = 5;
+            int maxRows = 8;
             int brickWidth = (int) scene.getWidth() / maxCol - 1;
             int brickHeight = 14;
+            Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
             for (int col = 0; col < maxCol; col++) {
                 for (int row = 0; row < maxRows; row++) {
-                    Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + 1, brickWidth, brickHeight, Color.BLUE);
+                    Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + menuBarHeight + 1, brickWidth, brickHeight, rowColors[row % rowColors.length]);
                     bricks.add(brick);
                     Rectangle brickShape = new Rectangle(brickWidth, brickHeight, brick.getColor());
                     brickShape.setX(brick.getX());
@@ -68,10 +74,12 @@
             Rectangle paddleShape = new Rectangle(paddle.getWidth(), paddle.getHeight(), paddle.getColor());
             paddleShape.setX(paddle.getX());
             paddleShape.setY(paddle.getY());
+
             root.getChildren().add(ballShape);
             root.getChildren().add(paddleShape);
             root.getChildren().add(wonText);
             root.getChildren().add(loseText);
+            root.getChildren().add(scoreText);
 
             scene.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.LEFT) {
@@ -96,12 +104,18 @@
                         ball.update();
                     for (Brick brick : bricks) {
                         if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                            if (ball.hitsOnY(brick))
+                            if (ball.hitsEdge(brick)) {
+                                ball.setVy(-ball.getVy());
+                                ball.setVx(-ball.getVx());
+                            }
+                            else if (ball.hitsOnY(brick))
                                 ball.setVy(-ball.getVy());
                             else
                                 ball.setVx(-ball.getVx());
                             brick.destroy();
                             rectangleMap.get(brick).setFill(Color.TRANSPARENT);
+                            score++;
+                            scoreText.setText("Score: " + Integer.toString(score));
                             break;
                         }
                     }
@@ -110,13 +124,27 @@
                         wonText.setFill(Color.WHITE);
                         this.stop();
                         }
+
                     if (ball.getX() < 0 || ball.getX() + ball.getWidth() > scene.getWidth())
                         ball.setVx(-ball.getVx());
-                    if (ball.getY() < 0)
+
+                    if (ball.getY() < menuBarHeight)
                         ball.setVy(-ball.getVy());
+
                     if (ball.collidesWith(paddle)) {
-                        if (ball.hitsOnY(paddle))
+                        int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+                        double ballCenterX = ball.getCenterX();
+                        double ballPaddleDistance =  ballCenterX - paddleCenterX;
+                        double angle = ballPaddleDistance / (paddle.getWidth() / 2.0);
+
+                        if (ball.hitsEdge(paddle)) {
                             ball.setVy(-ball.getVy());
+                            ball.setVx(-ball.getVx());
+                        }
+                        else if (ball.hitsOnY(paddle)) {
+                            ball.setVy(-ball.getVy());
+                            ball.setVx((int) (angle * ball.getMaxVx()));
+                        }
                         else
                             ball.setVx(-ball.getVx());
                     }
