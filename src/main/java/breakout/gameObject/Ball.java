@@ -15,20 +15,20 @@ public class Ball extends GameObject {
     /**
      * velocity of the paddle on the x-axis per frame
      */
-    private int vx;
+    private double vx;
     /**
      * velocity of the paddle on the y-axis per frame
      */
-    private int vy;
+    private double vy;
 
-    private int maxVx;
+    private double speed;
 
-    public Ball(int x, int y, int vx, int vy, int radius, Color color) {
+    public Ball(double x, double y, double vx, double vy, int radius, Color color) {
         super(x, y, 2 * radius, 2 * radius, color);
         this.radius = radius;
         this.vx = vx;
         this.vy = vy;
-        this.maxVx = vx;
+        this.speed = Math.sqrt(vx * vx + vy * vy);
     }
 
     /**
@@ -43,43 +43,51 @@ public class Ball extends GameObject {
         return radius;
     }
 
-    public int getVx() {
+    public double getVx() {
         return vx;
     }
 
-    public void setVx(int vx) {
+    public void setVx(double vx) {
         this.vx = vx;
     }
 
-    public int getVy() {
+    public double getVy() {
         return vy;
     }
 
-    public void setVy(int vy) {
+    public void setVy(double vy) {
         this.vy = vy;
     }
 
-    public int getCenterX() {
+    public double getCenterX() {
         return x + radius;
     }
 
-    public int getCenterY() {
+    public double getCenterY() {
         return y + radius;
     }
 
-    public int getMaxVx() {
-        return maxVx;
+    public double getSpeed() {
+        return speed;
     }
 
     public boolean hitsOnY(GameObject other) {
-        int overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
-        int overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
+        double overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
+        double overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
         return overlapX > overlapY;
     }
 
     public boolean hitsEdge(GameObject other) {
-        int overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
-        int overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
-        return overlapX == overlapY;
+        double overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
+        double overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
+        return Math.abs(overlapX - overlapY) < 0.001;
+    }
+    public double getRadians(Paddle paddle, int maxAngle) {
+        double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+        double ballCenterX = x + radius;
+        double ballPaddleDistance =  ballCenterX - paddleCenterX;
+        double ratio = ballPaddleDistance / (paddle.getWidth() / 2.0);
+        double angle = ratio * maxAngle;
+        return Math.toRadians(angle);
     }
 }

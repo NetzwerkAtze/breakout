@@ -4,11 +4,11 @@ import javafx.scene.paint.Color;
 
 public class Paddle extends GameObject {
     /** right maximum border of the map. */
-    private int maxX;
+    private double maxX;
     /** velocity of the paddle on the x-axis per frame */
-    private int vx;
+    private double vx;
 
-    public Paddle(int x, int y, int vx, int width, int height, Color color, int maxX) {
+    public Paddle(double x, double y, double vx, double width, double height, Color color, double maxX) {
         super(x, y, width, height, color);
         this.vx = vx;
         this.maxX = maxX;

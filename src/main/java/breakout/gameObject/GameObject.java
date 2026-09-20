@@ -4,13 +4,13 @@ import javafx.scene.paint.Color;
 
 public class GameObject {
 
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
+    protected double x;
+    protected double y;
+    protected double width;
+    protected double height;
     protected Color color;
 
-    public GameObject(int x, int y, int width, int height, Color color) {
+    public GameObject(double x, double y, double width, double height, Color color) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -22,19 +22,19 @@ public class GameObject {
         return !(x + width < other.x || x > other.x + other.width || y + height < other.y || y > other.y + other.height);
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -42,11 +42,11 @@ public class GameObject {
         return color;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 }

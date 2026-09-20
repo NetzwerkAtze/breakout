@@ -28,7 +28,7 @@
         private boolean idle = true;
         private int menuBarHeight = 30;
         private int score = 0;
-        private int ballMaxVx = 3;
+        private int maxAngle = 60;
 
         @Override
         public void start(Stage primaryStage) {
@@ -50,14 +50,14 @@
             loseText.setFont(new Font(20));
             loseText.setFill(Color.TRANSPARENT);
 
-            Ball ball = new Ball((int) scene.getWidth() / 2, (int) scene.getHeight() / 2, ballMaxVx, -3, 5, Color.WHITE);
-            Paddle paddle = new Paddle((int) ((scene.getWidth()) - 80) / 2, (int) scene.getHeight() - 20, 5, 80, 15, Color.WHITE, (int) scene.getWidth());
+            Ball ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
+            Paddle paddle = new Paddle(((scene.getWidth()) - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
             List<Brick> bricks = new ArrayList<>();
             Map<Brick, Rectangle> rectangleMap = new HashMap<>();
             int maxCol = 10;
             int maxRows = 8;
-            int brickWidth = (int) scene.getWidth() / maxCol - 1;
-            int brickHeight = 14;
+            double brickWidth = scene.getWidth() / maxCol - 1;
+            double brickHeight = 14;
             Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
             for (int col = 0; col < maxCol; col++) {
                 for (int row = 0; row < maxRows; row++) {
@@ -132,18 +132,13 @@
                         ball.setVy(-ball.getVy());
 
                     if (ball.collidesWith(paddle)) {
-                        int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
-                        double ballCenterX = ball.getCenterX();
-                        double ballPaddleDistance =  ballCenterX - paddleCenterX;
-                        double angle = ballPaddleDistance / (paddle.getWidth() / 2.0);
-
                         if (ball.hitsEdge(paddle)) {
                             ball.setVy(-ball.getVy());
                             ball.setVx(-ball.getVx());
                         }
                         else if (ball.hitsOnY(paddle)) {
-                            ball.setVy(-ball.getVy());
-                            ball.setVx((int) (angle * ball.getMaxVx()));
+                            ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
+                            ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
                         }
                         else
                             ball.setVx(-ball.getVx());
@@ -157,8 +152,8 @@
                     if (ball.getY() > scene.getHeight()) {
                         lives--;
                         idle = true;
-                        ball.setY((int) scene.getHeight() / 2);
-                        ball.setX((int) scene.getWidth() / 2);
+                        ball.setY(scene.getHeight() / 2);
+                        ball.setX(scene.getWidth() / 2);
                         ball.setVy(-ball.getVy());
                     }
                     if (lives == 0) {
