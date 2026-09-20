@@ -100,7 +100,7 @@ public class Game {
         return won;
     }
     public boolean gameOver() {
-        return lives == 0 | won;
+        return lives == 0 || won;
     }
     public int getScore() {
         return score;

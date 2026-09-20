@@ -8,6 +8,16 @@ public class Paddle extends GameObject {
     /** velocity of the paddle on the x-axis per frame */
     private double vx;
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param vx velocity for x-axis movement
+     * @param width
+     * @param height
+     * @param color
+     * @param maxX
+     */
     public Paddle(double x, double y, double vx, double width, double height, Color color, double maxX) {
         super(x, y, width, height, color);
         this.vx = vx;

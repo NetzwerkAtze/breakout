@@ -1,9 +1,10 @@
 package breakout;
 
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-
+/**
+ *
+ */
 public class InputHandler {
     private boolean moveLeft = false;
     private boolean moveRight = false;
