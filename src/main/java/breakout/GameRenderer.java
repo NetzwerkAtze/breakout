@@ -61,17 +61,17 @@ public class GameRenderer {
     public void gameOver(boolean won){
         if (won) {
             Text wonText = new Text("YOU WON!");
+            wonText.setFont(new Font(20));
             wonText.setY(root.getScene().getHeight() / 2 - wonText.getLayoutBounds().getCenterY());
             wonText.setX(root.getScene().getWidth() / 2 - wonText.getLayoutBounds().getCenterX());
-            wonText.setFont(new Font(20));
             wonText.setFill(Color.WHITE);
             root.getChildren().add(wonText);
         }
         else {
             Text loseText = new Text("YOU LOST!");
+            loseText.setFont(new Font(20));
             loseText.setY(root.getScene().getHeight() / 2 - loseText.getLayoutBounds().getCenterY());
             loseText.setX(root.getScene().getWidth() / 2 - loseText.getLayoutBounds().getCenterX());
-            loseText.setFont(new Font(20));
             loseText.setFill(Color.WHITE);
             root.getChildren().add(loseText);
         }
