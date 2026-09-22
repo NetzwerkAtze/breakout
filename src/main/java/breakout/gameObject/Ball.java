@@ -90,4 +90,43 @@ public class Ball extends GameObject {
         double angle = ratio * maxAngle;
         return Math.toRadians(angle);
     }
+    public double getOverlapX(GameObject other) {
+        return Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
+    }
+    public double getOverlapY(GameObject other) {
+        return Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
+    }
+    public void resolveCollision(GameObject other, boolean edge, boolean hitsY) {
+        if (edge) {
+            if (vx > 0) {
+                if (vy > 0) {  // top left corner
+                    x = x - getOverlapX(other);
+                    y = y - getOverlapY(other);
+                } else {  // bottom left corner
+                    x = x - getOverlapX(other);
+                    y = y + getOverlapY(other);
+                }
+            } else {
+                if (vy < 0) { // bottom right corner
+                    x = x + getOverlapX(other);
+                    y = y + getOverlapY(other);
+                } else {  // top right corner
+                    x = x + getOverlapX(other);
+                    y = y - getOverlapY(other);
+                }
+            }
+        }
+        else if (hitsY) {
+            if (vy > 0)
+                y = y - getOverlapY(other);
+            else
+                y = y + getOverlapY(other);
+        }
+        else{
+            if (vx > 0)
+                x = x - getOverlapX(other);
+            else
+                x = x + getOverlapX(other);
+        }
+    }
 }

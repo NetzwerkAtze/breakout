@@ -51,13 +51,16 @@ public class Game {
         for (Brick brick : bricks) {
             if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                 if (ball.hitsEdge(brick)) {
+                    ball.resolveCollision(brick, true, false);
                     ball.setVy(-ball.getVy());
+                    ball.setVx(-ball.getVx());
+                } else if (ball.hitsOnY(brick)) {
+                    ball.resolveCollision(brick, false, true);
+                    ball.setVy(-ball.getVy());
+                } else {
+                    ball.resolveCollision(brick, false, false);
                     ball.setVx(-ball.getVx());
                 }
-                else if (ball.hitsOnY(brick))
-                    ball.setVy(-ball.getVy());
-                else
-                    ball.setVx(-ball.getVx());
                 brick.destroy();
                 score++;
                 break;
@@ -75,15 +78,19 @@ public class Game {
 
         if (ball.collidesWith(paddle)) {
             if (ball.hitsEdge(paddle)) {
+                ball.resolveCollision(paddle, true, false);
                 ball.setVy(-ball.getVy());
                 ball.setVx(-ball.getVx());
             }
             else if (ball.hitsOnY(paddle)) {
+                ball.resolveCollision(paddle, false, true);
                 ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
                 ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
             }
-            else
+            else {
+                ball.resolveCollision(paddle, false, false);
                 ball.setVx(-ball.getVx());
+            }
         }
 
         if (ball.getY() > scene.getHeight()) {
@@ -137,5 +144,6 @@ public class Game {
     public int getMaxRow() {
         return maxRow;
     }
+
 }
 
