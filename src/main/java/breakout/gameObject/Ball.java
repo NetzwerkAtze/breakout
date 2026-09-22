@@ -96,6 +96,18 @@ public class Ball extends GameObject {
     public double getOverlapY(GameObject other) {
         return Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
     }
+
+    /**
+     * pushes the ball out of the object by the overlapping factor.
+     * edge and hitsY should never be true at the same time
+     * there are three cases
+     * 1. edge true, hitsY false on edge hits
+     * 2. edge false, hitsY true on y axis hits
+     * 3. edge false, hitsY false on x axis hits
+     * @param other other object that the ball hits
+     * @param edge if the ball hits on edge of object
+     * @param hitsY if ball hits on y axis
+     */
     public void resolveCollision(GameObject other, boolean edge, boolean hitsY) {
         if (edge) {
             if (vx > 0) {

@@ -10,6 +10,7 @@ public class InputHandler {
     private boolean moveRight = false;
     private Pane root;
     private Game game;
+    private boolean reset = false;
 
     public InputHandler(Pane root, Game game) {
         this.root = root;
@@ -24,6 +25,8 @@ public class InputHandler {
                 moveRight = true;
             } else if (event.getCode() == KeyCode.SPACE) {
                 game.setIdle(false);
+            } else if (event.getCode() == KeyCode.R) {
+                reset = true;
             }
         });
         root.getScene().setOnKeyReleased(event -> {
@@ -31,11 +34,18 @@ public class InputHandler {
                 moveLeft = false;
             } else if (event.getCode() == KeyCode.RIGHT) {
                 moveRight = false;
+            } else if (event.getCode() == KeyCode.R) {
+                reset = false;
             }
         });
     }
     public void update() {
         if (moveRight || moveLeft)
             game.getPaddle().move(moveLeft);
+        if (reset)
+            game.reset();
+    }
+    public boolean isReset() {
+        return reset;
     }
 }

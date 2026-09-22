@@ -9,16 +9,23 @@
         import javafx.scene.paint.Color;
         import javafx.stage.Stage;
 
+        import java.util.ArrayList;
+        import java.util.List;
+
 
         public class Main extends Application {
 
             @Override
             public void start(Stage primaryStage) {
+                List<LevelConfig> levels = new ArrayList<>();
+                levels.add(new LevelConfig(1,1));
+                levels.add(new LevelConfig(4, 4));
                 Pane root = new Pane();
                 Scene scene = new Scene(root, 900, 600, Color.BLACK);
                 Ball ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
-                Paddle paddle = new Paddle(((scene.getWidth()) - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
-                Game game = new Game(scene, paddle, ball, 2, 10 ,8);
+                Paddle paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
+           //     Game game = new Game(scene, paddle, ball, 2, 10 ,8);
+                Game game = new Game(scene, paddle, ball, 2, levels.get(0).maxCol() ,levels.get(0).maxRow());
                 GameRenderer gameRenderer = new GameRenderer(root, game);
                 InputHandler inputHandler = new InputHandler(root, game);
 
@@ -28,10 +35,7 @@
                         game.update();
                         gameRenderer.update();
                         inputHandler.update();
-                        if(game.gameOver()) {
-                            gameRenderer.gameOver(game.hasWon());
-                            this.stop();
-                        }
+                        //    this.stop();
                     }
                 };
                 timer.start();

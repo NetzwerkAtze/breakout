@@ -13,6 +13,7 @@ public class Game {
     private Paddle paddle;
     private Ball ball;
     private List<Brick> bricks = new ArrayList<>();
+    private int startLives;
     private int lives;
     private boolean won = false;
     private boolean idle = true;
@@ -27,11 +28,12 @@ public class Game {
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
 
-    public Game(Scene scene, Paddle paddle, Ball ball, int lives, int maxCol, int maxRow) {
+    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, int maxCol, int maxRow) {
         this.scene = scene;
         this.paddle = paddle;
         this.ball = ball;
-        this.lives = lives;
+        this.startLives = startLives;
+        this.lives = startLives;
         this.maxCol = maxCol;
         this.maxRow = maxRow;
         this.brickWidth = scene.getWidth() / maxCol - 1;
@@ -94,13 +96,28 @@ public class Game {
         }
 
         if (ball.getY() > scene.getHeight()) {
-            lives--;
+            if (lives > 0)
+                lives--;
             idle = true;
             if (lives > 0) {
                 ball.setY(scene.getHeight() / 2);
                 ball.setX(scene.getWidth() / 2);
                 ball.setVy(-ball.getVy());
             }
+        }
+    }
+    public void reset() {
+         if (lives == 0 || won) {
+            for (Brick brick : bricks)
+                brick.repair();
+            lives = startLives;
+            won = false;
+            score = 0;
+            ball.setY(scene.getHeight() / 2);
+            ball.setX(scene.getWidth() / 2);
+            ball.setVy(-ball.getVy());
+            paddle.setX((scene.getWidth() - 80) / 2);
+            idle = true;
         }
     }
     public boolean hasWon() {
@@ -112,38 +129,32 @@ public class Game {
     public int getScore() {
         return score;
     }
-
     public double getBrickHeight() {
         return brickHeight;
     }
-
     public double getBrickWidth() {
         return brickWidth;
     }
-
     public List<Brick> getBricks() {
         return bricks;
     }
-
     public Ball getBall() {
         return ball;
     }
-
     public Paddle getPaddle() {
         return paddle;
     }
-
     public void setIdle(boolean idle) {
         this.idle = idle;
     }
-
+    public int getLives() {
+        return lives;
+    }
     public int getMaxCol() {
         return maxCol;
     }
-
     public int getMaxRow() {
         return maxRow;
     }
-
 }
 
