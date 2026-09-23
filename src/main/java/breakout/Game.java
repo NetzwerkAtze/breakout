@@ -15,7 +15,7 @@ public class Game {
     private List<Brick> bricks = new ArrayList<>();
     private int startLives;
     private int lives;
-    private boolean won = false;
+    private boolean levelWon = false;
     private boolean idle = true;
     private int menuBarHeight = 30;
     private int score = 0;
@@ -70,7 +70,7 @@ public class Game {
             }
         }
         if (bricks.stream().allMatch(Brick::isDestroyed)) {
-            won = true;
+            levelWon = true;
             idle = true;
         }
 
@@ -109,11 +109,11 @@ public class Game {
         }
     }
     public void reset() {
-         if (lives == 0 || won) {
+         if (lives == 0 || levelWon) {
             for (Brick brick : bricks)
                 brick.repair();
             lives = startLives;
-            won = false;
+            levelWon = false;
             score = 0;
             ball.setY(scene.getHeight() / 2);
             ball.setX(scene.getWidth() / 2);
@@ -122,11 +122,11 @@ public class Game {
             idle = true;
         }
     }
-    public boolean hasWon() {
-        return won;
+    public boolean isLevelWon() {
+        return levelWon;
     }
     public boolean gameOver() {
-        return lives == 0 || won;
+        return lives == 0 || levelWon;
     }
     public int getScore() {
         return score;

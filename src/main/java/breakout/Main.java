@@ -23,13 +23,14 @@
             private Paddle paddle;
             private int currenLevel = 0;
             List<LevelConfig> levels = new ArrayList<>();
+            private boolean won = false;
 
 
             @Override
             public void start(Stage primaryStage) {
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
-                levels.add(new LevelConfig(1,1));
+                levels.add(new LevelConfig(2,2));
                 levels.add(new LevelConfig(1,1));
                 levels.add(new LevelConfig(1,1));
                 loadLevel(currenLevel);
@@ -37,12 +38,16 @@
                 AnimationTimer timer = new AnimationTimer() {
                     @Override
                     public void handle(long l) {
-                        game.update();
-                        gameRenderer.update();
-                        inputHandler.update();
-                        if (inputHandler.isReset() && ((game.getLives() == 0 || game.hasWon())))
+                        if(won)
+                            gameRenderer.displayVictory();
+                        if (!game.gameOver()) {
+                            game.update();
+                            gameRenderer.update();
+                            inputHandler.update();
+                        }
+                        if (inputHandler.isReset() && ((game.getLives() == 0)))
                             game.reset();
-                        if (inputHandler.isNextLevel() && game.hasWon())
+                        if (inputHandler.isNextLevel() && game.isLevelWon())
                             loadLevel(currenLevel);
                     }
                 };
@@ -55,6 +60,8 @@
                 launch(args);
             }
             public void loadLevel(int levelIndex) {
+                if (levelIndex >= levels.size())
+                    won = true;
                 if (levelIndex < levels.size()) {
                     ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
                     paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());

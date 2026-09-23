@@ -12,6 +12,7 @@ public class InputHandler {
     private Game game;
     private boolean reset = false;
     private boolean nextLevel = false;
+    private boolean unpause = false;
 
     public InputHandler(Pane root, Game game) {
         this.root = root;
@@ -37,6 +38,8 @@ public class InputHandler {
                 moveLeft = false;
             } else if (event.getCode() == KeyCode.RIGHT) {
                 moveRight = false;
+            } else if (event.getCode() == KeyCode.SPACE) {
+                unpause = false;
             } else if (event.getCode() == KeyCode.R) {
                 reset = false;
             } else if (event.getCode() == KeyCode.ENTER) {
@@ -54,5 +57,8 @@ public class InputHandler {
     }
     public boolean isNextLevel() {
         return nextLevel;
+    }
+    public boolean unpaused() {
+        return unpause;
     }
 }

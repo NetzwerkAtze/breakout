@@ -18,10 +18,12 @@ public class GameRenderer {
     private Map<Brick, Rectangle> rectangleMap = new HashMap<>();
     Text scoreText;
     Text wonText;
+    Text levelCompleteText;
     Text loseText;
     Text livesText;
     Text restartText;
     Text levelText;
+    Text nextLevelText;
 
 
 
@@ -50,6 +52,12 @@ public class GameRenderer {
         wonText.setX(root.getScene().getWidth() / 2 - wonText.getLayoutBounds().getCenterX());
         wonText.setFill(Color.TRANSPARENT);
 
+        levelCompleteText = new Text("Level Complete!");
+        levelCompleteText.setFont(new Font(20));
+        levelCompleteText.setY(root.getScene().getHeight() / 2 - levelCompleteText.getLayoutBounds().getCenterY());
+        levelCompleteText.setX(root.getScene().getWidth() / 2 - levelCompleteText.getLayoutBounds().getCenterX());
+        levelCompleteText.setFill(Color.TRANSPARENT);
+
         loseText = new Text("You Lost!");
         loseText.setFont(new Font(20));
         loseText.setY(root.getScene().getHeight() / 2 - loseText.getLayoutBounds().getCenterY());
@@ -61,6 +69,12 @@ public class GameRenderer {
         restartText.setY(loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()));
         restartText.setX(root.getScene().getWidth() / 2 - restartText.getLayoutBounds().getCenterX());
         restartText.setFill(Color.TRANSPARENT);
+
+        nextLevelText = new Text("- Press Enter for next level -");
+        nextLevelText.setFont(new Font(15));
+        nextLevelText.setY(loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()));
+        nextLevelText.setX(root.getScene().getWidth() / 2 - nextLevelText.getLayoutBounds().getCenterX());
+        nextLevelText.setFill(Color.TRANSPARENT);
 
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
@@ -75,6 +89,7 @@ public class GameRenderer {
         paddleShape.setY(game.getPaddle().getY());
 
         root.getChildren().add(wonText);
+        root.getChildren().add(levelCompleteText);
         root.getChildren().add(loseText);
         root.getChildren().add(ballShape);
         root.getChildren().add(paddleShape);
@@ -82,6 +97,7 @@ public class GameRenderer {
         root.getChildren().add(livesText);
         root.getChildren().add(restartText);
         root.getChildren().add(levelText);
+        root.getChildren().add(nextLevelText);
     }
     public void update() {
         for (Brick brick : game.getBricks()) {
@@ -97,15 +113,17 @@ public class GameRenderer {
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         if (game.gameOver()) {
-            restartText.setFill(Color.WHITE);
-            if (game.hasWon())
-                wonText.setFill(Color.WHITE);
-            else
+            if (game.isLevelWon()) {
+                levelCompleteText.setFill(Color.WHITE);
+                nextLevelText.setFill(Color.WHITE);
+            }
+            else {
+                restartText.setFill(Color.WHITE);
                 loseText.setFill(Color.WHITE);
+            }
         } else {
-            wonText.setFill(Color.TRANSPARENT);
-            loseText.setFill(Color.TRANSPARENT);
             restartText.setFill(Color.TRANSPARENT);
+            loseText.setFill(Color.TRANSPARENT);
         }
     }
     public void nextLevel() {
@@ -119,5 +137,11 @@ public class GameRenderer {
         root.getChildren().remove(livesText);
         root.getChildren().remove(restartText);
         root.getChildren().remove(levelText);
+        root.getChildren().remove(nextLevelText);
+        root.getChildren().remove(levelCompleteText);
+    }
+    public void displayVictory() {
+        nextLevel();
+        wonText.setFill(Color.WHITE);
     }
 }
