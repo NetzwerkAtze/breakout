@@ -21,6 +21,7 @@ public class GameRenderer {
     Text loseText;
     Text livesText;
     Text restartText;
+    Text levelText;
 
 
 
@@ -35,7 +36,11 @@ public class GameRenderer {
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
 
-        livesText = new Text(root.getScene().getWidth() / 2 + 15,  20, "Lives: " + Integer.toString(game.getLives()));
+        levelText = new Text((root.getScene().getWidth() / 3) * 2 + 15,20, "Level: " + Integer.toString(game.getLevel()));
+        levelText.setFont(new Font(20));
+        levelText.setFill(Color.WHITE);
+
+        livesText = new Text(root.getScene().getWidth() / 3 + 15,  20, "Lives: " + Integer.toString(game.getLives()));
         livesText.setFont(new Font(20));
         livesText.setFill(Color.WHITE);
 
@@ -49,7 +54,7 @@ public class GameRenderer {
         loseText.setFont(new Font(20));
         loseText.setY(root.getScene().getHeight() / 2 - loseText.getLayoutBounds().getCenterY());
         loseText.setX(root.getScene().getWidth() / 2 - loseText.getLayoutBounds().getCenterX());
-        loseText.setFill(Color.WHITE);
+        loseText.setFill(Color.TRANSPARENT);
 
         restartText = new Text("- Press R to restart -");
         restartText.setFont(new Font(15));
@@ -76,6 +81,7 @@ public class GameRenderer {
         root.getChildren().add(scoreText);
         root.getChildren().add(livesText);
         root.getChildren().add(restartText);
+        root.getChildren().add(levelText);
     }
     public void update() {
         for (Brick brick : game.getBricks()) {
@@ -102,5 +108,16 @@ public class GameRenderer {
             restartText.setFill(Color.TRANSPARENT);
         }
     }
-
+    public void nextLevel() {
+        for (Brick brick : game.getBricks())
+            root.getChildren().remove(rectangleMap.get(brick));
+        root.getChildren().remove(wonText);
+        root.getChildren().remove(loseText);
+        root.getChildren().remove(ballShape);
+        root.getChildren().remove(paddleShape);
+        root.getChildren().remove(scoreText);
+        root.getChildren().remove(livesText);
+        root.getChildren().remove(restartText);
+        root.getChildren().remove(levelText);
+    }
 }

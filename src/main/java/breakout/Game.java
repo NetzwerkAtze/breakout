@@ -24,11 +24,11 @@ public class Game {
     private int maxRow;
     private double brickHeight = 14;
     private double brickWidth;
+    private  int level;
 
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
-
-    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, int maxCol, int maxRow) {
+    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, int maxCol, int maxRow, int level) {
         this.scene = scene;
         this.paddle = paddle;
         this.ball = ball;
@@ -37,6 +37,7 @@ public class Game {
         this.maxCol = maxCol;
         this.maxRow = maxRow;
         this.brickWidth = scene.getWidth() / maxCol - 1;
+        this.level = level;
         init();
     }
     public void init() {
@@ -70,6 +71,7 @@ public class Game {
         }
         if (bricks.stream().allMatch(Brick::isDestroyed)) {
             won = true;
+            idle = true;
         }
 
         if (ball.getX() < 0 || ball.getX() + ball.getWidth() > scene.getWidth())
@@ -149,6 +151,9 @@ public class Game {
     }
     public int getLives() {
         return lives;
+    }
+    public int getLevel() {
+        return level;
     }
     public int getMaxCol() {
         return maxCol;
