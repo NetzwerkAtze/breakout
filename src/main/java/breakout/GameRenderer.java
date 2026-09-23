@@ -129,7 +129,6 @@ public class GameRenderer {
     public void nextLevel() {
         for (Brick brick : game.getBricks())
             root.getChildren().remove(rectangleMap.get(brick));
-        root.getChildren().remove(wonText);
         root.getChildren().remove(loseText);
         root.getChildren().remove(ballShape);
         root.getChildren().remove(paddleShape);

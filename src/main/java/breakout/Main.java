@@ -21,7 +21,7 @@
             private InputHandler inputHandler;
             private Ball ball;
             private Paddle paddle;
-            private int currenLevel = 0;
+            private int currentLevel = 0;
             List<LevelConfig> levels = new ArrayList<>();
             private boolean won = false;
 
@@ -33,13 +33,15 @@
                 levels.add(new LevelConfig(2,2));
                 levels.add(new LevelConfig(1,1));
                 levels.add(new LevelConfig(1,1));
-                loadLevel(currenLevel);
+                loadLevel(currentLevel);
 
                 AnimationTimer timer = new AnimationTimer() {
                     @Override
                     public void handle(long l) {
-                        if(won)
+                        if (won) {
                             gameRenderer.displayVictory();
+                            this.stop();
+                        }
                         if (!game.gameOver()) {
                             game.update();
                             gameRenderer.update();
@@ -48,7 +50,7 @@
                         if (inputHandler.isReset() && ((game.getLives() == 0)))
                             game.reset();
                         if (inputHandler.isNextLevel() && game.isLevelWon())
-                            loadLevel(currenLevel);
+                            loadLevel(currentLevel);
                     }
                 };
                 timer.start();
@@ -67,10 +69,10 @@
                     paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
                     if (levelIndex > 0)
                         gameRenderer.nextLevel();
-                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex).maxCol(), levels.get(levelIndex).maxRow(), currenLevel + 1);
+                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex).maxCol(), levels.get(levelIndex).maxRow(), currentLevel + 1);
                     gameRenderer = new GameRenderer(root, game);
                     inputHandler = new InputHandler(root, game);
-                    currenLevel++;
+                    currentLevel++;
                 }
             }
         }

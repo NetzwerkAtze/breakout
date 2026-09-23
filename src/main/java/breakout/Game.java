@@ -109,18 +109,16 @@ public class Game {
         }
     }
     public void reset() {
-         if (lives == 0 || levelWon) {
-            for (Brick brick : bricks)
-                brick.repair();
-            lives = startLives;
-            levelWon = false;
-            score = 0;
-            ball.setY(scene.getHeight() / 2);
-            ball.setX(scene.getWidth() / 2);
-            ball.setVy(-ball.getVy());
-            paddle.setX((scene.getWidth() - 80) / 2);
-            idle = true;
-        }
+        for (Brick brick : bricks)
+            brick.repair();
+        lives = startLives;
+        levelWon = false;
+        score = 0;
+        ball.setY(scene.getHeight() / 2);
+        ball.setX(scene.getWidth() / 2);
+        ball.setVy(-ball.getVy());
+        paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
+        idle = true;
     }
     public boolean isLevelWon() {
         return levelWon;
