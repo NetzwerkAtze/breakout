@@ -3,10 +3,11 @@ package breakout;
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
 import breakout.gameObject.Paddle;
+import breakout.gameObject.PowerUp;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
 
 public class Game {
     Scene scene;
@@ -25,6 +26,10 @@ public class Game {
     private double brickHeight = 14;
     private double brickWidth;
     private  int level;
+    private Random random = new Random();
+    private List<PowerUp> powerUps = new ArrayList<>();
+    private Map<Brick, PowerUp> brickPowerUpMap = new HashMap<>();
+    private double paddleStartingWidth;
 
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
@@ -45,12 +50,30 @@ public class Game {
             for (int row = 0; row < maxRow; row++) {
                 Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + menuBarHeight + 1, brickWidth, brickHeight, rowColors[row % rowColors.length]);
                 bricks.add(brick);
+                generatePowerUps(brick);
             }
         }
+        paddleStartingWidth = paddle.getWidth();
     }
     public void update() {
-        if (!idle)
+        if (!idle) {
             ball.update();
+
+            if (!powerUps.isEmpty()) {
+                for (PowerUp powerUp : powerUps) {
+                    powerUp.update();
+                    if (powerUp.getPowerUpState() == PowerUp.PowerUpState.EXPIRED) {
+                        removeEffect(powerUp);
+                        powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
+                    }
+                    if (powerUp.collidesWith(paddle)) {
+                        applyEffect(powerUp);
+                    }
+                    else if (powerUp.getY() > scene.getHeight())
+                        powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
+                }
+            }
+        }
         for (Brick brick : bricks) {
             if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                 if (ball.hitsEdge(brick)) {
@@ -65,6 +88,9 @@ public class Game {
                     ball.setVx(-ball.getVx());
                 }
                 brick.destroy();
+                if (brickPowerUpMap.get(brick) != null) {
+                    brickPowerUpMap.get(brick).setPowerUpState(PowerUp.PowerUpState.FALLING);
+                }
                 score++;
                 break;
             }
@@ -109,16 +135,37 @@ public class Game {
         }
     }
     public void reset() {
-        for (Brick brick : bricks)
-            brick.repair();
-        lives = startLives;
-        levelWon = false;
-        score = 0;
-        ball.setY(scene.getHeight() / 2);
-        ball.setX(scene.getWidth() / 2);
-        ball.setVy(-ball.getVy());
-        paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
-        idle = true;
+         if (lives == 0) {
+            for (Brick brick : bricks)
+                brick.repair();
+            lives = startLives;
+            levelWon = false;
+            score = 0;
+            ball.setY(scene.getHeight() / 2);
+            ball.setX(scene.getWidth() / 2);
+            ball.setVy(-ball.getVy());
+            paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
+            paddle.setWidth(paddleStartingWidth);
+            idle = true;
+            for (Brick brick : bricks)
+                generatePowerUps(brick);
+        }
+    }
+    public void applyEffect(PowerUp powerUp) {
+        if (powerUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
+            if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
+                paddle.setX(paddle.getX() - paddleStartingWidth / 2);
+                paddle.setWidth(paddle.getWidth() + paddleStartingWidth);
+            }
+        }
+        powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
+    }
+    public void removeEffect(PowerUp powerUp) {
+        if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
+            paddle.setX(paddle.getX() + paddleStartingWidth / 2);
+            paddle.setWidth(paddle.getWidth() - paddleStartingWidth);
+        }
+     //   powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
     }
     public boolean isLevelWon() {
         return levelWon;
@@ -153,11 +200,16 @@ public class Game {
     public int getLevel() {
         return level;
     }
-    public int getMaxCol() {
-        return maxCol;
+    public List<PowerUp> getPowerUps() {
+        return powerUps;
     }
-    public int getMaxRow() {
-        return maxRow;
+    public void generatePowerUps(Brick brick) {
+        double chance = random.nextDouble();
+        if (chance < 0.20) {
+            PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.GREEN, 3, PowerUp.PowerUpType.BIGGER_PADDLE, 360);
+            powerUps.add(pUp);
+            brickPowerUpMap.put(brick,pUp);
+        }
     }
 }
 

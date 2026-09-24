@@ -8,7 +8,6 @@
         import javafx.scene.layout.Pane;
         import javafx.scene.paint.Color;
         import javafx.stage.Stage;
-
         import java.util.ArrayList;
         import java.util.List;
 
@@ -30,9 +29,11 @@
             public void start(Stage primaryStage) {
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
-                levels.add(new LevelConfig(2,2));
+                //Test-Level
+                levels.add(new LevelConfig(5,6));
                 levels.add(new LevelConfig(1,1));
                 levels.add(new LevelConfig(1,1));
+
                 loadLevel(currentLevel);
 
                 AnimationTimer timer = new AnimationTimer() {

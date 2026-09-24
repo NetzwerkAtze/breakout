@@ -1,6 +1,7 @@
 package breakout;
 
 import breakout.gameObject.Brick;
+import breakout.gameObject.PowerUp;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -15,7 +16,8 @@ public class GameRenderer {
     private Game game;
     private Circle ballShape;
     private Rectangle paddleShape;
-    private Map<Brick, Rectangle> rectangleMap = new HashMap<>();
+    private Map<Brick, Rectangle> brickMap = new HashMap<>();
+    private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
     Text scoreText;
     Text wonText;
     Text levelCompleteText;
@@ -80,8 +82,13 @@ public class GameRenderer {
             Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
             brickShape.setX(brick.getX());
             brickShape.setY(brick.getY());
-            rectangleMap.put(brick, brickShape);
+            brickMap.put(brick, brickShape);
             root.getChildren().add(brickShape);
+        }
+        for (PowerUp pUp : game.getPowerUps()) {
+            Circle pUpShape = new Circle(pUp.getX() + pUp.getWidth() / 2, pUp.getY() + pUp.getHeight() / 2, pUp.getHeight(), Color.TRANSPARENT);
+            powerUpMap.put(pUp, pUpShape);
+            root.getChildren().add(pUpShape);
         }
         ballShape = new Circle(game.getBall().getCenterX(), game.getBall().getCenterY(), game.getBall().getRadius(), game.getBall().getColor());
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
@@ -102,9 +109,18 @@ public class GameRenderer {
     public void update() {
         for (Brick brick : game.getBricks()) {
             if (brick.isDestroyed())
-                rectangleMap.get(brick).setFill(Color.TRANSPARENT);
+                brickMap.get(brick).setFill(Color.TRANSPARENT);
             if (!brick.isDestroyed())
-                rectangleMap.get(brick).setFill(brick.getColor());
+                brickMap.get(brick).setFill(brick.getColor());
+        }
+        for (PowerUp pUp : game.getPowerUps()) {
+            if (pUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
+                powerUpMap.get(pUp).setFill(pUp.getColor());
+                powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
+                powerUpMap.get(pUp).setCenterY(pUp.getY() + pUp.getHeight() / 2);
+            } else if (pUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE || pUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED) {
+                powerUpMap.get(pUp).setFill(Color.TRANSPARENT);
+            }
         }
         scoreText.setText("Score: " + Integer.toString(game.getScore()));
         livesText.setText("Lives: " + Integer.toString(game.getLives()));
@@ -112,6 +128,7 @@ public class GameRenderer {
         ballShape.setCenterY(game.getBall().getCenterY());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
+        paddleShape.setWidth(game.getPaddle().getWidth());
         if (game.gameOver()) {
             if (game.isLevelWon()) {
                 levelCompleteText.setFill(Color.WHITE);
@@ -128,7 +145,7 @@ public class GameRenderer {
     }
     public void nextLevel() {
         for (Brick brick : game.getBricks())
-            root.getChildren().remove(rectangleMap.get(brick));
+            root.getChildren().remove(brickMap.get(brick));
         root.getChildren().remove(loseText);
         root.getChildren().remove(ballShape);
         root.getChildren().remove(paddleShape);
