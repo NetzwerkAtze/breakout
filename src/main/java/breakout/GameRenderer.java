@@ -114,11 +114,11 @@ public class GameRenderer {
                 brickMap.get(brick).setFill(brick.getColor());
         }
         for (PowerUp pUp : game.getPowerUps()) {
+            powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
+            powerUpMap.get(pUp).setCenterY(pUp.getY() + pUp.getHeight() / 2);
             if (pUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
                 powerUpMap.get(pUp).setFill(pUp.getColor());
-                powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
-                powerUpMap.get(pUp).setCenterY(pUp.getY() + pUp.getHeight() / 2);
-            } else if (pUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE || pUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED) {
+            } else if (pUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE || pUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED || pUp.getPowerUpState() == PowerUp.PowerUpState.WAITING) {
                 powerUpMap.get(pUp).setFill(Color.TRANSPARENT);
             }
         }

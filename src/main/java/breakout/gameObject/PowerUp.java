@@ -34,7 +34,7 @@ public class PowerUp extends GameObject {
             y += vy;
         if (powerUpState == PowerUpState.ACTIVE)
             duration++;
-        if (duration == maxDuration)
+        if (duration == maxDuration && powerUpState == PowerUpState.ACTIVE)
             powerUpState = PowerUpState.EXPIRED;
     }
     public PowerUpType getPowerUpType() {
