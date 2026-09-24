@@ -135,12 +135,11 @@ public class Game {
     }
     public void reset() {
          if (lives == 0) {
+             powerUps.clear();
+             brickPowerUpMap.clear();
             for (Brick brick : bricks) {
                 brick.repair();
-                if (brickPowerUpMap.get(brick) != null) {
-                    brickPowerUpMap.get(brick).setPowerUpState(PowerUp.PowerUpState.WAITING);
-                    brickPowerUpMap.get(brick).setY(brick.getY() + brickHeight / 2);
-                }
+                generatePowerUps(brick);
             }
             lives = startLives;
             levelWon = false;
@@ -159,8 +158,8 @@ public class Game {
                 paddle.setX(paddle.getX() - paddleStartingWidth / 2);
                 paddle.setWidth(paddle.getWidth() + paddleStartingWidth);
             }
+            powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
         }
-        powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
     }
     public void removeEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
@@ -172,7 +171,7 @@ public class Game {
     public void generatePowerUps(Brick brick) {
         double chance = random.nextDouble();
         if (chance < 1.20) {
-            PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.GREEN, 3, PowerUp.PowerUpType.BIGGER_PADDLE, 360);
+            PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.GREEN, 3, PowerUp.PowerUpType.BIGGER_PADDLE, 360, 6);
             powerUps.add(pUp);
             brickPowerUpMap.put(brick, pUp);
         }

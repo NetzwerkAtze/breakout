@@ -94,7 +94,6 @@ public class GameRenderer {
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
-
         root.getChildren().add(wonText);
         root.getChildren().add(levelCompleteText);
         root.getChildren().add(loseText);
@@ -141,6 +140,16 @@ public class GameRenderer {
         } else {
             restartText.setFill(Color.TRANSPARENT);
             loseText.setFill(Color.TRANSPARENT);
+        }
+    }
+    public void reset() {
+        for (PowerUp powerUp : powerUpMap.keySet())
+            root.getChildren().remove(powerUpMap.get(powerUp));
+        powerUpMap.clear();
+        for (PowerUp pUp : game.getPowerUps()) {
+            Circle pUpShape = new Circle(pUp.getX() + pUp.getWidth() / 2, pUp.getY() + pUp.getHeight() / 2, pUp.getHeight(), Color.TRANSPARENT);
+            powerUpMap.put(pUp, pUpShape);
+            root.getChildren().add(pUpShape);
         }
     }
     public void nextLevel() {

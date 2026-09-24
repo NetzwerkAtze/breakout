@@ -21,8 +21,8 @@ public class PowerUp extends GameObject {
         EXPIRED,
     }
 
-    public PowerUp(double x, double y, Color color, double vy, PowerUpType powerUpType, int maxDuration) {
-        super(x, y, 6, 6, color);
+    public PowerUp(double x, double y, Color color, double vy, PowerUpType powerUpType, int maxDuration, int radius) {
+        super(x, y, radius, radius, color);
         this.vy = vy;
         this.powerUpType = powerUpType;
         this.duration = 0;
@@ -45,5 +45,8 @@ public class PowerUp extends GameObject {
     }
     public void setPowerUpState(PowerUpState powerUpState) {
         this.powerUpState = powerUpState;
+    }
+    public void resetDuration() {
+        duration = 0;
     }
 }

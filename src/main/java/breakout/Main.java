@@ -48,8 +48,10 @@
                             gameRenderer.update();
                             inputHandler.update();
                         }
-                        if (inputHandler.isReset() && ((game.getLives() == 0)))
+                        if (inputHandler.isReset() && ((game.getLives() == 0))) {
                             game.reset();
+                            gameRenderer.reset();
+                        }
                         if (inputHandler.isNextLevel() && game.isLevelWon())
                             loadLevel(currentLevel);
                     }
