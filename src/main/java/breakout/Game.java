@@ -60,8 +60,7 @@ public class Game {
     public void update() {
         if (!idle) {
             for (Ball ball : balls)
-            ball.update();
-
+                ball.update();
             if (!powerUps.isEmpty()) {
                 for (PowerUp powerUp : powerUps) {
                     if (powerUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED)
@@ -137,7 +136,7 @@ public class Game {
                     lives--;
                     idle = true;
                 }
-                if (lives > 0) {
+                if (lives > 0 && balls.size() == 1) {
                     ball.setY(scene.getHeight() / 2);
                     ball.setX(scene.getWidth() / 2);
                     ball.setVy(-ball.getVy());

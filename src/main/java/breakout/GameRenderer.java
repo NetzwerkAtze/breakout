@@ -16,7 +16,6 @@ import java.util.Map;
 public class GameRenderer {
     private Pane root;
     private Game game;
-    private Circle ballShape;
     private Rectangle paddleShape;
     private Map<Brick, Rectangle> brickMap = new HashMap<>();
     private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
@@ -91,14 +90,12 @@ public class GameRenderer {
         }
         createPowerUpShapes();
 
-    //    ballShape = new Circle(game.getBall().getCenterX(), game.getBall().getCenterY(), game.getBall().getRadius(), game.getBall().getColor());
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         root.getChildren().add(wonText);
         root.getChildren().add(levelCompleteText);
         root.getChildren().add(loseText);
-     //   root.getChildren().add(ballShape);
         root.getChildren().add(paddleShape);
         root.getChildren().add(scoreText);
         root.getChildren().add(livesText);
@@ -159,9 +156,11 @@ public class GameRenderer {
     public void nextLevel() {
         for (Brick brick : game.getBricks())
             root.getChildren().remove(brickMap.get(brick));
+        root.getChildren().removeAll(powerUpMap.values());
+        powerUpMap.clear();
+        root.getChildren().removeAll(ballMap.values());
+        ballMap.clear();
         root.getChildren().remove(loseText);
-        for (Circle ballShape : ballMap.values())
-            root.getChildren().remove(ballShape);
         root.getChildren().remove(paddleShape);
         root.getChildren().remove(scoreText);
         root.getChildren().remove(livesText);
@@ -192,10 +191,12 @@ public class GameRenderer {
         }
         if (!ballMap.isEmpty()) {
             Iterator<Ball> it = ballMap.keySet().iterator();
-            Ball ball = it.next();
-            if (!game.getBalls().contains(ball)) {
-                root.getChildren().remove(ballMap.get(ball));
-                ballMap.remove(ball);
+            while (it.hasNext()) {
+                Ball ball = it.next();
+                if (!game.getBalls().contains(ball)) {
+                    root.getChildren().remove(ballMap.get(ball));
+                    it.remove();
+                }
             }
         }
     }

@@ -30,7 +30,7 @@
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
                 //Test-Level
-                levels.add(new LevelConfig(5,6));
+                levels.add(new LevelConfig(3,3));
                 levels.add(new LevelConfig(1,1));
                 levels.add(new LevelConfig(1,1));
 
