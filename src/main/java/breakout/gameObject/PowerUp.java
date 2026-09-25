@@ -11,7 +11,9 @@ public class PowerUp extends GameObject {
     private PowerUpState powerUpState;
 
     public enum PowerUpType {
-        BIGGER_PADDLE
+        BIGGER_PADDLE,
+        BIGGER_BALL,
+        ANOTHER_BALL
     }
     public enum PowerUpState {
         WAITING,

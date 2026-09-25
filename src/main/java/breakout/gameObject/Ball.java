@@ -11,7 +11,7 @@ public class Ball extends GameObject {
     /**
      * ball radius
      */
-    private int radius;
+    private double radius;
     /**
      * velocity of the paddle on the x-axis per frame
      */
@@ -23,7 +23,7 @@ public class Ball extends GameObject {
 
     private double speed;
 
-    public Ball(double x, double y, double vx, double vy, int radius, Color color) {
+    public Ball(double x, double y, double vx, double vy, double radius, Color color) {
         super(x, y, 2 * radius, 2 * radius, color);
         this.radius = radius;
         this.vx = vx;
@@ -39,8 +39,12 @@ public class Ball extends GameObject {
         y += vy;
     }
 
-    public int getRadius() {
+    public double getRadius() {
         return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public double getVx() {
