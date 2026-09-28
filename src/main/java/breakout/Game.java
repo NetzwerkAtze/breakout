@@ -31,6 +31,8 @@ public class Game {
     private Map<Brick, PowerUp> brickPowerUpMap = new HashMap<>();
     private double paddleStartingWidth;
     private double ballStartingRadius;
+    private boolean sticky;
+    private Map<Ball, Boolean> stickMap = new HashMap<>();
 
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
@@ -38,12 +40,14 @@ public class Game {
         this.scene = scene;
         this.paddle = paddle;
         balls.add(ball);
+        stickMap.put(ball, false);
         this.startLives = startLives;
         this.lives = startLives;
         this.maxCol = maxCol;
         this.maxRow = maxRow;
         this.brickWidth = scene.getWidth() / maxCol - 1;
         this.level = level;
+        this.sticky = false;
         init();
     }
     public void init() {
@@ -59,8 +63,10 @@ public class Game {
     }
     public void update() {
         if (!idle) {
-            for (Ball ball : balls)
-                ball.update();
+            for (Ball ball : balls) {
+                if (!stickMap.get(ball))
+                    ball.update();
+            }
             if (!powerUps.isEmpty()) {
                 for (PowerUp powerUp : powerUps) {
                     if (powerUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED)
@@ -114,6 +120,8 @@ public class Game {
                 ball.setVy(-ball.getVy());
 
             if (ball.collidesWith(paddle)) {
+                if (sticky)
+                    stickMap.put(ball, true);
                 if (ball.hitsEdge(paddle)) {
                     ball.resolveCollision(paddle, true, false);
                     ball.setVy(-ball.getVy());
@@ -130,8 +138,10 @@ public class Game {
                 }
             }
             if (ball.getY() > scene.getHeight()) {
-                if (balls.size() > 1)
+                if (balls.size() > 1) {
                     it.remove();
+                    stickMap.remove(ball);
+                }
                 else if (lives > 0) {
                     lives--;
                     idle = true;
@@ -146,6 +156,8 @@ public class Game {
     }
     public void reset() {
          if (lives == 0) {
+             for (PowerUp powerUp : powerUps)
+                 removeEffect(powerUp);
              powerUps.clear();
              brickPowerUpMap.clear();
             for (Brick brick : bricks) {
@@ -175,6 +187,10 @@ public class Game {
             }
             else if (powerUp.getPowerUpType() == PowerUp.PowerUpType.ANOTHER_BALL) {
                 balls.add(new Ball(balls.getFirst().getX(),balls.getFirst().getY(), -balls.getFirst().getVx(), balls.getFirst().getVy(), balls.getFirst().getRadius(), Color.WHITE));
+                stickMap.put(balls.getLast(), false);
+            }
+            else if (powerUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE) {
+                sticky = true;
             }
             powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
         }
@@ -188,6 +204,8 @@ public class Game {
             for (Ball ball : balls)
                 ball.setRadius(ball.getRadius() - ballStartingRadius);
         }
+        if (powerUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE)
+            sticky = false;
         powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
     }
     public void generatePowerUps(Brick brick) {
@@ -196,16 +214,22 @@ public class Game {
             PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.GREEN, 3, PowerUp.PowerUpType.BIGGER_PADDLE, 360, 6);
             powerUps.add(pUp);
             brickPowerUpMap.put(brick, pUp);
-        }
-        else if (chance < 0.20) {
+        } else if (chance < 0.20) {
             PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.BLUE, 3, PowerUp.PowerUpType.BIGGER_BALL, 360, 6);
             powerUps.add(pUp);
             brickPowerUpMap.put(brick, pUp);
-        } else if (chance < 1.0) {
+        } else if (chance < 0.30) {
             PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.YELLOW, 3, PowerUp.PowerUpType.ANOTHER_BALL, 360, 6);
             powerUps.add(pUp);
             brickPowerUpMap.put(brick, pUp);
+        } else if (chance < 1.00) {
+            PowerUp pUp = new PowerUp(brick.getX() + brickWidth / 2, brick.getY() + brickHeight / 2, Color.RED, 3, PowerUp.PowerUpType.STICKY_PADDLE, 360, 6);
+            powerUps.add(pUp);
+            brickPowerUpMap.put(brick, pUp);
         }
+    }
+    public Map<Ball, Boolean> getStickMap() {
+        return stickMap;
     }
     public boolean isLevelWon() {
         return levelWon;

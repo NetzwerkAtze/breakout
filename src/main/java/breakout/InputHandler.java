@@ -1,5 +1,6 @@
 package breakout;
 
+import breakout.gameObject.Ball;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 /**
@@ -26,6 +27,8 @@ public class InputHandler {
                 moveRight = true;
             } else if (event.getCode() == KeyCode.SPACE) {
                 game.setIdle(false);
+                for (Ball ball : game.getStickMap().keySet())
+                    game.getStickMap().put(ball, false);
             } else if (event.getCode() == KeyCode.R) {
                 reset = true;
             } else if (event.getCode() == KeyCode.ENTER) {
@@ -45,9 +48,17 @@ public class InputHandler {
         });
     }
     public void update() {
-        if (moveRight || moveLeft)
+        if (moveRight || moveLeft) {
             game.getPaddle().move(moveLeft);
-
+            for (Ball ball : game.getStickMap().keySet()) {
+                if (game.getStickMap().get(ball)) {
+                    if (moveLeft)
+                        ball.setX(ball.getX() - game.getPaddle().getVx());
+                    else
+                        ball.setX(ball.getX() + game.getPaddle().getVx());
+                }
+            }
+        }
     }
     public boolean isReset() {
         return reset;

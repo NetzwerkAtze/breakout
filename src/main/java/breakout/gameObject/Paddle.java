@@ -34,4 +34,7 @@ public class Paddle extends GameObject {
         else if (!isLeft && x < maxX - width)
             x += vx;
     }
+    public double getVx() {
+        return vx;
+    }
 }
