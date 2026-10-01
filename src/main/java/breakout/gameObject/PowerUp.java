@@ -52,4 +52,12 @@ public class PowerUp extends GameObject {
     public void resetDuration() {
         duration = 0;
     }
+
+    public int getMaxDuration() {
+        return maxDuration;
+    }
+
+    public void setMaxDuration(int maxDuration) {
+        this.maxDuration = maxDuration;
+    }
 }

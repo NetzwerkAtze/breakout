@@ -46,7 +46,6 @@
                         if (!game.gameOver()) {
                             game.update();
                             gameRenderer.update();
-                            inputHandler.update();
                         }
                         if (inputHandler.isReset() && ((game.getLives() == 0))) {
                             game.reset();

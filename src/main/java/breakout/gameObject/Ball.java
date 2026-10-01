@@ -23,20 +23,47 @@ public class Ball extends GameObject {
 
     private double speed;
 
+    private BallState ballState;
+
+    private double stickOffset;
+
+    public enum BallState {
+        FREE,
+        STICKING
+    }
+
     public Ball(double x, double y, double vx, double vy, double radius, Color color) {
         super(x, y, 2 * radius, 2 * radius, color);
         this.radius = radius;
         this.vx = vx;
         this.vy = vy;
         this.speed = Math.sqrt(vx * vx + vy * vy);
+        this.ballState = BallState.FREE;
     }
 
     /**
      * updates the position (x and y) of the ball based on the velocity.
      */
-    public void update() {
-        x += vx;
-        y += vy;
+    public void update(Paddle paddle) {
+        if (ballState == BallState.FREE) {
+            x += vx;
+            y += vy;
+        }
+        else if (ballState == BallState.STICKING) {
+            x = paddle.getX() - stickOffset;
+        }
+    }
+
+    public void setStickOffset(double stickOffset) {
+        this.stickOffset = stickOffset;
+    }
+
+    public BallState getBallState() {
+        return ballState;
+    }
+
+    public void setBallState(BallState ballState) {
+        this.ballState = ballState;
     }
 
     public double getRadius() {
