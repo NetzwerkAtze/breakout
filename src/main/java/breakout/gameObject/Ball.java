@@ -20,11 +20,8 @@ public class Ball extends GameObject {
      * velocity of the paddle on the y-axis per frame
      */
     private double vy;
-
     private double speed;
-
     private BallState ballState;
-
     private double stickOffset;
 
     public enum BallState {
@@ -113,6 +110,7 @@ public class Ball extends GameObject {
         double overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
         return Math.abs(overlapX - overlapY) < 0.001;
     }
+
     public double getRadians(Paddle paddle, int maxAngle) {
         double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
         double ballCenterX = x + radius;
@@ -121,9 +119,11 @@ public class Ball extends GameObject {
         double angle = ratio * maxAngle;
         return Math.toRadians(angle);
     }
+
     public double getOverlapX(GameObject other) {
         return Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
     }
+
     public double getOverlapY(GameObject other) {
         return Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
     }

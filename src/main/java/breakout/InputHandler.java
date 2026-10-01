@@ -1,6 +1,5 @@
 package breakout;
 
-import breakout.gameObject.Ball;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 /**

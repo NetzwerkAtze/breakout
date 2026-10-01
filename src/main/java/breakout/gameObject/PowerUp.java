@@ -43,14 +43,13 @@ public class PowerUp extends GameObject {
     public PowerUpType getPowerUpType() {
         return powerUpType;
     }
+
     public PowerUpState getPowerUpState() {
         return powerUpState;
     }
+
     public void setPowerUpState(PowerUpState powerUpState) {
         this.powerUpState = powerUpState;
-    }
-    public void resetDuration() {
-        duration = 0;
     }
 
     public int getMaxDuration() {

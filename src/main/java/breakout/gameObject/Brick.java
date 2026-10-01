@@ -10,12 +10,15 @@ public class Brick extends GameObject {
         super(x, y, width, height, color);
         isDestroyed = false;
     }
+
     public void destroy() {
         isDestroyed = true;
     }
+
     public void repair() {
         isDestroyed = false;
     }
+
     public boolean isDestroyed(){
         return isDestroyed;
     }

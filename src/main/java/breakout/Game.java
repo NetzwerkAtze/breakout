@@ -66,14 +66,14 @@ public class Game {
         ballStartingRadius = balls.getFirst().getRadius();
     }
     public void update() {
+        if (moveRight || moveLeft)
+            paddle.move(moveLeft);
         if (!idle) {
             for (Ball ball : balls) {
                 if (releaseBalls)
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
             }
-            if (moveRight || moveLeft)
-                paddle.move(moveLeft);
             if (!powerUps.isEmpty()) {
                 for (PowerUp powerUp : powerUps) {
                     if (powerUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED)
@@ -129,23 +129,22 @@ public class Game {
             if (ball.collidesWith(paddle)) {
                 if (sticky) {
                     if (ball.getBallState() == Ball.BallState.FREE) {
-                        ball.setStickOffset(paddle.getX() - ball.getX());
-                        ball.setBallState(Ball.BallState.STICKING);
+                            ball.setStickOffset(paddle.getX() - ball.getX());
+                            ball.setBallState(Ball.BallState.STICKING);
                     }
-                }
-                if (ball.hitsEdge(paddle)) {
-                    ball.resolveCollision(paddle, true, false);
-                    ball.setVy(-ball.getVy());
-                    ball.setVx(-ball.getVx());
-                }
-                else if (ball.hitsOnY(paddle)) {
-                    ball.resolveCollision(paddle, false, true);
-                    ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
-                    ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
-                }
-                else {
-                    ball.resolveCollision(paddle, false, false);
-                    ball.setVx(-ball.getVx());
+                } else {
+                    if (ball.hitsEdge(paddle)) {
+                        ball.resolveCollision(paddle, true, false);
+                        ball.setVy(-ball.getVy());
+                        ball.setVx(-ball.getVx());
+                    } else if (ball.hitsOnY(paddle)) {
+                        ball.resolveCollision(paddle, false, true);
+                        ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
+                        ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
+                    } else {
+                        ball.resolveCollision(paddle, false, false);
+                        ball.setVx(-ball.getVx());
+                    }
                 }
             }
             if (ball.getY() > scene.getHeight()) {
@@ -166,7 +165,8 @@ public class Game {
     public void reset() {
          if (lives == 0) {
              for (PowerUp powerUp : powerUps)
-                 removeEffect(powerUp);
+                 if (powerUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE)
+                     removeEffect(powerUp);
              powerUps.clear();
              brickPowerUpMap.clear();
             for (Brick brick : bricks) {
@@ -198,14 +198,19 @@ public class Game {
                 balls.add(new Ball(balls.getFirst().getX(),balls.getFirst().getY(), -balls.getFirst().getVx(), balls.getFirst().getVy(), balls.getFirst().getRadius(), Color.WHITE));
             }
             else if (powerUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE) {
-                if (sticky)
+                if (sticky) {
                     powerUps.stream()
-                            .filter(x -> x.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE)
-                            .forEach(x -> x.setMaxDuration(powerUp.getMaxDuration() + x.getMaxDuration()));
+                            .filter(pUp -> pUp != powerUp)
+                            .filter(pUp -> pUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE)
+                            .filter(pUp -> pUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE)
+                            .forEach(pUp -> pUp.setMaxDuration(powerUp.getMaxDuration() + pUp.getMaxDuration()));
+                    powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
+                }
                 else
                     sticky = true;
             }
-            powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
+            if (powerUp.getPowerUpState() != PowerUp.PowerUpState.REMOVED)
+                powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
         }
     }
     public void removeEffect(PowerUp powerUp) {
@@ -249,48 +254,58 @@ public class Game {
     public void setReleaseBalls(boolean releaseBalls) {
         this.releaseBalls = releaseBalls;
     }
+
     public void setMoveRight(boolean right){
         moveRight = right;
     }
+
     public void setMoveLeft(boolean left){
         moveLeft = left;
     }
     public boolean isLevelWon() {
         return levelWon;
     }
+
     public boolean gameOver() {
         return lives == 0 || levelWon;
     }
+
     public int getScore() {
         return score;
     }
+
     public double getBrickHeight() {
         return brickHeight;
     }
+
     public double getBrickWidth() {
         return brickWidth;
     }
+
     public List<Brick> getBricks() {
         return bricks;
     }
-    public Ball getBall() {
-        return balls.getFirst();
-    }
+
     public Paddle getPaddle() {
         return paddle;
     }
+
     public void setIdle(boolean idle) {
         this.idle = idle;
     }
+
     public int getLives() {
         return lives;
     }
+
     public int getLevel() {
         return level;
     }
+
     public List<PowerUp> getPowerUps() {
         return powerUps;
     }
+
     public List<Ball> getBalls() {
         return balls;
     }
