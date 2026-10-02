@@ -115,7 +115,7 @@ public class GameRenderer {
             if (!brick.isDestroyed())
                 brickMap.get(brick).setFill(brick.getColor());
         }
-        for (PowerUp pUp : game.getPowerUps()) {
+        for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
             powerUpMap.get(pUp).setCenterY(pUp.getY() + pUp.getHeight() / 2);
             if (pUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
@@ -174,7 +174,7 @@ public class GameRenderer {
         wonText.setFill(Color.WHITE);
     }
     public void createPowerUpShapes() {
-        for (PowerUp pUp : game.getPowerUps()) {
+        for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             Circle pUpShape = new Circle(pUp.getX() + pUp.getWidth() / 2, pUp.getY() + pUp.getHeight() / 2, pUp.getHeight(), Color.TRANSPARENT);
             powerUpMap.put(pUp, pUpShape);
             root.getChildren().add(pUpShape);

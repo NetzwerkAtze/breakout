@@ -26,7 +26,7 @@ public class Ball extends GameObject {
 
     public enum BallState {
         FREE,
-        STICKING
+        STICKING,
     }
 
     public Ball(double x, double y, double vx, double vy, double radius, Color color) {
