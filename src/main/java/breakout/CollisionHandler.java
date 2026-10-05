@@ -1,32 +1,29 @@
 package breakout;
 
 import breakout.gameObject.Ball;
-import breakout.gameObject.Brick;
 import breakout.gameObject.GameObject;
 import javafx.scene.Scene;
 
-import java.util.Iterator;
-
 public class CollisionHandler {
-    private Scene scene;
     private Game game;
 
-    public CollisionHandler(Scene scene, Game game) {
-        this.scene = scene;
+    public CollisionHandler(Game game) {
         this.game = game;
     }
-    public void resolveBallCollision(Ball ball, GameObject other) {
+    public void resolveBallCollision(Ball ball, GameObject other, boolean isPaddle, Runnable onStraightHit) {
+        if (game.isSticky() && isPaddle) {
+            if (ball.getBallState() == Ball.BallState.FREE) {
+                ball.setStickOffset(other.getX() - ball.getX());
+                ball.setBallState(Ball.BallState.STICKING);
+            }
+        }
         if (ball.hitsEdge(other)) {
             ball.resolveCollision(other, true, false);
             ball.setVy(-ball.getVy());
             ball.setVx(-ball.getVx());
         } else if (ball.hitsOnY(other)) {
             ball.resolveCollision(other, false, true);
-            ball.setVy(-ball.getVy());
-            if (other == game.getPaddle()) {
-                ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(game.getPaddle(), game.getMaxAngle())));
-                ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(game.getPaddle(), game.getMaxAngle()))));
-            }
+            onStraightHit.run();
         } else {
             ball.resolveCollision(other, false, false);
             ball.setVx(-ball.getVx());

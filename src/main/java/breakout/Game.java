@@ -32,6 +32,7 @@ public class    Game {
     private boolean moveLeft;
     private boolean releaseBalls;
     private PowerUpHandler powerUpHandler;
+    private CollisionHandler collisionHandler;
 
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
@@ -61,6 +62,7 @@ public class    Game {
         paddleStartingWidth = paddle.getWidth();
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
+        collisionHandler = new CollisionHandler(this);
     }
     public void update() {
         if (moveRight || moveLeft)
@@ -75,18 +77,9 @@ public class    Game {
         }
         for (Ball ball : balls) {
             for (Brick brick : bricks) {
+
                 if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                    if (ball.hitsEdge(brick)) {
-                        ball.resolveCollision(brick, true, false);
-                        ball.setVy(-ball.getVy());
-                        ball.setVx(-ball.getVx());
-                    } else if (ball.hitsOnY(brick)) {
-                        ball.resolveCollision(brick, false, true);
-                        ball.setVy(-ball.getVy());
-                    } else {
-                        ball.resolveCollision(brick, false, false);
-                        ball.setVx(-ball.getVx());
-                    }
+                    collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
                     brick.destroy();
                     score++;
                     break;
@@ -107,24 +100,10 @@ public class    Game {
                 ball.setVy(-ball.getVy());
 
             if (ball.collidesWith(paddle)) {
-                if (sticky) {
-                    if (ball.getBallState() == Ball.BallState.FREE) {
-                            ball.setStickOffset(paddle.getX() - ball.getX());
-                            ball.setBallState(Ball.BallState.STICKING);
-                    }
-                }
-                if (ball.hitsEdge(paddle)) {
-                    ball.resolveCollision(paddle, true, false);
-                    ball.setVy(-ball.getVy());
-                    ball.setVx(-ball.getVx());
-                } else if (ball.hitsOnY(paddle)) {
-                    ball.resolveCollision(paddle, false, true);
+                collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
                     ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
                     ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
-                } else {
-                    ball.resolveCollision(paddle, false, false);
-                    ball.setVx(-ball.getVx());
-                }
+                });
             }
             if (ball.getY() > scene.getHeight()) {
                 if (balls.size() > 1)
