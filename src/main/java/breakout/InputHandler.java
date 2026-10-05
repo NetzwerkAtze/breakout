@@ -25,7 +25,7 @@ public class InputHandler {
             } else if (event.getCode() == KeyCode.RIGHT) {
                 game.setMoveRight(true);
             } else if (event.getCode() == KeyCode.SPACE) {
-                game.setIdle(false);
+                game.getGameState().setIdle(false);
                 game.setReleaseBalls(true);
             } else if (event.getCode() == KeyCode.R) {
                 reset = true;

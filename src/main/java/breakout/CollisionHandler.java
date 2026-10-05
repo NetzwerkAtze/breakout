@@ -2,7 +2,6 @@ package breakout;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.GameObject;
-import javafx.scene.Scene;
 
 public class CollisionHandler {
     private Game game;
@@ -11,7 +10,7 @@ public class CollisionHandler {
         this.game = game;
     }
     public void resolveBallCollision(Ball ball, GameObject other, boolean isPaddle, Runnable onStraightHit) {
-        if (game.isSticky() && isPaddle) {
+        if (game.getGameState().isSticky() && isPaddle) {
             if (ball.getBallState() == Ball.BallState.FREE) {
                 ball.setStickOffset(other.getX() - ball.getX());
                 ball.setBallState(Ball.BallState.STICKING);

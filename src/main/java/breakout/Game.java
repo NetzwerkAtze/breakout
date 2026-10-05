@@ -13,26 +13,20 @@ public class    Game {
     private Paddle paddle;
     private List<Ball> balls = new ArrayList<>();;
     private List<Brick> bricks = new ArrayList<>();
-    private int startLives;
-    private int lives;
-    private boolean levelWon = false;
-    private boolean idle = true;
     private int menuBarHeight = 30;
-    private int score = 0;
     private int maxAngle = 60;
     private int maxCol;
     private int maxRow;
     private double brickHeight = 14;
     private double brickWidth;
-    private  int level;
     private double paddleStartingWidth;
     private double ballStartingRadius;
-    private boolean sticky;
     private boolean moveRight;
     private boolean moveLeft;
     private boolean releaseBalls;
     private PowerUpHandler powerUpHandler;
     private CollisionHandler collisionHandler;
+    private GameState gameState;
 
     Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
 
@@ -40,17 +34,18 @@ public class    Game {
         this.scene = scene;
         this.paddle = paddle;
         balls.add(ball);
-        this.startLives = startLives;
-        this.lives = startLives;
         this.maxCol = maxCol;
         this.maxRow = maxRow;
         this.brickWidth = scene.getWidth() / maxCol - 1;
-        this.level = level;
-        this.sticky = false;
         this.moveLeft = false;
         this.moveRight = false;
         this.releaseBalls = false;
         init();
+        paddleStartingWidth = paddle.getWidth();
+        ballStartingRadius = balls.getFirst().getRadius();
+        powerUpHandler = new PowerUpHandler(scene, this);
+        collisionHandler = new CollisionHandler(this);
+        gameState = new GameState(startLives, level);
     }
     public void init() {
         for (int col = 0; col < maxCol; col++) {
@@ -59,15 +54,11 @@ public class    Game {
                 bricks.add(brick);
             }
         }
-        paddleStartingWidth = paddle.getWidth();
-        ballStartingRadius = balls.getFirst().getRadius();
-        powerUpHandler = new PowerUpHandler(scene, this);
-        collisionHandler = new CollisionHandler(this);
     }
     public void update() {
         if (moveRight || moveLeft)
             paddle.move(moveLeft);
-        if (!idle) {
+        if (!gameState.isIdle()) {
             for (Ball ball : balls) {
                 if (releaseBalls)
                     ball.setBallState(Ball.BallState.FREE);
@@ -77,18 +68,17 @@ public class    Game {
         }
         for (Ball ball : balls) {
             for (Brick brick : bricks) {
-
                 if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                     collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
                     brick.destroy();
-                    score++;
+                    gameState.increaseScore();
                     break;
                 }
             }
         }
         if (bricks.stream().allMatch(Brick::isDestroyed)) {
-            levelWon = true;
-            idle = true;
+            gameState.setLevelWon(true);
+            gameState.setIdle(true);
         }
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
@@ -108,11 +98,11 @@ public class    Game {
             if (ball.getY() > scene.getHeight()) {
                 if (balls.size() > 1)
                     it.remove();
-                else if (lives > 0) {
-                    lives--;
-                    idle = true;
+                else if (gameState.isAlive()) {
+                    gameState.loseLife();
+                    gameState.setIdle(true);
                 }
-                if (lives > 0 && balls.size() == 1) {
+                if (gameState.isAlive() && balls.size() == 1) {
                     ball.setY(scene.getHeight() / 2);
                     ball.setX(scene.getWidth() / 2);
                     ball.setVy(-ball.getVy());
@@ -121,20 +111,17 @@ public class    Game {
         }
     }
     public void reset() {
-         if (lives == 0) {
+         if (!gameState.isAlive()) {
              powerUpHandler.reset();
             for (Brick brick : bricks) {
                 brick.repair();
             }
-            lives = startLives;
-            levelWon = false;
-            score = 0;
+            gameState.reset();
             balls.getFirst().setY(scene.getHeight() / 2);
             balls.getFirst().setX(scene.getWidth() / 2);
             balls.getFirst().setVy(-balls.getFirst().getVy());
             paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
             paddle.setWidth(paddleStartingWidth);
-            idle = true;
         }
     }
 
@@ -148,17 +135,6 @@ public class    Game {
 
     public void setMoveLeft(boolean left){
         moveLeft = left;
-    }
-    public boolean isLevelWon() {
-        return levelWon;
-    }
-
-    public boolean gameOver() {
-        return lives == 0 || levelWon;
-    }
-
-    public int getScore() {
-        return score;
     }
 
     public double getBrickHeight() {
@@ -177,18 +153,6 @@ public class    Game {
         return paddle;
     }
 
-    public void setIdle(boolean idle) {
-        this.idle = idle;
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
     public List<Ball> getBalls() {
         return balls;
     }
@@ -205,16 +169,12 @@ public class    Game {
         return powerUpHandler;
     }
 
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
-    }
-
-    public boolean isSticky() {
-        return sticky;
-    }
-
     public int getMaxAngle() {
         return maxAngle;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 }
 

@@ -39,15 +39,15 @@ public class GameRenderer {
 
     private void init() {
         updateBallShapes();
-        scoreText = new Text(15,20, "Score: " + Integer.toString(game.getScore()));
+        scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
 
-        levelText = new Text((root.getScene().getWidth() / 3) * 2 + 15,20, "Level: " + Integer.toString(game.getLevel()));
+        levelText = new Text((root.getScene().getWidth() / 3) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
         levelText.setFont(new Font(20));
         levelText.setFill(Color.WHITE);
 
-        livesText = new Text(root.getScene().getWidth() / 3 + 15,  20, "Lives: " + Integer.toString(game.getLives()));
+        livesText = new Text(root.getScene().getWidth() / 3 + 15,  20, "Lives: " + Integer.toString(game.getGameState().getLives()));
         livesText.setFont(new Font(20));
         livesText.setFill(Color.WHITE);
 
@@ -124,8 +124,8 @@ public class GameRenderer {
                 powerUpMap.get(pUp).setFill(Color.TRANSPARENT);
             }
         }
-        scoreText.setText("Score: " + Integer.toString(game.getScore()));
-        livesText.setText("Lives: " + Integer.toString(game.getLives()));
+        scoreText.setText("Score: " + Integer.toString(game.getGameState().getScore()));
+        livesText.setText("Lives: " + Integer.toString(game.getGameState().getLives()));
         for (Map.Entry<Ball, Circle> entry : ballMap.entrySet()) {
             entry.getValue().setCenterX(entry.getKey().getCenterX());
             entry.getValue().setCenterY(entry.getKey().getCenterY());
@@ -133,8 +133,8 @@ public class GameRenderer {
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         paddleShape.setWidth(game.getPaddle().getWidth());
-        if (game.gameOver()) {
-            if (game.isLevelWon()) {
+        if (game.getGameState().gameOver()) {
+            if (game.getGameState().isLevelWon()) {
                 levelCompleteText.setFill(Color.WHITE);
                 nextLevelText.setFill(Color.WHITE);
             }

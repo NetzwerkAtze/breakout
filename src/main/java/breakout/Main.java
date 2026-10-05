@@ -43,15 +43,15 @@
                             gameRenderer.displayVictory();
                             this.stop();
                         }
-                        if (!game.gameOver()) {
+                        if (!game.getGameState().gameOver()) {
                             game.update();
                             gameRenderer.update();
                         }
-                        if (inputHandler.isReset() && ((game.getLives() == 0))) {
+                        if (inputHandler.isReset() && ((!game.getGameState().isAlive()))) {
                             game.reset();
                             gameRenderer.reset();
                         }
-                        if (inputHandler.isNextLevel() && game.isLevelWon())
+                        if (inputHandler.isNextLevel() && game.getGameState().isLevelWon())
                             loadLevel(currentLevel);
                     }
                 };
