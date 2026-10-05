@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 import java.util.*;
 
-public class Game {
+public class    Game {
     private Scene scene;
     private Paddle paddle;
     private List<Ball> balls = new ArrayList<>();;
@@ -232,6 +232,10 @@ public class Game {
 
     public boolean isSticky() {
         return sticky;
+    }
+
+    public int getMaxAngle() {
+        return maxAngle;
     }
 }
 
