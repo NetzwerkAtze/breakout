@@ -7,7 +7,6 @@ public class GameState {
     private boolean idle = true;
     private int score = 0;
     private  int level;
-    private boolean sticky = false;
 
     public GameState(int startLives, int level) {
         this.startingLives = startLives;
@@ -32,14 +31,6 @@ public class GameState {
 
     public boolean isIdle() {
         return idle;
-    }
-
-    public boolean isSticky() {
-        return sticky;
-    }
-
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
     }
 
     public int getScore() {

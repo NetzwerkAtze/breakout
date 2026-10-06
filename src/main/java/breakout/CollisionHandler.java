@@ -10,7 +10,7 @@ public class CollisionHandler {
         this.game = game;
     }
     public void resolveBallCollision(Ball ball, GameObject other, boolean isPaddle, Runnable onStraightHit) {
-        if (game.getGameState().isSticky() && isPaddle) {
+        if (game.getPowerUpHandler().isStickyPaddle() && isPaddle) {
             if (ball.getBallState() == Ball.BallState.FREE) {
                 ball.setStickOffset(other.getX() - ball.getX());
                 ball.setBallState(Ball.BallState.STICKING);

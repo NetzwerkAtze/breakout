@@ -15,6 +15,7 @@ public class PowerUpHandler {
     private int powerUpSize;
     private double fallingSpeed;
     private double dropChance;
+    private boolean stickyPaddle = false;
     private Random random = new Random();
     private List<PowerUp> powerUps = new ArrayList<>();
     private Map<Brick, PowerUp> brickPowerUpMap = new HashMap<>();
@@ -111,7 +112,7 @@ public class PowerUpHandler {
                 game.getBalls().add(new Ball(game.getBalls().getFirst().getX(),game.getBalls().getFirst().getY(), -game.getBalls().getFirst().getVx(), game.getBalls().getFirst().getVy(), game.getBalls().getFirst().getRadius(), Color.WHITE));
             }
             else if (powerUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE) {
-                if (game.getGameState().isSticky()) {
+                if (stickyPaddle) {
                     powerUps.stream()
                             .filter(pUp -> pUp != powerUp)
                             .filter(pUp -> pUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE)
@@ -120,7 +121,7 @@ public class PowerUpHandler {
                     powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
                 }
                 else
-                    game.getGameState().setSticky(true);
+                    stickyPaddle = true;
             }
             if (powerUp.getPowerUpState() != PowerUp.PowerUpState.REMOVED)
                 powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
@@ -136,11 +137,15 @@ public class PowerUpHandler {
                 ball.setRadius(ball.getRadius() - game.getBallStartingRadius());
         }
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.STICKY_PADDLE)
-            game.getGameState().setSticky(false);
+            stickyPaddle = false;
         powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
     }
 
     public List<PowerUp> getPowerUps() {
         return powerUps;
+    }
+
+    public boolean isStickyPaddle() {
+        return stickyPaddle;
     }
 }
