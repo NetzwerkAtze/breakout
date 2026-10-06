@@ -6,12 +6,12 @@ import breakout.gameObject.PowerUp;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import java.util.*;
 
 public class GameRenderer {
     private Pane root;
@@ -20,6 +20,7 @@ public class GameRenderer {
     private Map<Brick, Rectangle> brickMap = new HashMap<>();
     private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
     private Map<Ball, Circle> ballMap = new HashMap<>();
+    private List<Polygon> heartShapes = new ArrayList<>();
     Text scoreText;
     Text wonText;
     Text levelCompleteText;
@@ -28,6 +29,7 @@ public class GameRenderer {
     Text restartText;
     Text levelText;
     Text nextLevelText;
+    Text pausedText;
 
 
 
@@ -43,11 +45,24 @@ public class GameRenderer {
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
 
-        levelText = new Text((root.getScene().getWidth() / 3) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
+        levelText = new Text((root.getScene().getWidth() / 3) + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
         levelText.setFont(new Font(20));
         levelText.setFill(Color.WHITE);
 
-        livesText = new Text(root.getScene().getWidth() / 3 + 15,  20, "Lives: " + Integer.toString(game.getGameState().getLives()));
+        livesText = new Text(root.getScene().getWidth() / 3 * 2 + 15,  20, "Lives: ");
+        for (int i = 0; i < game.getGameState().getLives(); i++) {
+            Polygon heart = new Polygon();
+            heart.getPoints().addAll(new Double[] {
+                    livesText.getLayoutBounds().getMaxX() + 20 + 25 * i, livesText.getLayoutBounds().getMinY(),
+                    livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
+                    livesText.getLayoutBounds().getMaxX() + 20 * 2 + 25 * i, livesText.getLayoutBounds().getMinY(),
+                    livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMaxY(),
+            });
+            heart.setFill(Color.RED);
+            heartShapes.add(heart);
+            heart.setFill(Color.RED);
+            root.getChildren().add(heart);
+        }
         livesText.setFont(new Font(20));
         livesText.setFill(Color.WHITE);
 
@@ -81,6 +96,12 @@ public class GameRenderer {
         nextLevelText.setX(root.getScene().getWidth() / 2 - nextLevelText.getLayoutBounds().getCenterX());
         nextLevelText.setFill(Color.TRANSPARENT);
 
+        pausedText = new Text("- Paused. Press P to unpause. -");
+        pausedText.setFont(new Font(15));
+        pausedText.setY(root.getScene().getHeight() / 2 - pausedText.getLayoutBounds().getCenterY());
+        pausedText.setX(root.getScene().getWidth() / 2 - pausedText.getLayoutBounds().getCenterX());
+        pausedText.setFill(Color.TRANSPARENT);
+
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
             brickShape.setX(brick.getX());
@@ -102,9 +123,14 @@ public class GameRenderer {
         root.getChildren().add(restartText);
         root.getChildren().add(levelText);
         root.getChildren().add(nextLevelText);
+        root.getChildren().add(pausedText);
     }
     public void update() {
         updateBallShapes();
+        if (game.getGameState().isPaused())
+            pausedText.setFill(Color.WHITE);
+        if (!game.getGameState().isPaused())
+            pausedText.setFill(Color.TRANSPARENT);
         for (Map.Entry<Ball, Circle> entry : ballMap.entrySet()) {
             if (entry.getKey().getRadius() != entry.getValue().getRadius())
                 entry.getValue().setRadius(entry.getKey().getRadius());
@@ -125,7 +151,9 @@ public class GameRenderer {
             }
         }
         scoreText.setText("Score: " + Integer.toString(game.getGameState().getScore()));
-        livesText.setText("Lives: " + Integer.toString(game.getGameState().getLives()));
+     //   livesText.setText("Lives: " + Integer.toString(game.getGameState().getLives()));
+        if (game.getGameState().getLives() < heartShapes.size())
+            heartShapes.get(game.getGameState().getLives()).setFill(Color.TRANSPARENT);
         for (Map.Entry<Ball, Circle> entry : ballMap.entrySet()) {
             entry.getValue().setCenterX(entry.getKey().getCenterX());
             entry.getValue().setCenterY(entry.getKey().getCenterY());
@@ -152,6 +180,8 @@ public class GameRenderer {
             root.getChildren().remove(powerUpMap.get(powerUp));
         powerUpMap.clear();
         createPowerUpShapes();
+        for (Polygon heart : heartShapes)
+            heart.setFill(Color.RED);
     }
     public void nextLevel() {
         for (Brick brick : game.getBricks())

@@ -55,6 +55,8 @@ public class    Game {
         }
     }
     public void update() {
+        if (gameState.isPaused())
+            return;
         if (moveRight || moveLeft)
             paddle.move(moveLeft);
         if (!gameState.isIdle()) {

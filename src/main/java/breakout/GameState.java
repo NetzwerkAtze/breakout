@@ -5,6 +5,7 @@ public class GameState {
     private int lives;
     private boolean levelWon = false;
     private boolean idle = true;
+    private boolean paused = false;
     private int score = 0;
     private  int level;
 
@@ -65,5 +66,13 @@ public class GameState {
 
     public boolean gameOver() {
         return lives == 0 || levelWon;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }

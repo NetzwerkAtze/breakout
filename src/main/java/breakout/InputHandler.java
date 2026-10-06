@@ -31,6 +31,8 @@ public class InputHandler {
                 reset = true;
             } else if (event.getCode() == KeyCode.ENTER) {
                 nextLevel = true;
+            } else if (event.getCode() == KeyCode.P) {
+                game.getGameState().setPaused(!game.getGameState().isPaused());
             }
         });
         root.getScene().setOnKeyReleased(event -> {
