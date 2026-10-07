@@ -42,30 +42,29 @@
                 AnimationTimer timer = new AnimationTimer() {
                     @Override
                     public void handle(long l) {
-                        if (won || game.getGameState().gameOver()) {
+                        if (inputHandler.isExit()) {
+                            this.stop();
+                            System.exit(0);
+                        }
+                        if (game.getGameState().gameOver()) {
                             if (game.getGameState().getScore() > hsManager.getHighscore())
                                 hsManager.writeHighscore(game.getGameState().getScore());
-                            if (won)
-                                gameRenderer.displayVictory();
                             if (inputHandler.isReset()) {
                                 game.reset();
                                 gameRenderer.reset();
                             }
-                            if (inputHandler.isExit()) {
-                                this.stop();
-                                System.exit(0);
+                        } else if (game.getGameState().isLevelWon()) {
+                            if (won) {
+                                if (game.getGameState().getScore() > hsManager.getHighscore())
+                                    hsManager.writeHighscore(game.getGameState().getScore());
+                                gameRenderer.displayVictory();
                             }
-                        }
-                        if (!game.getGameState().gameOver() && !game.getGameState().isLevelWon()) {
+                            if (inputHandler.isNextLevel())
+                                loadLevel(nextLevel);
+                        } else {
                             game.update();
                             gameRenderer.update();
                         }
-                        if (inputHandler.isReset() && ((!game.getGameState().isAlive()))) {
-                            game.reset();
-                            gameRenderer.reset();
-                        }
-                        if (inputHandler.isNextLevel() && game.getGameState().isLevelWon())
-                            loadLevel(nextLevel);
                     }
                 };
                 timer.start();
