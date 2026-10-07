@@ -151,7 +151,6 @@ public class GameRenderer {
             }
         }
         scoreText.setText("Score: " + Integer.toString(game.getGameState().getScore()));
-     //   livesText.setText("Lives: " + Integer.toString(game.getGameState().getLives()));
         if (game.getGameState().getLives() < heartShapes.size())
             heartShapes.get(game.getGameState().getLives()).setFill(Color.TRANSPARENT);
         for (Map.Entry<Ball, Circle> entry : ballMap.entrySet()) {
