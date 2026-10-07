@@ -24,7 +24,7 @@ public class GameObjectTest {
     }
     @Test
     void meetOnCorner() {
-        GameObject a = new GameObject(0, 0, 10, 10, Color.BLUE);
+        GameObject a = new GameObject(0, 0, 15, 15, Color.BLUE);
         GameObject b = new GameObject(10, 10, 10, 10, Color.BLUE);
         boolean result = a.collidesWith(b);
         assertTrue(result);
@@ -45,7 +45,7 @@ public class GameObjectTest {
     }
     @Test
     void hitsEdge() {
-        Ball a = new Ball(10,10,5,5,5,Color.RED);
+        Ball a = new Ball(7,7,5,5,5,Color.RED);
         GameObject b = new GameObject(10, 10, 15, 15, Color.RED);
         boolean result = a.hitsEdge(b);
         assertTrue(result);

@@ -65,7 +65,7 @@ public class GameState {
     }
 
     public boolean gameOver() {
-        return lives == 0 || levelWon;
+        return lives == 0;
     }
 
     public boolean isPaused() {

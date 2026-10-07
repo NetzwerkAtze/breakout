@@ -30,12 +30,15 @@ public class GameRenderer {
     Text levelText;
     Text nextLevelText;
     Text pausedText;
+    Text highscoreText;
+    HighscoreManager hsManager;
 
 
 
-    public GameRenderer(Pane root, Game game) {
+    public GameRenderer(Pane root, Game game, HighscoreManager hsManager) {
         this.root = root;
         this.game = game;
+        this.hsManager = hsManager;
         init();
     }
 
@@ -45,11 +48,19 @@ public class GameRenderer {
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
 
-        levelText = new Text((root.getScene().getWidth() / 3) + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
+        scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
+        scoreText.setFont(new Font(20));
+        scoreText.setFill(Color.WHITE);
+
+        highscoreText = new Text((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore());
+        highscoreText.setFont(new Font(20));
+        highscoreText.setFill(Color.WHITE);
+
+        levelText = new Text((root.getScene().getWidth() / 4) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
         levelText.setFont(new Font(20));
         levelText.setFill(Color.WHITE);
 
-        livesText = new Text(root.getScene().getWidth() / 3 * 2 + 15,  20, "Lives: ");
+        livesText = new Text((root.getScene().getWidth() / 4) * 3 + 15,  20, "Lives: ");
         for (int i = 0; i < game.getGameState().getLives(); i++) {
             Polygon heart = new Polygon();
             heart.getPoints().addAll(new Double[] {
@@ -124,6 +135,7 @@ public class GameRenderer {
         root.getChildren().add(levelText);
         root.getChildren().add(nextLevelText);
         root.getChildren().add(pausedText);
+        root.getChildren().add(highscoreText);
     }
     public void update() {
         updateBallShapes();
@@ -151,6 +163,7 @@ public class GameRenderer {
             }
         }
         scoreText.setText("Score: " + Integer.toString(game.getGameState().getScore()));
+        highscoreText.setText(("Highscore: " + hsManager.getHighscore()));
         if (game.getGameState().getLives() < heartShapes.size())
             heartShapes.get(game.getGameState().getLives()).setFill(Color.TRANSPARENT);
         for (Map.Entry<Ball, Circle> entry : ballMap.entrySet()) {
@@ -161,14 +174,11 @@ public class GameRenderer {
         paddleShape.setY(game.getPaddle().getY());
         paddleShape.setWidth(game.getPaddle().getWidth());
         if (game.getGameState().gameOver()) {
-            if (game.getGameState().isLevelWon()) {
-                levelCompleteText.setFill(Color.WHITE);
-                nextLevelText.setFill(Color.WHITE);
-            }
-            else {
-                restartText.setFill(Color.WHITE);
-                loseText.setFill(Color.WHITE);
-            }
+            restartText.setFill(Color.WHITE);
+            loseText.setFill(Color.WHITE);
+        } else if (game.getGameState().isLevelWon()) {
+            levelCompleteText.setFill(Color.WHITE);
+            nextLevelText.setFill(Color.WHITE);
         } else {
             restartText.setFill(Color.TRANSPARENT);
             loseText.setFill(Color.TRANSPARENT);
@@ -189,9 +199,11 @@ public class GameRenderer {
         powerUpMap.clear();
         root.getChildren().removeAll(ballMap.values());
         ballMap.clear();
+        root.getChildren().removeAll(heartShapes);
         root.getChildren().remove(loseText);
         root.getChildren().remove(paddleShape);
         root.getChildren().remove(scoreText);
+        root.getChildren().remove(highscoreText);
         root.getChildren().remove(livesText);
         root.getChildren().remove(restartText);
         root.getChildren().remove(levelText);

@@ -8,14 +8,13 @@ import javafx.scene.layout.Pane;
 public class InputHandler {
     private Pane root;
     private Game game;
-    private boolean reset;
-    private boolean nextLevel;
+    private boolean reset = false;
+    private boolean nextLevel = false;
+    private boolean exit = false;
 
     public InputHandler(Pane root, Game game) {
         this.root = root;
         this.game = game;
-        reset = false;
-        nextLevel = false;
         init();
     }
     private void init() {
@@ -33,6 +32,8 @@ public class InputHandler {
                 nextLevel = true;
             } else if (event.getCode() == KeyCode.P) {
                 game.getGameState().setPaused(!game.getGameState().isPaused());
+            } else if (event.getCode() == KeyCode.ESCAPE) {
+                exit = true;
             }
         });
         root.getScene().setOnKeyReleased(event -> {
@@ -46,6 +47,8 @@ public class InputHandler {
                 reset = false;
             } else if (event.getCode() == KeyCode.ENTER) {
                 nextLevel = false;
+            } else if (event.getCode() == KeyCode.ESCAPE) {
+                exit = false;
             }
         });
     }
@@ -54,5 +57,8 @@ public class InputHandler {
     }
     public boolean isNextLevel() {
         return nextLevel;
+    }
+    public boolean isExit() {
+        return exit;
     }
 }
