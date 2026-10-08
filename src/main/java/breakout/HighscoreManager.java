@@ -18,7 +18,7 @@ public class HighscoreManager {
         Path highscorePath = Paths.get("highscore.txt");
         try {
             highscore = Integer.parseInt(Files.readString(highscorePath));
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             highscore = 0;
         }
     }

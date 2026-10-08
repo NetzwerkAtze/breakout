@@ -10,7 +10,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
+import javafx.scene.effect.DropShadow;
 import java.util.*;
 
 public class GameRenderer {
@@ -32,6 +32,7 @@ public class GameRenderer {
     Text pausedText;
     Text highscoreText;
     HighscoreManager hsManager;
+    DropShadow dropShadow;
 
 
 
@@ -43,11 +44,8 @@ public class GameRenderer {
     }
 
     private void init() {
+        dropShadow = new DropShadow(8, Color.rgb(0,0,0,0.5));
         updateBallShapes();
-        scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
-        scoreText.setFont(new Font(20));
-        scoreText.setFill(Color.WHITE);
-
         scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
@@ -117,6 +115,8 @@ public class GameRenderer {
             Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
             brickShape.setX(brick.getX());
             brickShape.setY(brick.getY());
+            brickShape.setArcHeight(8);
+            brickShape.setArcWidth(8);
             brickMap.put(brick, brickShape);
             root.getChildren().add(brickShape);
         }
@@ -125,6 +125,8 @@ public class GameRenderer {
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
+        paddleShape.setArcWidth(8);
+        paddleShape.setArcHeight(8);
         root.getChildren().add(wonText);
         root.getChildren().add(levelCompleteText);
         root.getChildren().add(loseText);
@@ -200,6 +202,7 @@ public class GameRenderer {
         root.getChildren().removeAll(ballMap.values());
         ballMap.clear();
         root.getChildren().removeAll(heartShapes);
+        heartShapes.clear();
         root.getChildren().remove(loseText);
         root.getChildren().remove(paddleShape);
         root.getChildren().remove(scoreText);
@@ -226,6 +229,7 @@ public class GameRenderer {
             if (!ballMap.containsKey(ball)) {
                 Ball currentBall = game.getBalls().get(game.getBalls().indexOf(ball));
                 Circle ballShape = new Circle(currentBall.getCenterX(), currentBall.getCenterY(), currentBall.getRadius(), currentBall.getColor());
+                ballShape.setEffect(dropShadow);
                 ballMap.put(ball, ballShape);
                 root.getChildren().add(ballShape);
             }

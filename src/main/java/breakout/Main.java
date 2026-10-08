@@ -19,9 +19,7 @@
             private GameRenderer gameRenderer;
             private InputHandler inputHandler;
             private HighscoreManager hsManager;
-            private Ball ball;
-            private Paddle paddle;
-            private int nextLevel = 0;
+            private int nextLevelIndex = 0;
             List<LevelConfig> levels = new ArrayList<>();
             private boolean won = false;
 
@@ -33,11 +31,11 @@
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
                 //Test-Level
-                levels.add(new LevelConfig(1,1));
+                levels.add(new LevelConfig(4,4));
                 levels.add(new LevelConfig(1,1));
                 levels.add(new LevelConfig(1,1));
 
-                loadLevel(nextLevel);
+                loadLevel(nextLevelIndex);
 
                 AnimationTimer timer = new AnimationTimer() {
                     @Override
@@ -60,7 +58,7 @@
                                 gameRenderer.displayVictory();
                             }
                             if (inputHandler.isNextLevel())
-                                loadLevel(nextLevel);
+                                loadLevel(nextLevelIndex);
                         } else {
                             game.update();
                             gameRenderer.update();
@@ -79,14 +77,14 @@
                 if (levelIndex >= levels.size())
                     won = true;
                 if (levelIndex < levels.size()) {
-                    ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
-                    paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
+                    Ball ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
+                    Paddle paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.WHITE, scene.getWidth());
                     if (levelIndex > 0)
                         gameRenderer.nextLevel();
-                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex).maxCol(), levels.get(levelIndex).maxRow(), nextLevel + 1);
+                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex).maxCol(), levels.get(levelIndex).maxRow(), nextLevelIndex + 1);
                     gameRenderer = new GameRenderer(root, game, hsManager);
                     inputHandler = new InputHandler(root, game);
-                    nextLevel++;
+                    nextLevelIndex++;
                 }
             }
         }
