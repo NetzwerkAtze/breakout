@@ -2,7 +2,6 @@ package breakout;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
-import breakout.gameObject.GameObject;
 import breakout.gameObject.PowerUp;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,18 +25,18 @@ public class GameRenderer {
     private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<Polygon> heartShapes = new ArrayList<>();
-    Text scoreText;
-    Text wonText;
-    Text levelCompleteText;
-    Text loseText;
-    Text livesText;
-    Text restartText;
-    Text levelText;
-    Text nextLevelText;
-    Text pausedText;
-    Text highscoreText;
-    HighscoreManager hsManager;
-    DropShadow dropShadow;
+    private Text scoreText;
+    private Text wonText;
+    private Text levelCompleteText;
+    private Text loseText;
+    private Text livesText;
+    private Text restartText;
+    private Text levelText;
+    private Text nextLevelText;
+    private Text pausedText;
+    private Text highscoreText;
+    private HighscoreManager hsManager;
+    private DropShadow dropShadow;
 
 
 
@@ -50,7 +49,8 @@ public class GameRenderer {
     }
 
     private void init() {
-        dropShadow = new DropShadow(8, Color.rgb(0,0,0,0.5));
+        dropShadow = new DropShadow(25, Color.rgb(255,255,255));
+        dropShadow.setSpread(0.5);
         updateBallShapes();
         scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
         scoreText.setFont(new Font(20));
@@ -148,8 +148,10 @@ public class GameRenderer {
         root.getChildren().add(highscoreText);
     }
     public void update() {
-        if (game.getPowerUpHandler().isStickyPaddle())
+        if (game.getPowerUpHandler().isStickyPaddle()) {
             paddleShape.setEffect(new Glow(1));
+            paddleShape.setEffect(dropShadow);
+        }
         else
             paddleShape.setEffect(null);
         updateBallShapes();
