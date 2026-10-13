@@ -2,15 +2,20 @@ package breakout;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
+import breakout.gameObject.GameObject;
 import breakout.gameObject.PowerUp;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import java.util.*;
 
 public class GameRenderer {
@@ -36,6 +41,7 @@ public class GameRenderer {
 
 
 
+
     public GameRenderer(Pane root, Game game, HighscoreManager hsManager) {
         this.root = root;
         this.game = game;
@@ -49,6 +55,7 @@ public class GameRenderer {
         scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
         scoreText.setFont(new Font(20));
         scoreText.setFill(Color.WHITE);
+
 
         highscoreText = new Text((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore());
         highscoreText.setFont(new Font(20));
@@ -113,6 +120,7 @@ public class GameRenderer {
 
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
+            brickShape.setFill(makeGradient(brick.getColor()));
             brickShape.setX(brick.getX());
             brickShape.setY(brick.getY());
             brickShape.setArcHeight(8);
@@ -140,6 +148,10 @@ public class GameRenderer {
         root.getChildren().add(highscoreText);
     }
     public void update() {
+        if (game.getPowerUpHandler().isStickyPaddle())
+            paddleShape.setEffect(new Glow(1));
+        else
+            paddleShape.setEffect(null);
         updateBallShapes();
         if (game.getGameState().isPaused())
             pausedText.setFill(Color.WHITE);
@@ -153,7 +165,8 @@ public class GameRenderer {
             if (brick.isDestroyed())
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
             if (!brick.isDestroyed())
-                brickMap.get(brick).setFill(brick.getColor());
+                brickMap.get(brick).setFill(makeGradient(brick.getColor()));
+
         }
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
@@ -193,6 +206,8 @@ public class GameRenderer {
         createPowerUpShapes();
         for (Polygon heart : heartShapes)
             heart.setFill(Color.RED);
+        for (Brick brick : game.getBricks())
+            brickMap.get(brick).setFill(makeGradient(brick.getColor()));
     }
     public void nextLevel() {
         for (Brick brick : game.getBricks())
@@ -244,5 +259,9 @@ public class GameRenderer {
                 }
             }
         }
+    }
+    public LinearGradient makeGradient(Color color) {
+    Stop[] stops = new Stop[] { new Stop(0, color.brighter().brighter()), new Stop(1, color.darker().darker())};
+        return new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
     }
 }

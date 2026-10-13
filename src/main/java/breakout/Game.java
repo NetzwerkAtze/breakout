@@ -64,19 +64,18 @@ public class    Game {
                 if (releaseBalls)
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
-            }
-            powerUpHandler.update();
-        }
-        for (Ball ball : balls) {
-            for (Brick brick : bricks) {
-                if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                    collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
-                    brick.destroy();
-                    gameState.increaseScore();
-                    break;
+                for (Brick brick : bricks) {
+                    if (ball.collidesWith(brick) && !brick.isDestroyed()) {
+                        collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
+                        brick.destroy();
+                        powerUpHandler.onBrickDestroyed(brick);
+                        gameState.increaseScore();
+                        break;
+                    }
                 }
             }
         }
+        powerUpHandler.update();
         if (bricks.stream().allMatch(Brick::isDestroyed)) {
             gameState.setLevelWon(true);
             gameState.setIdle(true);

@@ -37,30 +37,26 @@ public class PowerUpHandler {
         init();
     }
     public void update() {
-        if (!powerUps.isEmpty()) {
-            for (PowerUp powerUp : powerUps) {
-                if (powerUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED)
-                    continue;
-                powerUp.update();
-                if (powerUp.getPowerUpState() == PowerUp.PowerUpState.EXPIRED) {
-                    removeEffect(powerUp);
-                }
-                if (powerUp.collidesWith(game.getPaddle())) {
-                    applyEffect(powerUp);
-                } else if (powerUp.getY() > scene.getHeight())
-                    powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
+        for (PowerUp powerUp : powerUps) {
+            if (powerUp.getPowerUpState() == PowerUp.PowerUpState.REMOVED)
+                continue;
+            powerUp.update();
+            if (powerUp.getPowerUpState() == PowerUp.PowerUpState.EXPIRED) {
+                removeEffect(powerUp);
             }
-            for (Ball ball : game.getBalls()) {
-                for (Brick brick : game.getBricks()) {
-                    if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                        if (brickPowerUpMap.get(brick) != null) {
-                            brickPowerUpMap.get(brick).setPowerUpState(PowerUp.PowerUpState.FALLING);
-                        }
-                    }
-                }
-            }
+            if (powerUp.collidesWith(game.getPaddle())) {
+                applyEffect(powerUp);
+            } else if (powerUp.getY() > scene.getHeight())
+                powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
         }
     }
+
+    public void onBrickDestroyed(Brick brick)  {
+        PowerUp pUp = brickPowerUpMap.get(brick);
+        if (pUp != null && pUp.getPowerUpState() == PowerUp.PowerUpState.WAITING)
+            pUp.setPowerUpState(PowerUp.PowerUpState.FALLING);
+    }
+
     public void reset() {
         for (PowerUp powerUp : powerUps)
             if (powerUp.getPowerUpState() == PowerUp.PowerUpState.ACTIVE)
@@ -70,10 +66,12 @@ public class PowerUpHandler {
         for (Brick brick : game.getBricks())
             generatePowerUps(brick);
     }
+
     private void init() {
         for (Brick brick : game.getBricks())
             generatePowerUps(brick);
     }
+
     private void generatePowerUps(Brick brick) {
         double chance = random.nextDouble();
         Color color = null;
@@ -88,7 +86,7 @@ public class PowerUpHandler {
         } else if (chance < dropChance * 3) {
             color = Color.YELLOW;
             type = PowerUp.PowerUpType.ANOTHER_BALL;
-        } else if (chance < dropChance * 8) {
+        } else if (chance < dropChance * 10) {
             color = Color.RED;
             type = PowerUp.PowerUpType.STICKY_PADDLE;
         }
@@ -98,6 +96,7 @@ public class PowerUpHandler {
             brickPowerUpMap.put(brick, pUp);
         }
     }
+
     public void applyEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
             if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
@@ -127,6 +126,7 @@ public class PowerUpHandler {
                 powerUp.setPowerUpState(PowerUp.PowerUpState.ACTIVE);
         }
     }
+
     public void removeEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
             game.getPaddle().setX(game.getPaddle().getX() + game.getPaddleStartingWidth() / 2);
