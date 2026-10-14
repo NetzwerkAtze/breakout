@@ -49,7 +49,7 @@ public class    Game {
     public void init() {
         for (int col = 0; col < maxCol; col++) {
             for (int row = 0; row < maxRow; row++) {
-                Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + menuBarHeight + 1, brickWidth, brickHeight, rowColors[row % rowColors.length]);
+                Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + menuBarHeight + 1, brickWidth, brickHeight, rowColors[row % rowColors.length], 4);
                 bricks.add(brick);
             }
         }
@@ -67,9 +67,11 @@ public class    Game {
                 for (Brick brick : bricks) {
                     if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                         collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
-                        brick.destroy();
-                        powerUpHandler.onBrickDestroyed(brick);
-                        gameState.increaseScore();
+                        brick.hit();
+                        if (brick.isDestroyed()) {
+                            powerUpHandler.onBrickDestroyed(brick);
+                            gameState.increaseScore();
+                        }
                         break;
                     }
                 }

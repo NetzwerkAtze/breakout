@@ -69,6 +69,8 @@ public class Ball extends GameObject {
 
     public void setRadius(double radius) {
         this.radius = radius;
+        width = 2 * radius;
+        height = 2 * radius;
     }
 
     public double getVx() {

@@ -3,14 +3,13 @@ package breakout;
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
 import breakout.gameObject.PowerUp;
+import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.effect.DropShadow;
@@ -25,6 +24,7 @@ public class GameRenderer {
     private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<Polygon> heartShapes = new ArrayList<>();
+    private Map<Brick, List<Group>> crackMap = new HashMap<>();
     private Text scoreText;
     private Text wonText;
     private Text levelCompleteText;
@@ -119,7 +119,7 @@ public class GameRenderer {
         pausedText.setFill(Color.TRANSPARENT);
 
         for (Brick brick : game.getBricks()) {
-            Rectangle brickShape = new Rectangle(game.getBrickWidth(), game.getBrickHeight(), brick.getColor());
+            Rectangle brickShape = new Rectangle(brick.getWidth(), brick.getHeight(), brick.getColor());
             brickShape.setFill(makeGradient(brick.getColor()));
             brickShape.setX(brick.getX());
             brickShape.setY(brick.getY());
@@ -127,6 +127,7 @@ public class GameRenderer {
             brickShape.setArcWidth(8);
             brickMap.put(brick, brickShape);
             root.getChildren().add(brickShape);
+            addCracks(brick);
         }
         createPowerUpShapes();
 
@@ -164,8 +165,14 @@ public class GameRenderer {
                 entry.getValue().setRadius(entry.getKey().getRadius());
         }
         for (Brick brick : game.getBricks()) {
-            if (brick.isDestroyed())
+            if (brick.isDestroyed()) {
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
+                continue;
+            }
+            if (brick.getMaxHits() > brick.getHitsRemaining()) {
+                for (int i = 0; i <= crackMap.get(brick).size() - brick.getHitsRemaining(); i++)
+                    crackMap.get(brick).get(i).setVisible(true);
+            }
             if (!brick.isDestroyed())
                 brickMap.get(brick).setFill(makeGradient(brick.getColor()));
 
@@ -208,8 +215,11 @@ public class GameRenderer {
         createPowerUpShapes();
         for (Polygon heart : heartShapes)
             heart.setFill(Color.RED);
-        for (Brick brick : game.getBricks())
+        for (Brick brick : game.getBricks()) {
             brickMap.get(brick).setFill(makeGradient(brick.getColor()));
+            for (int i = 0; i < crackMap.get(brick).size(); i++)
+                crackMap.get(brick).get(i).setVisible(false);
+        }
     }
     public void nextLevel() {
         for (Brick brick : game.getBricks())
@@ -265,5 +275,35 @@ public class GameRenderer {
     public LinearGradient makeGradient(Color color) {
     Stop[] stops = new Stop[] { new Stop(0, color.brighter().brighter()), new Stop(1, color.darker().darker())};
         return new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
+    }
+    private void addCracks(Brick brick) {
+        Group crack1 = buildCrack(brick,
+                new double[]{0.40, 0.0,  0.33, 0.35,  0.45, 0.55,  0.38, 0.80,  0.47, 1.0},
+                new double[]{0.45, 0.55,  0.62, 0.65,  0.70, 0.90},
+                new double[]{0.33, 0.35,  0.20, 0.45});
+
+        Group crack2 = buildCrack(brick,
+                new double[]{0.75, 0.0,  0.80, 0.30,  0.70, 0.50,  0.78, 0.75,  0.72, 1.0},
+                new double[]{0.70, 0.50,  0.58, 0.40},
+                new double[]{0.80, 0.30,  0.92, 0.45});
+
+        List<Group> cracks = List.of(crack1, crack2);
+        crackMap.put(brick, cracks);
+        root.getChildren().addAll(cracks);
+    }
+    private Polyline buildLine(Brick brick, double... points) {
+        Polyline line = new Polyline();
+        for (int i = 0; i < points.length; i += 2) {
+            line.getPoints().addAll(brick.getX() + brick.getWidth() * points[i], brick.getY() + brick.getHeight() * points[i+1]);
+        }
+        return line;
+    }
+
+    private Group buildCrack(Brick brick, double[]... lines) {
+        Group crack = new Group();
+        for (double[] points : lines)
+            crack.getChildren().add(buildLine(brick, points));
+        crack.setVisible(false);
+        return crack;
     }
 }

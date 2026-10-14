@@ -4,22 +4,37 @@ import javafx.scene.paint.Color;
 
 public class Brick extends GameObject {
     /** if a block is still intact or got destroyed */
-    private boolean isDestroyed;
+    private int maxHits;
+    private int hitsRemaining;
 
     public Brick (double x, double y, double width, double height, Color color) {
         super(x, y, width, height, color);
-        isDestroyed = false;
+        maxHits = 1;
+        hitsRemaining = maxHits;
     }
 
-    public void destroy() {
-        isDestroyed = true;
+    public Brick (double x, double y, double width, double height, Color color, int maxHits) {
+        super(x, y, width, height, color);
+        this.maxHits = maxHits;
+        hitsRemaining = maxHits;
+    }
+    public void hit() {
+        hitsRemaining = Math.max(0, hitsRemaining - 1);
+    }
+
+    public int getHitsRemaining() {
+        return hitsRemaining;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
     }
 
     public void repair() {
-        isDestroyed = false;
+        hitsRemaining = maxHits;
     }
 
     public boolean isDestroyed(){
-        return isDestroyed;
+        return hitsRemaining <= 0;
     }
 }
