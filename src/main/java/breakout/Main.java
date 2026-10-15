@@ -31,9 +31,11 @@
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
                 //Test-Level
-                levels.add(new LevelConfig(4,4));
-                levels.add(new LevelConfig(1,1));
-                levels.add(new LevelConfig(1,1));
+                levels.add(new LevelConfig("Level 1", 1, List.of(
+                        "....111111....",
+                        "..1111111111..",
+                        "11111111111111"
+                )));
 
                 loadLevel(nextLevelIndex);
 
@@ -81,7 +83,7 @@
                     Paddle paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());
                     if (levelIndex > 0)
                         gameRenderer.nextLevel();
-                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex).maxCol(), levels.get(levelIndex).maxRow(), nextLevelIndex + 1);
+                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex));
                     gameRenderer = new GameRenderer(root, game, hsManager);
                     inputHandler = new InputHandler(root, game);
                     nextLevelIndex++;

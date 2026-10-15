@@ -17,7 +17,7 @@ public class HighscoreManager {
     private void init() {
         Path highscorePath = Paths.get("highscore.txt");
         try {
-            highscore = Integer.parseInt(Files.readString(highscorePath));
+            highscore = Integer.parseInt(Files.readString(highscorePath).trim());
         } catch (IOException | NumberFormatException e) {
             highscore = 0;
         }
@@ -27,9 +27,7 @@ public class HighscoreManager {
         try {
             Files.writeString(Path.of("highscore.txt"), Integer.toString(highscore), StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException e) {}
         this.highscore = highscore;
         newHighscore = true;
     }

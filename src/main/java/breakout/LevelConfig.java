@@ -1,4 +1,7 @@
 package breakout;
 
-public record LevelConfig(int maxCol, int maxRow) {
+import java.util.List;
+
+public record LevelConfig(String name, int level, List<String> levelLayout) {
+
 }

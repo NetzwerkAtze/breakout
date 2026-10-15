@@ -17,8 +17,6 @@ public class    Game {
     private int maxAngle = 60;
     private int maxCol;
     private int maxRow;
-    private double brickHeight = 14;
-    private double brickWidth;
     private double paddleStartingWidth;
     private double ballStartingRadius;
     private boolean moveRight;
@@ -28,31 +26,33 @@ public class    Game {
     private CollisionHandler collisionHandler;
     private GameState gameState;
     private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
+    private LevelConfig levelConfig;
 
-    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, int maxCol, int maxRow, int level) {
+    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {
         this.scene = scene;
         this.paddle = paddle;
         balls.add(ball);
-        this.maxCol = maxCol;
-        this.maxRow = maxRow;
-        this.brickWidth = scene.getWidth() / maxCol - 1;
         this.moveLeft = false;
         this.moveRight = false;
         this.releaseBalls = false;
+        this.levelConfig = levelConfig;
         init();
         paddleStartingWidth = paddle.getWidth();
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
         collisionHandler = new CollisionHandler(this);
-        gameState = new GameState(startLives, level);
+        gameState = new GameState(startLives, levelConfig.level());
     }
     public void init() {
-        for (int col = 0; col < maxCol; col++) {
-            for (int row = 0; row < maxRow; row++) {
-                Brick brick = new Brick(col * (brickWidth + 1), (row * brickHeight) + menuBarHeight + 1, brickWidth, brickHeight, rowColors[row % rowColors.length], 4);
-                bricks.add(brick);
+        for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
+            for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
+                if (Character.isDigit(levelConfig.levelLayout().get(row).charAt(col))) {
+                    Brick brick = new Brick(col * (60 + 1) + 23, (row * 20) + menuBarHeight + 1, rowColors[row % rowColors.length]);
+                    bricks.add(brick);
+                }
             }
         }
+
     }
     public void update() {
         if (gameState.isPaused())
@@ -137,14 +137,6 @@ public class    Game {
 
     public void setMoveLeft(boolean left){
         moveLeft = left;
-    }
-
-    public double getBrickHeight() {
-        return brickHeight;
-    }
-
-    public double getBrickWidth() {
-        return brickWidth;
     }
 
     public List<Brick> getBricks() {

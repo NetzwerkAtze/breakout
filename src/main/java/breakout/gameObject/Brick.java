@@ -3,12 +3,12 @@ package breakout.gameObject;
 import javafx.scene.paint.Color;
 
 public class Brick extends GameObject {
-    /** if a block is still intact or got destroyed */
+
     private int maxHits;
     private int hitsRemaining;
 
-    public Brick (double x, double y, double width, double height, Color color) {
-        super(x, y, width, height, color);
+    public Brick (double x, double y, Color color) {
+        super(x, y, 60, 20, color);
         maxHits = 1;
         hitsRemaining = maxHits;
     }

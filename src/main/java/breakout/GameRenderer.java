@@ -128,6 +128,7 @@ public class GameRenderer {
             brickMap.put(brick, brickShape);
             root.getChildren().add(brickShape);
             addCracks(brick);
+
         }
         createPowerUpShapes();
 
@@ -175,7 +176,6 @@ public class GameRenderer {
             }
             if (!brick.isDestroyed())
                 brickMap.get(brick).setFill(makeGradient(brick.getColor()));
-
         }
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
