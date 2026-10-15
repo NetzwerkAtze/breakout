@@ -16,6 +16,7 @@ public class    Game {
     private List<Brick> walls = new ArrayList<>();
     private int menuBarHeight = 30;
     private int maxAngle = 60;
+    private double wallBorderThickness = 23.5;
     private double paddleStartingWidth;
     private double ballStartingRadius;
     private boolean moveRight;
@@ -45,15 +46,17 @@ public class    Game {
     public void init() {
         for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
             for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
-                if (Character.isDigit(levelConfig.levelLayout().get(row).charAt(col))) {
-                    Brick brick = new Brick(col * (60 + 1) + 23, (row * 20) + menuBarHeight + 1, rowColors[row % rowColors.length]);
+                char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
+                if (Character.isDigit(currentSymbol)) {
+                    Brick brick = new Brick(col * (60 + 1) + 23.5, (row * 20) + menuBarHeight + 1 + 23.5, 60,20, rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }
         }
         for (int i = 0; i < 6; i++) {
-            walls.add(new Brick(0, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
-            walls.add(new Brick(scene.getWidth() - 23, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(0, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23.5, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(scene.getWidth() - 23.5, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23.5, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(23 + ((scene.getWidth() - 46) / 6) * i, menuBarHeight + 1,(scene.getWidth() - 46) / 6, 23.5, Color.GREY, Integer.MAX_VALUE));
         }
     }
     public void update() {
@@ -66,10 +69,6 @@ public class    Game {
                 if (releaseBalls)
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
-                for (Brick wall : walls) {
-                    if (ball.collidesWith(wall))
-                        collisionHandler.resolveBallCollision(ball, wall, false, () -> ball.setVx(-ball.getVx()));
-                }
                 for (Brick brick : bricks) {
                     if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                         collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
@@ -91,11 +90,15 @@ public class    Game {
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
             Ball ball = it.next();
-            if (ball.getX() < 0 || ball.getX() + ball.getWidth() > scene.getWidth())
+            if (ball.getX() < 0 + wallBorderThickness || ball.getX() + ball.getWidth() > scene.getWidth() - wallBorderThickness) {
+                ball.setX(ball.getX() < 0 + wallBorderThickness ? wallBorderThickness : scene.getWidth() - wallBorderThickness - ball.getWidth());
                 ball.setVx(-ball.getVx());
+            }
 
-            if (ball.getY() < menuBarHeight)
+            if (ball.getY() < menuBarHeight + wallBorderThickness) {
                 ball.setVy(-ball.getVy());
+
+            }
 
             if (ball.collidesWith(paddle)) {
                 collisionHandler.resolveBallCollision(ball, paddle, true, () -> {

@@ -15,7 +15,7 @@ public class Paddle extends GameObject {
     }
 
     /**
-     * method to move the paddle left and right on the x axis.
+     * method to move the paddle left and right on the x-axis.
      * @param isLeft boolean true, if the paddle is moving left
      */
     public void move(boolean isLeft, double border) {

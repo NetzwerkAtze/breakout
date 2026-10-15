@@ -36,6 +36,16 @@
                         "..1111111111..",
                         "11111111111111"
                 )));
+                levels.add(new LevelConfig("Level 2", 1, List.of(
+                        "....111111....",
+                        "..1111111111..",
+                        "22222222222222"
+                )));
+                levels.add(new LevelConfig("Level 3", 1, List.of(
+                        "....111111....",
+                        "..1111111111..",
+                        ".............."
+                )));
 
                 loadLevel(nextLevelIndex);
 
