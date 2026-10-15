@@ -117,7 +117,15 @@ public class GameRenderer {
         pausedText.setY(root.getScene().getHeight() / 2 - pausedText.getLayoutBounds().getCenterY());
         pausedText.setX(root.getScene().getWidth() / 2 - pausedText.getLayoutBounds().getCenterX());
         pausedText.setFill(Color.TRANSPARENT);
-
+        for (Brick wall : game.getWalls()) {
+            Rectangle wallShape = new Rectangle(wall.getWidth(), wall.getHeight(), wall.getColor());
+            wallShape.setFill(makeGradient(wall.getColor()));
+            wallShape.setX(wall.getX());
+            wallShape.setY(wall.getY());
+            wallShape.setArcHeight(8);
+            wallShape.setArcWidth(8);
+            root.getChildren().add(wallShape);
+        }
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(brick.getWidth(), brick.getHeight(), brick.getColor());
             brickShape.setFill(makeGradient(brick.getColor()));

@@ -13,10 +13,9 @@ public class    Game {
     private Paddle paddle;
     private List<Ball> balls = new ArrayList<>();;
     private List<Brick> bricks = new ArrayList<>();
+    private List<Brick> walls = new ArrayList<>();
     private int menuBarHeight = 30;
     private int maxAngle = 60;
-    private int maxCol;
-    private int maxRow;
     private double paddleStartingWidth;
     private double ballStartingRadius;
     private boolean moveRight;
@@ -52,18 +51,25 @@ public class    Game {
                 }
             }
         }
-
+        for (int i = 0; i < 6; i++) {
+            walls.add(new Brick(0, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(scene.getWidth() - 23, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
+        }
     }
     public void update() {
         if (gameState.isPaused())
             return;
         if (moveRight || moveLeft)
-            paddle.move(moveLeft);
+            paddle.move(moveLeft, walls.getFirst().getWidth());
         if (!gameState.isIdle()) {
             for (Ball ball : balls) {
                 if (releaseBalls)
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
+                for (Brick wall : walls) {
+                    if (ball.collidesWith(wall))
+                        collisionHandler.resolveBallCollision(ball, wall, false, () -> ball.setVx(-ball.getVx()));
+                }
                 for (Brick brick : bricks) {
                     if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                         collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
@@ -163,8 +169,8 @@ public class    Game {
         return powerUpHandler;
     }
 
-    public int getMaxAngle() {
-        return maxAngle;
+    public List<Brick> getWalls() {
+        return walls;
     }
 
     public GameState getGameState() {
