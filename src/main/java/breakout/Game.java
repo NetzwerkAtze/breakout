@@ -14,9 +14,7 @@ public class    Game {
     private List<Ball> balls = new ArrayList<>();;
     private List<Brick> bricks = new ArrayList<>();
     private List<Brick> walls = new ArrayList<>();
-    private int menuBarHeight = 30;
-    private int maxAngle = 60;
-    private double wallBorderThickness = 23.5;
+    private final int maxAngle = 60;
     private double paddleStartingWidth;
     private double ballStartingRadius;
     private boolean moveRight;
@@ -27,6 +25,10 @@ public class    Game {
     private GameState gameState;
     private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
     private LevelConfig levelConfig;
+    private static final double WALL_THICKNESS = 23.5;
+    private static final double MENU_BAR_HEIGHT = 30;
+    private static final double BRICK_GAP = 1;
+    private static final int NUM_BRICK_IN_WALL = 6;
 
     public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {
         this.scene = scene;
@@ -48,15 +50,15 @@ public class    Game {
             for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
                 char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
                 if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (60 + 1) + 23.5, (row * 20) + menuBarHeight + 1 + 23.5, 60,20, rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    Brick brick = new Brick(col * (60 + BRICK_GAP) + WALL_THICKNESS, (row * 20) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, 60,20, rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }
         }
-        for (int i = 0; i < 6; i++) {
-            walls.add(new Brick(0, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23.5, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
-            walls.add(new Brick(scene.getWidth() - 23.5, menuBarHeight + 1 + ((scene.getHeight() - (menuBarHeight + 1)) / 6) * i, 23.5, (scene.getHeight() - (menuBarHeight + 1)) / 6, Color.GREY, Integer.MAX_VALUE));
-            walls.add(new Brick(23 + ((scene.getWidth() - 46) / 6) * i, menuBarHeight + 1,(scene.getWidth() - 46) / 6, 23.5, Color.GREY, Integer.MAX_VALUE));
+        for (int i = 0; i < NUM_BRICK_IN_WALL; i++) {
+            walls.add(new Brick(0, MENU_BAR_HEIGHT + BRICK_GAP + ((scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL) * i, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(scene.getWidth() - WALL_THICKNESS, MENU_BAR_HEIGHT + BRICK_GAP + ((scene.getHeight() - (MENU_BAR_HEIGHT + 1)) / NUM_BRICK_IN_WALL) * i, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL, Color.GREY, Integer.MAX_VALUE));
+            walls.add(new Brick(WALL_THICKNESS + ((scene.getWidth() - WALL_THICKNESS * 2) / NUM_BRICK_IN_WALL) * i, MENU_BAR_HEIGHT + BRICK_GAP,(scene.getWidth() - WALL_THICKNESS * 2) / NUM_BRICK_IN_WALL, WALL_THICKNESS, Color.GREY, Integer.MAX_VALUE));
         }
     }
     public void update() {
@@ -90,12 +92,12 @@ public class    Game {
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
             Ball ball = it.next();
-            if (ball.getX() < 0 + wallBorderThickness || ball.getX() + ball.getWidth() > scene.getWidth() - wallBorderThickness) {
-                ball.setX(ball.getX() < 0 + wallBorderThickness ? wallBorderThickness : scene.getWidth() - wallBorderThickness - ball.getWidth());
+            if (ball.getX() < 0 + WALL_THICKNESS || ball.getX() + ball.getWidth() > scene.getWidth() - WALL_THICKNESS) {
+                ball.setX(ball.getX() < 0 + WALL_THICKNESS ? WALL_THICKNESS : scene.getWidth() - WALL_THICKNESS - ball.getWidth());
                 ball.setVx(-ball.getVx());
             }
 
-            if (ball.getY() < menuBarHeight + wallBorderThickness) {
+            if (ball.getY() < MENU_BAR_HEIGHT + WALL_THICKNESS) {
                 ball.setVy(-ball.getVy());
 
             }
