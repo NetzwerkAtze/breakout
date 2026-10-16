@@ -13,7 +13,6 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import java.util.*;
 
 public class GameRenderer {
@@ -25,6 +24,9 @@ public class GameRenderer {
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<Polygon> heartShapes = new ArrayList<>();
     private Map<Brick, List<Group>> crackMap = new HashMap<>();
+    private List<Rectangle> wallShapes = new ArrayList<>();
+    private List<Shape> shapes = new ArrayList<>();
+    private List<Text> texts = new ArrayList<>();
     private Text scoreText;
     private Text wonText;
     private Text levelCompleteText;
@@ -51,72 +53,32 @@ public class GameRenderer {
     private void init() {
         dropShadow = new DropShadow(25, Color.rgb(255,255,255));
         dropShadow.setSpread(0.5);
-        updateBallShapes();
-        scoreText = new Text(15,20, "Score: " + Integer.toString(game.getGameState().getScore()));
-        scoreText.setFont(new Font(20));
-        scoreText.setFill(Color.WHITE);
 
+        scoreText = generateText(15,20,"Score: " + Integer.toString(game.getGameState().getScore()),  Color.WHITE);
+        highscoreText = generateText((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore(), Color.WHITE);
+        levelText = generateText((root.getScene().getWidth() / 4) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()), Color.WHITE);
+        wonText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"You Won!");
+        levelCompleteText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"Level Complete!");
+        loseText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"You Lost!");
+        restartText = generateText(root.getScene().getWidth() / 2,loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()),"- Press R to restart -");
+        nextLevelText = generateText(root.getScene().getWidth() / 2,loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()),"- Press Enter for next level -");
+        pausedText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"- Paused. Press P to unpause. -");
+        livesText = generateText((root.getScene().getWidth() / 4) * 3 + 15,  20, "Lives: ", Color.WHITE);
 
-        highscoreText = new Text((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore());
-        highscoreText.setFont(new Font(20));
-        highscoreText.setFill(Color.WHITE);
-
-        levelText = new Text((root.getScene().getWidth() / 4) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
-        levelText.setFont(new Font(20));
-        levelText.setFill(Color.WHITE);
-
-        livesText = new Text((root.getScene().getWidth() / 4) * 3 + 15,  20, "Lives: ");
         for (int i = 0; i < game.getGameState().getLives(); i++) {
             Polygon heart = new Polygon();
             heart.getPoints().addAll(new Double[] {
-                    livesText.getLayoutBounds().getMaxX() + 20 + 25 * i, livesText.getLayoutBounds().getMinY(),
-                    livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
-                    livesText.getLayoutBounds().getMaxX() + 20 * 2 + 25 * i, livesText.getLayoutBounds().getMinY(),
+                    livesText.getLayoutBounds().getMaxX() + 20 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
+                    livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 15,
+                    livesText.getLayoutBounds().getMaxX() + 20 * 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
                     livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMaxY(),
             });
             heart.setFill(Color.RED);
             heartShapes.add(heart);
             heart.setFill(Color.RED);
-            root.getChildren().add(heart);
+            shapes.add(heart);
         }
-        livesText.setFont(new Font(20));
-        livesText.setFill(Color.WHITE);
 
-        wonText = new Text("You Won!");
-        wonText.setFont(new Font(20));
-        wonText.setY(root.getScene().getHeight() / 2 - wonText.getLayoutBounds().getCenterY());
-        wonText.setX(root.getScene().getWidth() / 2 - wonText.getLayoutBounds().getCenterX());
-        wonText.setFill(Color.TRANSPARENT);
-
-        levelCompleteText = new Text("Level Complete!");
-        levelCompleteText.setFont(new Font(20));
-        levelCompleteText.setY(root.getScene().getHeight() / 2 - levelCompleteText.getLayoutBounds().getCenterY());
-        levelCompleteText.setX(root.getScene().getWidth() / 2 - levelCompleteText.getLayoutBounds().getCenterX());
-        levelCompleteText.setFill(Color.TRANSPARENT);
-
-        loseText = new Text("You Lost!");
-        loseText.setFont(new Font(20));
-        loseText.setY(root.getScene().getHeight() / 2 - loseText.getLayoutBounds().getCenterY());
-        loseText.setX(root.getScene().getWidth() / 2 - loseText.getLayoutBounds().getCenterX());
-        loseText.setFill(Color.TRANSPARENT);
-
-        restartText = new Text("- Press R to restart -");
-        restartText.setFont(new Font(15));
-        restartText.setY(loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()));
-        restartText.setX(root.getScene().getWidth() / 2 - restartText.getLayoutBounds().getCenterX());
-        restartText.setFill(Color.TRANSPARENT);
-
-        nextLevelText = new Text("- Press Enter for next level -");
-        nextLevelText.setFont(new Font(15));
-        nextLevelText.setY(loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()));
-        nextLevelText.setX(root.getScene().getWidth() / 2 - nextLevelText.getLayoutBounds().getCenterX());
-        nextLevelText.setFill(Color.TRANSPARENT);
-
-        pausedText = new Text("- Paused. Press P to unpause. -");
-        pausedText.setFont(new Font(15));
-        pausedText.setY(root.getScene().getHeight() / 2 - pausedText.getLayoutBounds().getCenterY());
-        pausedText.setX(root.getScene().getWidth() / 2 - pausedText.getLayoutBounds().getCenterX());
-        pausedText.setFill(Color.TRANSPARENT);
         for (Brick wall : game.getWalls()) {
             Rectangle wallShape = new Rectangle(wall.getWidth(), wall.getHeight(), wall.getColor());
             wallShape.setFill(makeGradient(wall.getColor()));
@@ -124,7 +86,8 @@ public class GameRenderer {
             wallShape.setY(wall.getY());
             wallShape.setArcHeight(8);
             wallShape.setArcWidth(8);
-            root.getChildren().add(wallShape);
+            wallShapes.add(wallShape);
+            shapes.add(wallShape);
         }
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(brick.getWidth(), brick.getHeight(), brick.getColor());
@@ -134,34 +97,31 @@ public class GameRenderer {
             brickShape.setArcHeight(8);
             brickShape.setArcWidth(8);
             brickMap.put(brick, brickShape);
-            root.getChildren().add(brickShape);
+            shapes.add(brickShape);
             addCracks(brick);
 
         }
         createPowerUpShapes();
-
+        Circle ballShape = new Circle(game.getBalls().getFirst().getCenterX(), game.getBalls().getFirst().getCenterY(), game.getBalls().getFirst().getRadius(), game.getBalls().getFirst().getColor());
+        ballShape.setEffect(dropShadow);
+        ballMap.put(game.getBalls().getFirst(), ballShape);
+        shapes.add(ballShape);
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         paddleShape.setArcWidth(8);
         paddleShape.setArcHeight(8);
-        root.getChildren().add(wonText);
-        root.getChildren().add(levelCompleteText);
-        root.getChildren().add(loseText);
-        root.getChildren().add(paddleShape);
-        root.getChildren().add(scoreText);
-        root.getChildren().add(livesText);
-        root.getChildren().add(restartText);
-        root.getChildren().add(levelText);
-        root.getChildren().add(nextLevelText);
-        root.getChildren().add(pausedText);
-        root.getChildren().add(highscoreText);
+        shapes.add(paddleShape);
+
+        for (Shape shape : shapes)
+            root.getChildren().add(shape);
+        for (Text text : texts)
+            root.getChildren().add(text);
     }
     public void update() {
-        if (game.getPowerUpHandler().isStickyPaddle()) {
-            paddleShape.setEffect(new Glow(1));
+        if (game.getPowerUpHandler().isStickyPaddle())
             paddleShape.setEffect(dropShadow);
-        }
+
         else
             paddleShape.setEffect(null);
         updateBallShapes();
@@ -176,6 +136,7 @@ public class GameRenderer {
         for (Brick brick : game.getBricks()) {
             if (brick.isDestroyed()) {
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
+                crackMap.getOrDefault(brick, List.of()).forEach(value -> value.setVisible(true));
                 continue;
             }
             if (brick.getMaxHits() > brick.getHitsRemaining()) {
@@ -230,33 +191,28 @@ public class GameRenderer {
         }
     }
     public void nextLevel() {
-        for (Brick brick : game.getBricks())
-            root.getChildren().remove(brickMap.get(brick));
-        root.getChildren().removeAll(powerUpMap.values());
+        crackMap.values().forEach(list -> list.forEach(value -> root.getChildren().remove(value)));
+        crackMap.clear();
+        for (Text text : texts)
+            root.getChildren().remove(text);
+        for (Shape shape : shapes)
+            root.getChildren().remove(shape);
         powerUpMap.clear();
-        root.getChildren().removeAll(ballMap.values());
         ballMap.clear();
-        root.getChildren().removeAll(heartShapes);
         heartShapes.clear();
-        root.getChildren().remove(loseText);
-        root.getChildren().remove(paddleShape);
-        root.getChildren().remove(scoreText);
-        root.getChildren().remove(highscoreText);
-        root.getChildren().remove(livesText);
-        root.getChildren().remove(restartText);
-        root.getChildren().remove(levelText);
-        root.getChildren().remove(nextLevelText);
-        root.getChildren().remove(levelCompleteText);
+        crackMap.clear();
+
     }
     public void displayVictory() {
         nextLevel();
         wonText.setFill(Color.WHITE);
+        root.getChildren().add(wonText);
     }
     public void createPowerUpShapes() {
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             Circle pUpShape = new Circle(pUp.getX() + pUp.getWidth() / 2, pUp.getY() + pUp.getHeight() / 2, pUp.getHeight(), Color.TRANSPARENT);
             powerUpMap.put(pUp, pUpShape);
-            root.getChildren().add(pUpShape);
+            shapes.add(pUpShape);
         }
     }
     public void updateBallShapes() {
@@ -266,6 +222,7 @@ public class GameRenderer {
                 Circle ballShape = new Circle(currentBall.getCenterX(), currentBall.getCenterY(), currentBall.getRadius(), currentBall.getColor());
                 ballShape.setEffect(dropShadow);
                 ballMap.put(ball, ballShape);
+                shapes.add(ballShape);
                 root.getChildren().add(ballShape);
             }
         }
@@ -313,5 +270,23 @@ public class GameRenderer {
             crack.getChildren().add(buildLine(brick, points));
         crack.setVisible(false);
         return crack;
+    }
+    private Text generateText(double x, double y, String text) {
+        Text tmp = new Text(text);
+        tmp.setFont(new Font(15));
+        tmp.setY(y - tmp.getLayoutBounds().getCenterY());
+        tmp.setX(x - tmp.getLayoutBounds().getCenterX());
+        tmp.setFill(Color.TRANSPARENT);
+        texts.add(tmp);
+        return tmp;
+    }
+    private Text generateText(double x, double y, String text, Color color) {
+        Text tmp = new Text(text);
+        tmp.setFont(new Font(20));
+        tmp.setY(y);
+        tmp.setX(x);
+        tmp.setFill(color);
+        texts.add(tmp);
+        return tmp;
     }
 }

@@ -25,10 +25,14 @@ public class    Game {
     private GameState gameState;
     private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
     private LevelConfig levelConfig;
+    private Playfield playfield;
+    private double brickWidth;
+    private double brickHeight;
     private static final double WALL_THICKNESS = 23.5;
     private static final double MENU_BAR_HEIGHT = 30;
     private static final double BRICK_GAP = 1;
     private static final int NUM_BRICK_IN_WALL = 6;
+    private static final double BRICK_HEIGHT = 20;
 
     public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {
         this.scene = scene;
@@ -38,6 +42,9 @@ public class    Game {
         this.moveRight = false;
         this.releaseBalls = false;
         this.levelConfig = levelConfig;
+        this.playfield = new Playfield(WALL_THICKNESS,scene.getWidth() - WALL_THICKNESS, MENU_BAR_HEIGHT + WALL_THICKNESS,
+                ((scene.getWidth() - 2 * WALL_THICKNESS)-(levelConfig.maxCol()-1)) / levelConfig.maxCol(),
+                BRICK_HEIGHT);
         init();
         paddleStartingWidth = paddle.getWidth();
         ballStartingRadius = balls.getFirst().getRadius();
@@ -50,7 +57,7 @@ public class    Game {
             for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
                 char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
                 if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (60 + BRICK_GAP) + WALL_THICKNESS, (row * 20) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, 60,20, rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    Brick brick = new Brick(col * (playfield.brickWidth() + BRICK_GAP) + WALL_THICKNESS, (row * playfield.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, playfield.brickWidth(), playfield.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }
@@ -92,12 +99,12 @@ public class    Game {
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
             Ball ball = it.next();
-            if (ball.getX() < 0 + WALL_THICKNESS || ball.getX() + ball.getWidth() > scene.getWidth() - WALL_THICKNESS) {
-                ball.setX(ball.getX() < 0 + WALL_THICKNESS ? WALL_THICKNESS : scene.getWidth() - WALL_THICKNESS - ball.getWidth());
+            if (ball.getX() < playfield.left() || ball.getX() + ball.getWidth() > playfield.right()) {
+                ball.setX(ball.getX() < playfield.left() ? playfield.left() : playfield.right() - ball.getWidth());
                 ball.setVx(-ball.getVx());
             }
 
-            if (ball.getY() < MENU_BAR_HEIGHT + WALL_THICKNESS) {
+            if (ball.getY() < playfield.top()) {
                 ball.setVy(-ball.getVy());
 
             }
