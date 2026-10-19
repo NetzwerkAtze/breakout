@@ -23,9 +23,11 @@ public class Ball extends GameObject {
     private double speed;
     private BallState ballState;
     private double stickOffset;
+    private int immunTimer;
 
     public enum BallState {
         FREE,
+        IMMUN,
         STICKING,
     }
 
@@ -42,13 +44,16 @@ public class Ball extends GameObject {
      * updates the position (x and y) of the ball based on the velocity.
      */
     public void update(Paddle paddle) {
-        if (ballState == BallState.FREE) {
+        if (immunTimer == 0)
+            ballState = BallState.FREE;
+        if (ballState == BallState.FREE || ballState == BallState.IMMUN) {
             x += vx;
             y += vy;
         }
         else if (ballState == BallState.STICKING) {
             x = paddle.getX() - stickOffset;
         }
+        immunTimer--;
     }
 
     public void setStickOffset(double stickOffset) {
@@ -128,6 +133,14 @@ public class Ball extends GameObject {
 
     public double getOverlapY(GameObject other) {
         return Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
+    }
+
+    public void setImmunTimer(int immunTimer) {
+        this.immunTimer = immunTimer;
+    }
+
+    public int getImmunTimer() {
+        return immunTimer;
     }
 
     /**

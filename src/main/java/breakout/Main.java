@@ -32,6 +32,7 @@
                 scene = new Scene(root, 900, 600, Color.BLACK);
                 //Test-Level
                 levels.add(new LevelConfig("Level 1", 1, List.of(
+                        "..............",
                         "....111111....",
                         "..1111111111..",
                         "11111111111111"
@@ -85,6 +86,7 @@
             public static void main(String[] args) {
                 launch(args);
             }
+
             public void loadLevel(int levelIndex) {
                 if (levelIndex >= levels.size())
                     won = true;

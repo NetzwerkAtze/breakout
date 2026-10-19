@@ -2,6 +2,7 @@ package breakout;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
+import breakout.gameObject.GameObject;
 import breakout.gameObject.PowerUp;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
@@ -24,8 +25,6 @@ public class GameRenderer {
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<Polygon> heartShapes = new ArrayList<>();
     private Map<Brick, List<Group>> crackMap = new HashMap<>();
-    private List<Shape> shapes = new ArrayList<>();
-    private List<Text> texts = new ArrayList<>();
     private Text scoreText;
     private Text wonText;
     private Text levelCompleteText;
@@ -80,7 +79,7 @@ public class GameRenderer {
             hudLayer.getChildren().add(heart);
         }
 
-        for (Brick wall : game.getWalls()) {
+        for (GameObject wall : game.getWalls()) {
             Rectangle wallShape = new Rectangle(wall.getWidth(), wall.getHeight(), wall.getColor());
             wallShape.setFill(makeGradient(wall.getColor()));
             wallShape.setX(wall.getX());
@@ -226,7 +225,7 @@ public class GameRenderer {
             while (it.hasNext()) {
                 Ball ball = it.next();
                 if (!game.getBalls().contains(ball)) {
-                    root.getChildren().remove(ballMap.get(ball));
+                    playLayer.getChildren().remove(ballMap.get(ball));
                     it.remove();
                 }
             }

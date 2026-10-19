@@ -27,5 +27,9 @@ public class CollisionHandler {
             ball.resolveCollision(other, false, false);
             ball.setVx(-ball.getVx());
         }
+        if (ball.getBallState() == Ball.BallState.FREE) {
+            ball.setBallState(Ball.BallState.IMMUN);
+            ball.setImmunTimer(3);
+        }
     }
 }
