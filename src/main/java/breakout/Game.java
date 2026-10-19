@@ -32,7 +32,7 @@ public class    Game {
     private static final double WALL_THICKNESS = 23.5;
     private static final double MENU_BAR_HEIGHT = 30;
     private static final double BRICK_GAP = 1;
-    private static final int NUM_BRICK_IN_WALL = 6;
+    private static final int NUM_BRICK_IN_WALL = 1;
     private static final double BRICK_HEIGHT = 20;
 
     public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {
@@ -63,11 +63,10 @@ public class    Game {
                 }
             }
         }
-        for (int i = 0; i < NUM_BRICK_IN_WALL; i++) {
-            walls.add(new GameObject(0, MENU_BAR_HEIGHT + BRICK_GAP + ((scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL) * i, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL, Color.GREY));
-            walls.add(new GameObject(scene.getWidth() - WALL_THICKNESS, MENU_BAR_HEIGHT + BRICK_GAP + ((scene.getHeight() - (MENU_BAR_HEIGHT + 1)) / NUM_BRICK_IN_WALL) * i, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)) / NUM_BRICK_IN_WALL, Color.GREY));
-            walls.add(new GameObject(WALL_THICKNESS + ((scene.getWidth() - WALL_THICKNESS * 2) / NUM_BRICK_IN_WALL) * i, MENU_BAR_HEIGHT + BRICK_GAP,(scene.getWidth() - WALL_THICKNESS * 2) / NUM_BRICK_IN_WALL, WALL_THICKNESS, Color.GREY));
-        }
+        walls.add(new GameObject(0, MENU_BAR_HEIGHT + BRICK_GAP, WALL_THICKNESS, scene.getHeight(), Color.GREY));
+        walls.add(new GameObject(scene.getWidth() - WALL_THICKNESS, MENU_BAR_HEIGHT + BRICK_GAP, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
+        walls.add(new GameObject(WALL_THICKNESS, MENU_BAR_HEIGHT + BRICK_GAP,(scene.getWidth() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
+
     }
     public void update() {
         if (gameState.isPaused())

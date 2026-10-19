@@ -79,15 +79,9 @@ public class GameRenderer {
             hudLayer.getChildren().add(heart);
         }
 
-        for (GameObject wall : game.getWalls()) {
-            Rectangle wallShape = new Rectangle(wall.getWidth(), wall.getHeight(), wall.getColor());
-            wallShape.setFill(makeGradient(wall.getColor()));
-            wallShape.setX(wall.getX());
-            wallShape.setY(wall.getY());
-            wallShape.setArcHeight(8);
-            wallShape.setArcWidth(8);
-            boardLayer.getChildren().add(wallShape);
-        }
+        for (GameObject wall : game.getWalls())
+            buildWall(wall,wall.getWidth() > wall.getHeight(), 8);
+
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(brick.getWidth(), brick.getHeight(), brick.getColor());
             brickShape.setFill(makeGradient(brick.getColor()));
@@ -283,5 +277,24 @@ public class GameRenderer {
         tmp.setFill(color);
         hudLayer.getChildren().add(tmp);
         return tmp;
+    }
+
+    private void buildWall(GameObject wall, boolean isHorizontal, int wallAmount) {
+        double wallWidth = isHorizontal ? wall.getWidth() / wallAmount : wall.getWidth();
+        double wallHeight = isHorizontal ? wall.getHeight() : wall.getHeight() / wallAmount ;
+        for (int i = 0; i < wallAmount; i++) {
+            Rectangle wallShape = new Rectangle(wallWidth, wallHeight, wall.getColor());
+            wallShape.setFill(makeGradient(wall.getColor()));
+            if (isHorizontal) {
+                wallShape.setX(wall.getX() + wallWidth * i);
+                wallShape.setY(wall.getY());
+            } else {
+                wallShape.setX(wall.getX());
+                wallShape.setY(wall.getY() + wallHeight * i);
+            }
+            wallShape.setArcHeight(8);
+            wallShape.setArcWidth(8);
+            boardLayer.getChildren().add(wallShape);
+        }
     }
 }
