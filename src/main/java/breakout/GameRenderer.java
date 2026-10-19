@@ -24,7 +24,6 @@ public class GameRenderer {
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<Polygon> heartShapes = new ArrayList<>();
     private Map<Brick, List<Group>> crackMap = new HashMap<>();
-    private List<Rectangle> wallShapes = new ArrayList<>();
     private List<Shape> shapes = new ArrayList<>();
     private List<Text> texts = new ArrayList<>();
     private Text scoreText;
@@ -39,7 +38,9 @@ public class GameRenderer {
     private Text highscoreText;
     private HighscoreManager hsManager;
     private DropShadow dropShadow;
-
+    Group boardLayer = new Group();
+    Group playLayer = new Group();
+    Group hudLayer = new Group();
 
 
 
@@ -76,7 +77,7 @@ public class GameRenderer {
             heart.setFill(Color.RED);
             heartShapes.add(heart);
             heart.setFill(Color.RED);
-            shapes.add(heart);
+            hudLayer.getChildren().add(heart);
         }
 
         for (Brick wall : game.getWalls()) {
@@ -86,8 +87,7 @@ public class GameRenderer {
             wallShape.setY(wall.getY());
             wallShape.setArcHeight(8);
             wallShape.setArcWidth(8);
-            wallShapes.add(wallShape);
-            shapes.add(wallShape);
+            boardLayer.getChildren().add(wallShape);
         }
         for (Brick brick : game.getBricks()) {
             Rectangle brickShape = new Rectangle(brick.getWidth(), brick.getHeight(), brick.getColor());
@@ -97,26 +97,23 @@ public class GameRenderer {
             brickShape.setArcHeight(8);
             brickShape.setArcWidth(8);
             brickMap.put(brick, brickShape);
-            shapes.add(brickShape);
+            boardLayer.getChildren().add(brickShape);
             addCracks(brick);
 
         }
         createPowerUpShapes();
-        Circle ballShape = new Circle(game.getBalls().getFirst().getCenterX(), game.getBalls().getFirst().getCenterY(), game.getBalls().getFirst().getRadius(), game.getBalls().getFirst().getColor());
-        ballShape.setEffect(dropShadow);
-        ballMap.put(game.getBalls().getFirst(), ballShape);
-        shapes.add(ballShape);
+        updateBallShapes();
+
         paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         paddleShape.setArcWidth(8);
         paddleShape.setArcHeight(8);
-        shapes.add(paddleShape);
+        playLayer.getChildren().add(paddleShape);
 
-        for (Shape shape : shapes)
-            root.getChildren().add(shape);
-        for (Text text : texts)
-            root.getChildren().add(text);
+        root.getChildren().addAll(boardLayer);
+        root.getChildren().addAll(playLayer);
+        root.getChildren().addAll(hudLayer);
     }
     public void update() {
         if (game.getPowerUpHandler().isStickyPaddle())
@@ -177,9 +174,10 @@ public class GameRenderer {
             loseText.setFill(Color.TRANSPARENT);
         }
     }
+
     public void reset() {
         for (PowerUp powerUp : powerUpMap.keySet())
-            root.getChildren().remove(powerUpMap.get(powerUp));
+            playLayer.getChildren().remove(powerUpMap.get(powerUp));
         powerUpMap.clear();
         createPowerUpShapes();
         for (Polygon heart : heartShapes)
@@ -193,15 +191,13 @@ public class GameRenderer {
     public void nextLevel() {
         crackMap.values().forEach(list -> list.forEach(value -> root.getChildren().remove(value)));
         crackMap.clear();
-        for (Text text : texts)
-            root.getChildren().remove(text);
-        for (Shape shape : shapes)
-            root.getChildren().remove(shape);
         powerUpMap.clear();
         ballMap.clear();
         heartShapes.clear();
         crackMap.clear();
-
+        root.getChildren().remove(boardLayer);
+        root.getChildren().remove(playLayer);
+        root.getChildren().remove(hudLayer);
     }
     public void displayVictory() {
         nextLevel();
@@ -212,7 +208,7 @@ public class GameRenderer {
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             Circle pUpShape = new Circle(pUp.getX() + pUp.getWidth() / 2, pUp.getY() + pUp.getHeight() / 2, pUp.getHeight(), Color.TRANSPARENT);
             powerUpMap.put(pUp, pUpShape);
-            shapes.add(pUpShape);
+            playLayer.getChildren().add(pUpShape);
         }
     }
     public void updateBallShapes() {
@@ -222,8 +218,7 @@ public class GameRenderer {
                 Circle ballShape = new Circle(currentBall.getCenterX(), currentBall.getCenterY(), currentBall.getRadius(), currentBall.getColor());
                 ballShape.setEffect(dropShadow);
                 ballMap.put(ball, ballShape);
-                shapes.add(ballShape);
-                root.getChildren().add(ballShape);
+                playLayer.getChildren().add(ballShape);
             }
         }
         if (!ballMap.isEmpty()) {
@@ -254,8 +249,9 @@ public class GameRenderer {
 
         List<Group> cracks = List.of(crack1, crack2);
         crackMap.put(brick, cracks);
-        root.getChildren().addAll(cracks);
+        boardLayer.getChildren().addAll(cracks);
     }
+
     private Polyline buildLine(Brick brick, double... points) {
         Polyline line = new Polyline();
         for (int i = 0; i < points.length; i += 2) {
@@ -277,7 +273,7 @@ public class GameRenderer {
         tmp.setY(y - tmp.getLayoutBounds().getCenterY());
         tmp.setX(x - tmp.getLayoutBounds().getCenterX());
         tmp.setFill(Color.TRANSPARENT);
-        texts.add(tmp);
+        hudLayer.getChildren().add(tmp);
         return tmp;
     }
     private Text generateText(double x, double y, String text, Color color) {
@@ -286,7 +282,7 @@ public class GameRenderer {
         tmp.setY(y);
         tmp.setX(x);
         tmp.setFill(color);
-        texts.add(tmp);
+        hudLayer.getChildren().add(tmp);
         return tmp;
     }
 }
