@@ -30,23 +30,8 @@
                 System.out.println(hsManager.getHighscore());
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
-                //Test-Level
-                levels.add(new LevelConfig("Level 1", 1, List.of(
-                        "..............",
-                        "....111111....",
-                        "..1111111111..",
-                        "11111111111111"
-                ), 14));
-                levels.add(new LevelConfig("Level 2", 2, List.of(
-                        "...",
-                        ".1.",
-                        "222"
-                ), 3));
-                levels.add(new LevelConfig("Level 3", 3, List.of(
-                        "....111111....",
-                        "..1111111111..",
-                        ".............."
-                ), 14));
+
+                levels = new LevelRepository().getLevels();
 
                 loadLevel(nextLevelIndex);
 
@@ -69,6 +54,7 @@
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
                                 gameRenderer.displayVictory();
+                                this.stop();
                             }
                             if (inputHandler.isNextLevel())
                                 loadLevel(nextLevelIndex);

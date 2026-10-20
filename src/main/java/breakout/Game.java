@@ -27,12 +27,9 @@ public class    Game {
     private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
     private LevelConfig levelConfig;
     private Playfield playfield;
-    private double brickWidth;
-    private double brickHeight;
     private static final double WALL_THICKNESS = 23.5;
     private static final double MENU_BAR_HEIGHT = 30;
     private static final double BRICK_GAP = 1;
-    private static final int NUM_BRICK_IN_WALL = 1;
     private static final double BRICK_HEIGHT = 20;
 
     public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {

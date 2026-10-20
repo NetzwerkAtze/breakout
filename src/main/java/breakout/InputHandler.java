@@ -35,7 +35,7 @@ public class InputHandler {
                     game.getGameState().setPaused(!game.getGameState().isPaused());
             } else if (event.getCode() == KeyCode.ESCAPE) {
                 exit = true;
-            } else if (event.getCode() == KeyCode.Q) {
+            } else if (event.getCode() == KeyCode.Q) {    // debug button
                 game.getGameState().setLevelWon(true);
             }
         });

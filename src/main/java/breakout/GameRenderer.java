@@ -133,8 +133,6 @@ public class GameRenderer {
                 for (int i = 0; i <= crackMap.get(brick).size() - brick.getHitsRemaining(); i++)
                     crackMap.get(brick).get(i).setVisible(true);
             }
-            if (!brick.isDestroyed())
-                brickMap.get(brick).setFill(makeGradient(brick.getColor()));
         }
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
