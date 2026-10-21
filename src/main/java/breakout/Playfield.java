@@ -1,4 +1,4 @@
 package breakout;
 
-public record Playfield(double left, double right, double top,double brickWidth, double brickHeight) {
+public record Playfield(double left, double right, double top) {
 }
