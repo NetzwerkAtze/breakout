@@ -54,7 +54,7 @@ public class    Game {
             for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
                 char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
                 if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (levelConfig.brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset, (row * levelConfig.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.brickWidth(), levelConfig.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    Brick brick = new Brick(col * (levelConfig.brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset + BRICK_GAP, (row * levelConfig.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.brickWidth(), levelConfig.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }
@@ -71,7 +71,7 @@ public class    Game {
         if (gameState.isPaused())
             return;
         if (moveRight || moveLeft)
-            paddle.move(moveLeft, WALL_THICKNESS + playfield.left());
+            paddle.move(moveLeft, playfield.left());
         if (!gameState.isIdle()) {
             Iterator<Ball> it = balls.iterator();
             while (it.hasNext()) {

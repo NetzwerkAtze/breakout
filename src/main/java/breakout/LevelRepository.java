@@ -5,21 +5,33 @@ import java.util.List;
 
 public class LevelRepository {
     private final double defaultBrickWidth = 60;
-    private final double defaultPlayfieldWidth = 900;
+    private final double defaultBrickHeight = 20;
+
+    private final double smallPlayfieldWidth = 550;
+    private final int smallPlayfieldMaxCol = 7;
+
+    private final double maximumPlayfieldWidth = 900;
+    private final int maximumPlayfieldMaxCol = 14;
+
     private final List<LevelConfig> levels = new ArrayList<>();
 
     public LevelRepository() {
         levels.add(new LevelConfig(1, List.of(
-                "..........",
-                "....11....",
-                "..111111..",
-                "1111111111"
-        ), 10, 700, 60, 20));
+                ".......",
+                ".......",
+                ".......",
+                ".......",
+                ".11111.",
+                ".11111."
+        ), smallPlayfieldMaxCol, smallPlayfieldWidth, defaultBrickWidth, defaultBrickHeight));
         levels.add(new LevelConfig(2, List.of(
-                "...",
-                ".1.",
-                "222"
-        ), 3,900, 60, 20));
+                ".......",
+                ".......",
+                ".......",
+                "...1...",
+                "..111..",
+                ".11111."
+        ), smallPlayfieldMaxCol, smallPlayfieldWidth, defaultBrickWidth, defaultBrickHeight));
         levels.add(new LevelConfig(3, List.of(
                 "....111111....",
                 "..1111111111..",
