@@ -126,7 +126,7 @@ public class GameRenderer {
         for (Brick brick : game.getBricks()) {
             if (brick.isDestroyed()) {
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
-                crackMap.getOrDefault(brick, List.of()).forEach(value -> value.setVisible(true));
+                crackMap.getOrDefault(brick, List.of()).forEach(value -> value.setVisible(false));
                 continue;
             }
             if (brick.getMaxHits() > brick.getHitsRemaining()) {

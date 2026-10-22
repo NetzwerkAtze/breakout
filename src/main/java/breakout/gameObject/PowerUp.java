@@ -11,10 +11,19 @@ public class PowerUp extends GameObject {
     private PowerUpState powerUpState;
 
     public enum PowerUpType {
-        BIGGER_PADDLE,
-        BIGGER_BALL,
-        ANOTHER_BALL,
-        STICKY_PADDLE
+        BIGGER_PADDLE(Color.GREEN),
+        BIGGER_BALL(Color.BLUE),
+        ANOTHER_BALL(Color.YELLOW),
+        STICKY_PADDLE(Color.RED);
+
+        private final Color color;
+
+        PowerUpType(Color color) {
+            this.color = color;
+        }
+        public Color getColor() {
+            return color;
+        }
     }
     public enum PowerUpState {
         WAITING,

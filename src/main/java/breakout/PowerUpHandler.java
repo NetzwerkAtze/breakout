@@ -64,36 +64,32 @@ public class PowerUpHandler {
         powerUps.clear();
         brickPowerUpMap.clear();
         for (Brick brick : game.getBricks())
-            generatePowerUps(brick);
+            generatePowerUps(brick, game.getLevelConfig().powerUpDropchance());
     }
 
     private void init() {
         for (Brick brick : game.getBricks())
-            generatePowerUps(brick);
+            generatePowerUps(brick, game.getLevelConfig().powerUpDropchance());
     }
 
-    private void generatePowerUps(Brick brick) {
-        double chance = random.nextDouble();
-        Color color = null;
+    private void generatePowerUps(Brick brick, HashMap<PowerUp.PowerUpType, Double> powerUpWeigh) {
         PowerUp.PowerUpType type = null;
-        PowerUp pUp;
-        if (chance < dropChance) {
-            color = Color.GREEN;
-            type = PowerUp.PowerUpType.BIGGER_PADDLE;
-        } else if (chance < dropChance * 2) {
-            color = Color.BLUE;
-            type = PowerUp.PowerUpType.BIGGER_BALL;
-        } else if (chance < dropChance * 3) {
-            color = Color.YELLOW;
-            type = PowerUp.PowerUpType.ANOTHER_BALL;
-        } else if (chance < dropChance * 10) {
-            color = Color.RED;
-            type = PowerUp.PowerUpType.STICKY_PADDLE;
-        }
-        if (color != null) {
-            pUp = new PowerUp(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, color, fallingSpeed, type, powerUpDuration, powerUpSize);
-            powerUps.add(pUp);
-            brickPowerUpMap.put(brick, pUp);
+        Color color = null;
+        /**
+        double totalWeight = 0;
+        for (double weight : powerUpWeigh.values())
+            totalWeight += weight;
+         */
+        double chance = random.nextDouble() * 100;
+        for (Map.Entry<PowerUp.PowerUpType, Double> entry : powerUpWeigh.entrySet()) {
+            chance -= entry.getValue();
+            if (chance < 0) {
+                type = entry.getKey();
+                color = entry.getKey().getColor();
+            }
+        PowerUp pUp = new PowerUp(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, color, fallingSpeed, type, powerUpDuration, powerUpSize);
+        powerUps.add(pUp);
+        brickPowerUpMap.put(brick, pUp);
         }
     }
 

@@ -183,5 +183,9 @@ public class    Game {
         double gap = (scene.getWidth() - Math.min(config.mapWidth(), scene.getWidth())) / 2;
         return new Playfield(0 + gap + WALL_THICKNESS, scene.getWidth() - gap - WALL_THICKNESS, MENU_BAR_HEIGHT + WALL_THICKNESS);
     }
+
+    public LevelConfig getLevelConfig() {
+        return levelConfig;
+    }
 }
 
