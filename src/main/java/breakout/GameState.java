@@ -8,11 +8,25 @@ public class GameState {
     private boolean paused = false;
     private int score = 0;
     private  int level;
+    private InputHandler inputHandler;
 
-    public GameState(int startLives, int level) {
+    public GameState(int startLives, int level, InputHandler inputHandler) {
         this.startingLives = startLives;
         this.lives = startLives;
         this.level = level;
+        this.inputHandler = inputHandler;
+    }
+    public void update() {
+        if (inputHandler.isSpaceBarPressed())
+            idle = false;
+        if (inputHandler.isPausedPressed()) {
+            paused = !paused;
+            inputHandler.resetPausedPress();
+        }
+        if (inputHandler.isSkipToNextLevelPressed()) {
+            levelWon = true;
+            inputHandler.resetSkipToNextLevel();
+        }
     }
 
     public void reset() {

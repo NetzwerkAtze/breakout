@@ -19,10 +19,10 @@ public class    Game {
     private double paddleStartingWidth;
     private double ballStartingRadius;
     private boolean moveRight;
-    private boolean moveLeft;
     private boolean releaseBalls;
     private PowerUpHandler powerUpHandler;
     private CollisionHandler collisionHandler;
+    private InputHandler inputHandler;
     private GameState gameState;
     private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
     private LevelConfig levelConfig;
@@ -32,21 +32,20 @@ public class    Game {
     private static final double BRICK_GAP = 1;
     private static final double BRICK_HEIGHT = 20;
 
-    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig) {
+    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig, InputHandler inputHandler) {
         this.scene = scene;
         this.paddle = paddle;
         balls.add(ball);
-        this.moveLeft = false;
-        this.moveRight = false;
         this.releaseBalls = false;
         this.levelConfig = levelConfig;
         this.playfield = initPlayfield(levelConfig);
+        this.inputHandler = inputHandler;
         init();
         paddleStartingWidth = paddle.getWidth();
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
         collisionHandler = new CollisionHandler(this);
-        gameState = new GameState(startLives, levelConfig.level());
+        gameState = new GameState(startLives, levelConfig.level(), inputHandler);
     }
     public void init() {
         double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
@@ -68,15 +67,16 @@ public class    Game {
 
     }
     public void update() {
+        gameState.update();
         if (gameState.isPaused())
             return;
-        if (moveRight || moveLeft)
-            paddle.move(moveLeft, playfield.left());
+        if (inputHandler.isMovingRight() || inputHandler.isMovingLeft())
+            paddle.move(inputHandler.isMovingLeft(), playfield.left());
         if (!gameState.isIdle()) {
             Iterator<Ball> it = balls.iterator();
             while (it.hasNext()) {
                 Ball ball = it.next();
-                if (releaseBalls)
+                if (inputHandler.isSpaceBarPressed()) //releaseBalls
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
                 for (Brick brick : bricks) {
@@ -138,14 +138,6 @@ public class    Game {
 
     public void setReleaseBalls(boolean releaseBalls) {
         this.releaseBalls = releaseBalls;
-    }
-
-    public void setMoveRight(boolean right){
-        moveRight = right;
-    }
-
-    public void setMoveLeft(boolean left){
-        moveLeft = left;
     }
 
     public List<Brick> getBricks() {

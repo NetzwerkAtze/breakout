@@ -7,49 +7,52 @@ import javafx.scene.layout.Pane;
  */
 public class InputHandler {
     private Pane root;
-    private Game game;
     private boolean reset = false;
-    private boolean nextLevel = false;
+    private boolean enterConfirmed = false;
     private boolean exit = false;
+    private boolean movingLeft = false;
+    private boolean movingRight = false;
+    private boolean spaceBarPressed = false;
+    private boolean pausedPressed = false;
+    private boolean skipToNextLevelPressed = false;
 
-    public InputHandler(Pane root, Game game) {
+    public InputHandler(Pane root) {
         this.root = root;
-        this.game = game;
         init();
     }
     private void init() {
         root.getScene().setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.LEFT) {
-                game.setMoveLeft(true);
+                movingLeft = true;
             } else if (event.getCode() == KeyCode.RIGHT) {
-                game.setMoveRight(true);
+                movingRight = true;
             } else if (event.getCode() == KeyCode.SPACE) {
-                game.getGameState().setIdle(false);
-                game.setReleaseBalls(true);
+                spaceBarPressed = true;
             } else if (event.getCode() == KeyCode.R) {
                 reset = true;
             } else if (event.getCode() == KeyCode.ENTER) {
-                nextLevel = true;
+                enterConfirmed = true;
             } else if (event.getCode() == KeyCode.P) {
-                if (!game.getGameState().gameOver() && !game.getGameState().isLevelWon())
-                    game.getGameState().setPaused(!game.getGameState().isPaused());
+                pausedPressed = true;
             } else if (event.getCode() == KeyCode.ESCAPE) {
                 exit = true;
             } else if (event.getCode() == KeyCode.Q) {    // debug button
-                game.getGameState().setLevelWon(true);
+                skipToNextLevelPressed = true;
             }
         });
         root.getScene().setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.LEFT) {
-                game.setMoveLeft(false);
+                movingLeft = false;
             } else if (event.getCode() == KeyCode.RIGHT) {
-                game.setMoveRight(false);
+                movingRight = false;
             } else if (event.getCode() == KeyCode.SPACE) {
-                    game.setReleaseBalls(false);
+                    spaceBarPressed = false;
             } else if (event.getCode() == KeyCode.R) {
                 reset = false;
             } else if (event.getCode() == KeyCode.ENTER) {
-                nextLevel = false;
+                enterConfirmed = false;
+            } else if (event.getCode() == KeyCode.P) {
+                pausedPressed = false;
             } else if (event.getCode() == KeyCode.ESCAPE) {
                 exit = false;
             }
@@ -58,10 +61,31 @@ public class InputHandler {
     public boolean isReset() {
         return reset;
     }
-    public boolean isNextLevel() {
-        return nextLevel;
+    public boolean isEnterConfirmed() {
+        return enterConfirmed;
     }
     public boolean isExit() {
         return exit;
+    }
+    public boolean isMovingLeft() {
+        return movingLeft;
+    }
+    public boolean isMovingRight() {
+        return movingRight;
+    }
+    public boolean isSpaceBarPressed() {
+        return spaceBarPressed;
+    }
+    public boolean isPausedPressed() {
+        return pausedPressed;
+    }
+    public boolean isSkipToNextLevelPressed() {
+        return skipToNextLevelPressed;
+    }
+    public void resetPausedPress(){
+        pausedPressed = false;
+    }
+    public void resetSkipToNextLevel() {
+        skipToNextLevelPressed = false;
     }
 }

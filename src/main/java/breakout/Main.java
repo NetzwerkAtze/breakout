@@ -15,6 +15,7 @@
 
             private Pane root;
             private Scene scene;
+            private Menu menu;
             private Game game;
             private GameRenderer gameRenderer;
             private InputHandler inputHandler;
@@ -22,45 +23,56 @@
             private int nextLevelIndex = 0;
             List<LevelConfig> levels = new ArrayList<>();
             private boolean won = false;
+            private boolean inMenu = true;
 
 
             @Override
             public void start(Stage primaryStage) {
                 hsManager = new HighscoreManager();
-                System.out.println(hsManager.getHighscore());
                 root = new Pane();
                 scene = new Scene(root, 900, 600, Color.BLACK);
-
+                inputHandler = new InputHandler(root);
+                menu = new Menu(root, inputHandler);
                 levels = new LevelRepository().getLevels();
 
-                loadLevel(nextLevelIndex);
 
                 AnimationTimer timer = new AnimationTimer() {
                     @Override
                     public void handle(long l) {
-                        if (inputHandler.isExit()) {
-                            this.stop();
-                            System.exit(0);
-                        }
-                        if (game.getGameState().gameOver()) {
-                            if (game.getGameState().getScore() > hsManager.getHighscore())
-                                hsManager.writeHighscore(game.getGameState().getScore());
-                            if (inputHandler.isReset()) {
-                                game.reset();
-                                gameRenderer.reset();
+                        if (inMenu) {
+                            if (inputHandler.isEnterConfirmed()) {
+                                loadLevel(nextLevelIndex);
+                                inMenu = false;
                             }
-                        } else if (game.getGameState().isLevelWon()) {
-                            if (won) {
+
+                        }
+                        else {
+                            if (inputHandler.isSkipToNextLevelPressed())     // for debugging
+                                game.getGameState().setLevelWon(true);  // for debugging
+                            if (inputHandler.isExit()) {
+                                this.stop();
+                                System.exit(0);
+                            }
+                            if (game.getGameState().gameOver()) {
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
-                                gameRenderer.displayVictory();
-                                this.stop();
+                                if (inputHandler.isReset()) {
+                                    game.reset();
+                                    gameRenderer.reset();
+                                }
+                            } else if (game.getGameState().isLevelWon()) {
+                                if (won) {
+                                    if (game.getGameState().getScore() > hsManager.getHighscore())
+                                        hsManager.writeHighscore(game.getGameState().getScore());
+                                    gameRenderer.displayVictory();
+                                    this.stop();
+                                }
+                                if (inputHandler.isEnterConfirmed())
+                                    loadLevel(nextLevelIndex);
+                            } else {
+                                game.update();
+                                gameRenderer.update();
                             }
-                            if (inputHandler.isNextLevel())
-                                loadLevel(nextLevelIndex);
-                        } else {
-                            game.update();
-                            gameRenderer.update();
                         }
                     }
                 };
@@ -81,9 +93,8 @@
                     Paddle paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());
                     if (levelIndex > 0)
                         gameRenderer.nextLevel();
-                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex));
+                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex), inputHandler);
                     gameRenderer = new GameRenderer(root, game, hsManager);
-                    inputHandler = new InputHandler(root, game);
                     nextLevelIndex++;
                 }
             }
