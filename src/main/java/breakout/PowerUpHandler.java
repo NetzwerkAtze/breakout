@@ -75,21 +75,16 @@ public class PowerUpHandler {
     private void generatePowerUps(Brick brick, HashMap<PowerUp.PowerUpType, Double> powerUpWeigh) {
         PowerUp.PowerUpType type = null;
         Color color = null;
-        /**
-        double totalWeight = 0;
-        for (double weight : powerUpWeigh.values())
-            totalWeight += weight;
-         */
         double chance = random.nextDouble() * 100;
         for (Map.Entry<PowerUp.PowerUpType, Double> entry : powerUpWeigh.entrySet()) {
             chance -= entry.getValue();
             if (chance < 0) {
                 type = entry.getKey();
                 color = entry.getKey().getColor();
+                PowerUp pUp = new PowerUp(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, color, fallingSpeed, type, powerUpDuration, powerUpSize);
+                powerUps.add(pUp);
+                brickPowerUpMap.put(brick, pUp);
             }
-        PowerUp pUp = new PowerUp(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, color, fallingSpeed, type, powerUpDuration, powerUpSize);
-        powerUps.add(pUp);
-        brickPowerUpMap.put(brick, pUp);
         }
     }
 

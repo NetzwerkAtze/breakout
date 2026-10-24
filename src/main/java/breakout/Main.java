@@ -42,6 +42,7 @@
                         if (inMenu) {
                             if (inputHandler.isEnterConfirmed()) {
                                 loadLevel(nextLevelIndex);
+                                menu.close();
                                 inMenu = false;
                             }
 

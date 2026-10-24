@@ -7,6 +7,7 @@ import javafx.scene.text.Text;
 
 public class Menu {
     private Pane root;
+    private Text startText;
 
     public Menu(Pane root, InputHandler inputHandler) {
         this.root = root;
@@ -14,11 +15,14 @@ public class Menu {
     }
 
     private void init() {
-        Text t = new Text("Start");
-        t.setFill(Color.WHITE);
-        t.setFont(new Font(20));
-        t.setX(root.getScene().getWidth()/2);
-        t.setY(root.getScene().getHeight()/2);
-        root.getChildren().add(t);
+        startText = new Text("Start");
+        startText.setFill(Color.WHITE);
+        startText.setFont(new Font(20));
+        startText.setX(root.getScene().getWidth()/2);
+        startText.setY(root.getScene().getHeight()/2);
+        root.getChildren().add(startText);
+    }
+    public void close() {
+        startText.setFill(Color.TRANSPARENT);
     }
 }

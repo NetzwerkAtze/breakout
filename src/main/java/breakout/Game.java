@@ -71,7 +71,7 @@ public class    Game {
         if (gameState.isPaused())
             return;
         if (inputHandler.isMovingRight() || inputHandler.isMovingLeft())
-            paddle.move(inputHandler.isMovingLeft(), playfield.left());
+            paddle.move(inputHandler.isMovingLeft(), playfield.left(), playfield.right());
         if (!gameState.isIdle()) {
             Iterator<Ball> it = balls.iterator();
             while (it.hasNext()) {
