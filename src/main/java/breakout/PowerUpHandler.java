@@ -122,8 +122,10 @@ public class PowerUpHandler {
 
     public void removeEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
-            game.getPaddle().setX(game.getPaddle().getX() + paddleSizeIncrease / 2);
-            game.getPaddle().setWidth(game.getPaddle().getWidth() - paddleSizeIncrease);
+            if (game.getPaddle().getWidth() > game.getPaddle().getStartingWidth()) {
+                game.getPaddle().setX(game.getPaddle().getX() + (Math.min(paddleSizeIncrease , game.getPaddle().getWidth() - game.getPaddle().getStartingWidth()) / 2));
+                game.getPaddle().setWidth(Math.max(game.getPaddle().getWidth() - paddleSizeIncrease, game.getPaddle().getStartingWidth()));
+            }
         }
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_BALL) {
             for (Ball ball : game.getBalls())

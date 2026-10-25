@@ -120,18 +120,17 @@ public class    Game {
     }
 
     public void reset() {
-         if (!gameState.isAlive()) {
-             powerUpHandler.reset();
-            for (Brick brick : bricks) {
-                brick.repair();
-            }
-            gameState.reset();
-            balls.getFirst().setY(scene.getHeight() / 2);
-            balls.getFirst().setX(scene.getWidth() / 2);
-            balls.getFirst().setVy(-balls.getFirst().getVy());
-            paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
-            paddle.setWidth(paddle.getStartingWidth());
+         powerUpHandler.reset();
+        for (Brick brick : bricks) {
+            brick.repair();
         }
+        gameState.reset();
+        balls.getFirst().setY(scene.getHeight() / 2);
+        balls.getFirst().setX(scene.getWidth() / 2);
+        balls.getFirst().setVy(-Math.sqrt(balls.getFirst().getVy()*balls.getFirst().getVy()));
+        paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
+        paddle.setWidth(paddle.getStartingWidth());
+        gameState.setIdle(true);
     }
 
     public List<Brick> getBricks() {

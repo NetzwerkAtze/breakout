@@ -46,13 +46,13 @@
                             }
                         }
                         else {
+                            if (inputHandler.wasPressed(KeyCode.R)) {
+                                game.reset();
+                                gameRenderer.reset();
+                            }
                             if (game.getGameState().gameOver()) {
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
-                                if (inputHandler.wasPressed(KeyCode.R)) {
-                                    game.reset();
-                                    gameRenderer.reset();
-                                }
                             } else if (game.getGameState().isLevelWon()) {
                                 if (won) {
                                     if (game.getGameState().getScore() > hsManager.getHighscore())
