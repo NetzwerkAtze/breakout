@@ -2,19 +2,16 @@ package breakout;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+
+import java.util.ArrayList;
+
 /**
  *
  */
 public class InputHandler {
     private Pane root;
-    private boolean reset = false;
-    private boolean enterConfirmed = false;
-    private boolean exit = false;
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
-    private boolean spaceBarPressed = false;
-    private boolean pausedPressed = false;
-    private boolean skipToNextLevelPressed = false;
+    private ArrayList<KeyCode> held = new ArrayList<>();
+    private ArrayList<KeyCode> justPressed = new ArrayList<>();
 
     public InputHandler(Pane root) {
         this.root = root;
@@ -23,69 +20,61 @@ public class InputHandler {
     private void init() {
         root.getScene().setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.LEFT) {
-                movingLeft = true;
+                addKey(KeyCode.LEFT);
             } else if (event.getCode() == KeyCode.RIGHT) {
-                movingRight = true;
+                addKey(KeyCode.RIGHT);
             } else if (event.getCode() == KeyCode.SPACE) {
-                spaceBarPressed = true;
+                addKey(KeyCode.SPACE);
             } else if (event.getCode() == KeyCode.R) {
-                reset = true;
+                addKey(KeyCode.R);
             } else if (event.getCode() == KeyCode.ENTER) {
-                enterConfirmed = true;
+                addKey(KeyCode.ENTER);
             } else if (event.getCode() == KeyCode.P) {
-                pausedPressed = true;
+                addKey(KeyCode.P);
             } else if (event.getCode() == KeyCode.ESCAPE) {
-                exit = true;
-            } else if (event.getCode() == KeyCode.Q) {    // debug button
-                skipToNextLevelPressed = true;
+                addKey(KeyCode.ESCAPE);
+            } else if (event.getCode() == KeyCode.Q) {
+                addKey(KeyCode.Q);// debug button
             }
         });
         root.getScene().setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.LEFT) {
-                movingLeft = false;
+                removeKey(KeyCode.LEFT);
             } else if (event.getCode() == KeyCode.RIGHT) {
-                movingRight = false;
+                removeKey(KeyCode.RIGHT);
             } else if (event.getCode() == KeyCode.SPACE) {
-                    spaceBarPressed = false;
+                removeKey(KeyCode.SPACE);
             } else if (event.getCode() == KeyCode.R) {
-                reset = false;
+                removeKey(KeyCode.R);
             } else if (event.getCode() == KeyCode.ENTER) {
-                enterConfirmed = false;
+                removeKey(KeyCode.ENTER);
             } else if (event.getCode() == KeyCode.P) {
-                pausedPressed = false;
+                removeKey(KeyCode.P);
             } else if (event.getCode() == KeyCode.ESCAPE) {
-                exit = false;
+                removeKey(KeyCode.ESCAPE);
+            } else if (event.getCode() == KeyCode.Q) {
+                removeKey(KeyCode.Q);
             }
         });
     }
-    public boolean isReset() {
-        return reset;
+    public boolean isHeld(KeyCode key) {
+        return held.contains(key);
     }
-    public boolean isEnterConfirmed() {
-        return enterConfirmed;
+    public boolean wasPressed(KeyCode key) {
+        return justPressed.contains(key);
     }
-    public boolean isExit() {
-        return exit;
+    private void addKey(KeyCode key) {
+        if (!held.contains(key) && !justPressed.contains(key)){
+            held.add(key);
+            justPressed.add(key);
+        }
     }
-    public boolean isMovingLeft() {
-        return movingLeft;
+    private void removeKey(KeyCode key) {
+        held.remove(key);
+        justPressed.remove(key);
     }
-    public boolean isMovingRight() {
-        return movingRight;
-    }
-    public boolean isSpaceBarPressed() {
-        return spaceBarPressed;
-    }
-    public boolean isPausedPressed() {
-        return pausedPressed;
-    }
-    public boolean isSkipToNextLevelPressed() {
-        return skipToNextLevelPressed;
-    }
-    public void resetPausedPress(){
-        pausedPressed = false;
-    }
-    public void resetSkipToNextLevel() {
-        skipToNextLevelPressed = false;
+
+    public ArrayList<KeyCode> getJustPressed() {
+        return justPressed;
     }
 }

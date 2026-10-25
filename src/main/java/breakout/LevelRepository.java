@@ -17,7 +17,7 @@ public class LevelRepository {
     private final double maximumPlayfieldWidth = 900;
     private final int maximumPlayfieldMaxCol = 14;
 
-    private final HashMap<PowerUp.PowerUpType, Double> firstWorldPuPWeigh = new HashMap<>(Map.of(PowerUp.PowerUpType.BIGGER_PADDLE, 20.));
+    private final HashMap<PowerUp.PowerUpType, Double> firstWorldPuPWeigh = new HashMap<>(Map.of(PowerUp.PowerUpType.BIGGER_PADDLE, 100.));
 
     private final List<LevelConfig> levels = new ArrayList<>();
 

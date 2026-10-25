@@ -1,5 +1,7 @@
 package breakout;
 
+import javafx.scene.input.KeyCode;
+
 public class GameState {
     private int startingLives;
     private int lives;
@@ -8,25 +10,11 @@ public class GameState {
     private boolean paused = false;
     private int score = 0;
     private  int level;
-    private InputHandler inputHandler;
 
-    public GameState(int startLives, int level, InputHandler inputHandler) {
+    public GameState(int startLives, int level) {
         this.startingLives = startLives;
         this.lives = startLives;
         this.level = level;
-        this.inputHandler = inputHandler;
-    }
-    public void update() {
-        if (inputHandler.isSpaceBarPressed())
-            idle = false;
-        if (inputHandler.isPausedPressed()) {
-            paused = !paused;
-            inputHandler.resetPausedPress();
-        }
-        if (inputHandler.isSkipToNextLevelPressed()) {
-            levelWon = true;
-            inputHandler.resetSkipToNextLevel();
-        }
     }
 
     public void reset() {
@@ -53,9 +41,6 @@ public class GameState {
     }
     public void increaseScore() {
         score++;
-    }
-    public void increaseScore(int score) {
-        this.score += score;
     }
 
     public boolean isLevelWon() {

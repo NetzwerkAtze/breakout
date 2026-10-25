@@ -5,6 +5,7 @@ import breakout.gameObject.Brick;
 import breakout.gameObject.GameObject;
 import breakout.gameObject.Paddle;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -16,10 +17,7 @@ public class    Game {
     private List<Brick> bricks = new ArrayList<>();
     private List<GameObject> walls = new ArrayList<>();
     private final int maxAngle = 60;
-    private double paddleStartingWidth;
     private double ballStartingRadius;
-    private boolean moveRight;
-    private boolean releaseBalls;
     private PowerUpHandler powerUpHandler;
     private CollisionHandler collisionHandler;
     private InputHandler inputHandler;
@@ -30,22 +28,19 @@ public class    Game {
     private static final double WALL_THICKNESS = 23.5;
     private static final double MENU_BAR_HEIGHT = 30;
     private static final double BRICK_GAP = 1;
-    private static final double BRICK_HEIGHT = 20;
 
-    public Game(Scene scene, Paddle paddle, Ball ball, int startLives, LevelConfig levelConfig, InputHandler inputHandler) {
+    public Game(Scene scene, int startLives, LevelConfig levelConfig, InputHandler inputHandler) {
         this.scene = scene;
-        this.paddle = paddle;
-        balls.add(ball);
-        this.releaseBalls = false;
+        this.paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());;
+        balls.add(new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE));
         this.levelConfig = levelConfig;
         this.playfield = initPlayfield(levelConfig);
         this.inputHandler = inputHandler;
         init();
-        paddleStartingWidth = paddle.getWidth();
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
         collisionHandler = new CollisionHandler(this);
-        gameState = new GameState(startLives, levelConfig.level(), inputHandler);
+        gameState = new GameState(startLives, levelConfig.level());
     }
     public void init() {
         double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
@@ -67,16 +62,19 @@ public class    Game {
 
     }
     public void update() {
-        gameState.update();
+        if (inputHandler.wasPressed(KeyCode.P))
+            gameState.setPaused(!gameState.isPaused());
+        if (inputHandler.wasPressed(KeyCode.SPACE))
+            gameState.setIdle(false);
         if (gameState.isPaused())
             return;
-        if (inputHandler.isMovingRight() || inputHandler.isMovingLeft())
-            paddle.move(inputHandler.isMovingLeft(), playfield.left(), playfield.right());
+        if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
+            paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
         if (!gameState.isIdle()) {
             Iterator<Ball> it = balls.iterator();
             while (it.hasNext()) {
                 Ball ball = it.next();
-                if (inputHandler.isSpaceBarPressed()) //releaseBalls
+                if (inputHandler.wasPressed(KeyCode.SPACE)) //releaseBalls
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
                 for (Brick brick : bricks) {
@@ -132,12 +130,8 @@ public class    Game {
             balls.getFirst().setX(scene.getWidth() / 2);
             balls.getFirst().setVy(-balls.getFirst().getVy());
             paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
-            paddle.setWidth(paddleStartingWidth);
+            paddle.setWidth(paddle.getStartingWidth());
         }
-    }
-
-    public void setReleaseBalls(boolean releaseBalls) {
-        this.releaseBalls = releaseBalls;
     }
 
     public List<Brick> getBricks() {
@@ -150,10 +144,6 @@ public class    Game {
 
     public List<Ball> getBalls() {
         return balls;
-    }
-
-    public double getPaddleStartingWidth() {
-        return paddleStartingWidth;
     }
 
     public double getBallStartingRadius() {
@@ -178,6 +168,10 @@ public class    Game {
 
     public LevelConfig getLevelConfig() {
         return levelConfig;
+    }
+
+    public Playfield getPlayfield() {
+        return playfield;
     }
 }
 

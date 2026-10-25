@@ -19,6 +19,7 @@ public class PowerUpHandler {
     private Random random = new Random();
     private List<PowerUp> powerUps = new ArrayList<>();
     private Map<Brick, PowerUp> brickPowerUpMap = new HashMap<>();
+    private double paddleSizeIncrease = 100;
 
     /**
      * Constructor with default values.
@@ -73,17 +74,16 @@ public class PowerUpHandler {
     }
 
     private void generatePowerUps(Brick brick, HashMap<PowerUp.PowerUpType, Double> powerUpWeigh) {
-        PowerUp.PowerUpType type = null;
-        Color color = null;
         double chance = random.nextDouble() * 100;
         for (Map.Entry<PowerUp.PowerUpType, Double> entry : powerUpWeigh.entrySet()) {
             chance -= entry.getValue();
             if (chance < 0) {
-                type = entry.getKey();
-                color = entry.getKey().getColor();
+                PowerUp.PowerUpType type = entry.getKey();
+                Color color = entry.getKey().getColor();
                 PowerUp pUp = new PowerUp(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, color, fallingSpeed, type, powerUpDuration, powerUpSize);
                 powerUps.add(pUp);
                 brickPowerUpMap.put(brick, pUp);
+                break;
             }
         }
     }
@@ -91,8 +91,10 @@ public class PowerUpHandler {
     public void applyEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpState() == PowerUp.PowerUpState.FALLING) {
             if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
-                game.getPaddle().setX(game.getPaddle().getX() - game.getPaddleStartingWidth() / 2);
-                game.getPaddle().setWidth(game.getPaddle().getWidth() + game.getPaddleStartingWidth());
+                game.getPaddle().setWidth(Math.min(game.getPaddle().getWidth() + paddleSizeIncrease, game.getPlayfield().right() - game.getPlayfield().left()));
+                game.getPaddle().setX(Math.max((game.getPaddle().getX() - paddleSizeIncrease / 2), game.getPlayfield().left()));
+                if (game.getPaddle().getX() + game.getPaddle().getWidth() > game.getPlayfield().right())
+                    game.getPaddle().setX(game.getPlayfield().right() - game.getPaddle().getWidth());
             }
             else if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_BALL) {
                 for (Ball ball : game.getBalls())
@@ -120,8 +122,8 @@ public class PowerUpHandler {
 
     public void removeEffect(PowerUp powerUp) {
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_PADDLE) {
-            game.getPaddle().setX(game.getPaddle().getX() + game.getPaddleStartingWidth() / 2);
-            game.getPaddle().setWidth(game.getPaddle().getWidth() - game.getPaddleStartingWidth());
+            game.getPaddle().setX(game.getPaddle().getX() + paddleSizeIncrease / 2);
+            game.getPaddle().setWidth(game.getPaddle().getWidth() - paddleSizeIncrease);
         }
         if (powerUp.getPowerUpType() == PowerUp.PowerUpType.BIGGER_BALL) {
             for (Ball ball : game.getBalls())

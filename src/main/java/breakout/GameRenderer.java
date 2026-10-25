@@ -179,7 +179,7 @@ public class GameRenderer {
                 crackMap.get(brick).get(i).setVisible(false);
         }
     }
-    public void nextLevel() {
+    public void clear() {
         crackMap.values().forEach(list -> list.forEach(value -> root.getChildren().remove(value)));
         crackMap.clear();
         powerUpMap.clear();
@@ -191,7 +191,7 @@ public class GameRenderer {
         root.getChildren().remove(hudLayer);
     }
     public void displayVictory() {
-        nextLevel();
+        clear();
         wonText.setFill(Color.WHITE);
         root.getChildren().add(wonText);
     }

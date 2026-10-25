@@ -1,10 +1,9 @@
         package breakout;
 
-        import breakout.gameObject.Ball;
-        import breakout.gameObject.Paddle;
         import javafx.animation.AnimationTimer;
         import javafx.application.Application;
         import javafx.scene.Scene;
+        import javafx.scene.input.KeyCode;
         import javafx.scene.layout.Pane;
         import javafx.scene.paint.Color;
         import javafx.stage.Stage;
@@ -40,24 +39,17 @@
                     @Override
                     public void handle(long l) {
                         if (inMenu) {
-                            if (inputHandler.isEnterConfirmed()) {
+                            if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                 loadLevel(nextLevelIndex);
-                                menu.close();
+                                menu.hide();
                                 inMenu = false;
                             }
-
                         }
                         else {
-                            if (inputHandler.isSkipToNextLevelPressed())     // for debugging
-                                game.getGameState().setLevelWon(true);  // for debugging
-                            if (inputHandler.isExit()) {
-                                this.stop();
-                                System.exit(0);
-                            }
                             if (game.getGameState().gameOver()) {
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
-                                if (inputHandler.isReset()) {
+                                if (inputHandler.wasPressed(KeyCode.R)) {
                                     game.reset();
                                     gameRenderer.reset();
                                 }
@@ -68,13 +60,22 @@
                                     gameRenderer.displayVictory();
                                     this.stop();
                                 }
-                                if (inputHandler.isEnterConfirmed())
+                                if (inputHandler.wasPressed(KeyCode.ENTER))
                                     loadLevel(nextLevelIndex);
                             } else {
                                 game.update();
                                 gameRenderer.update();
                             }
+                            if (inputHandler.wasPressed(KeyCode.Q))     // for debugging
+                                game.getGameState().setLevelWon(true);  // for debugging
+                            if (inputHandler.wasPressed(KeyCode.ESCAPE)) {
+                                gameRenderer.clear();
+                                menu.show();
+                                inMenu = true;
+                                nextLevelIndex = 0;
+                            }
                         }
+                        inputHandler.getJustPressed().clear();
                     }
                 };
                 timer.start();
@@ -90,11 +91,9 @@
                 if (levelIndex >= levels.size())
                     won = true;
                 if (levelIndex < levels.size()) {
-                    Ball ball = new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE);
-                    Paddle paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());
                     if (levelIndex > 0)
-                        gameRenderer.nextLevel();
-                    game = new Game(scene, paddle, ball, 3, levels.get(levelIndex), inputHandler);
+                        gameRenderer.clear();
+                    game = new Game(scene, 3, levels.get(levelIndex), inputHandler);
                     gameRenderer = new GameRenderer(root, game, hsManager);
                     nextLevelIndex++;
                 }
