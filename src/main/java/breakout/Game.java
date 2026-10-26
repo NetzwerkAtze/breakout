@@ -194,9 +194,9 @@ public class    Game {
             });
         }
     }
-    private void checkBallInPlay(Iterator<Ball> it) {
+  //  private void checkBallInPlay(Iterator<Ball> it) {
 
-    }
+    //}
     private void resetBall(Ball ball) {
         ball.setY(scene.getHeight() / 2);
         ball.setX(scene.getWidth() / 2);
