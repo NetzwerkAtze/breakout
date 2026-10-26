@@ -43,16 +43,7 @@ public class    Game {
         gameState = new GameState(startLives, levelConfig.level());
     }
     public void init() {
-        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
-        for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
-            for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
-                char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
-                if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (levelConfig.brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset + BRICK_GAP, (row * levelConfig.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.brickWidth(), levelConfig.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
-                    bricks.add(brick);
-                }
-            }
-        }
+        createBricks();
         //left wall
         walls.add(new GameObject(playfield.left() - WALL_THICKNESS, playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS,  (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
         //right wall
@@ -78,7 +69,7 @@ public class    Game {
                     ball.setBallState(Ball.BallState.FREE);
                 ball.update(paddle);
                 for (Brick brick : bricks) {
-                    if (ball.collidesWith(brick) && !brick.isDestroyed() && ball.getBallState() != Ball.BallState.IMMUN) {
+                    if (ball.collidesWith(brick) && !brick.isDestroyed()) {
                         collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
                         brick.hit();
                         if (brick.isDestroyed()) {
@@ -87,10 +78,13 @@ public class    Game {
                         }
                     }
                 }
-                if (ball.collidesWith(paddle) && ball.getBallState() != Ball.BallState.IMMUN) {
+                if (ball.collidesWith(paddle)) {
                     collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
                         ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
-                        ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
+                        if (ball.getY() + ball.getHeight() / 2 < paddle.getY() + paddle.getHeight() / 2)
+                            ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
+                        else
+                            ball.setVy(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle)));
                     });
                 }
                 for (GameObject wall : walls) {
@@ -171,6 +165,26 @@ public class    Game {
 
     public Playfield getPlayfield() {
         return playfield;
+    }
+    private void createBricks() {
+        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
+        for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
+            for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
+                char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
+                if (Character.isDigit(currentSymbol)) {
+                    Brick brick = new Brick(col * (levelConfig.brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset + BRICK_GAP, (row * levelConfig.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.brickWidth(), levelConfig.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    bricks.add(brick);
+                }
+            }
+        }
+    }
+    private void createWalls() {
+        //left wall
+        walls.add(new GameObject(playfield.left() - WALL_THICKNESS, playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS,  (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
+        //right wall
+        walls.add(new GameObject(playfield.right(), playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
+        // top wall
+        walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + BRICK_GAP,(levelConfig.mapWidth() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
     }
 }
 

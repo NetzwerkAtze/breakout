@@ -23,11 +23,9 @@ public class Ball extends GameObject {
     private double speed;
     private BallState ballState;
     private double stickOffset;
-    private int immunTimer;
 
     public enum BallState {
         FREE,
-        IMMUN,
         STICKING,
     }
 
@@ -44,16 +42,13 @@ public class Ball extends GameObject {
      * updates the position (x and y) of the ball based on the velocity.
      */
     public void update(Paddle paddle) {
-        if (immunTimer == 0)
-            ballState = BallState.FREE;
-        if (ballState == BallState.FREE || ballState == BallState.IMMUN) {
+        if (ballState == BallState.FREE) {
             x += vx;
             y += vy;
         }
         else if (ballState == BallState.STICKING) {
             x = paddle.getX() - stickOffset;
         }
-        immunTimer--;
     }
 
     public void setStickOffset(double stickOffset) {
@@ -134,15 +129,6 @@ public class Ball extends GameObject {
     public double getOverlapY(GameObject other) {
         return Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
     }
-
-    public void setImmunTimer(int immunTimer) {
-        this.immunTimer = immunTimer;
-    }
-
-    public int getImmunTimer() {
-        return immunTimer;
-    }
-
     /**
      * pushes the ball out of the object by the overlapping factor.
      * edge and hitsY should never be true at the same time
@@ -156,8 +142,8 @@ public class Ball extends GameObject {
      */
     public void resolveCollision(GameObject other, boolean edge, boolean hitsY) {
         if (edge) {
-            if (vx > 0) {
-                if (vy > 0) {  // top left corner
+            if (x + (width / 2) < other.getX() + (other.getWidth() /2)) {
+                if (y + (height / 2) < other.getY() + (other.getHeight() / 2)) {  // top left corner
                     x = x - getOverlapX(other);
                     y = y - getOverlapY(other);
                 } else {  // bottom left corner
@@ -165,7 +151,7 @@ public class Ball extends GameObject {
                     y = y + getOverlapY(other);
                 }
             } else {
-                if (vy < 0) { // bottom right corner
+                if (y + (height / 2) > other.getY() + (other.getHeight() / 2)) { // bottom right corner
                     x = x + getOverlapX(other);
                     y = y + getOverlapY(other);
                 } else {  // top right corner
@@ -175,13 +161,13 @@ public class Ball extends GameObject {
             }
         }
         else if (hitsY) {
-            if (vy > 0)
+            if (y + (height / 2) < other.getY() + (other.getHeight() / 2))
                 y = y - getOverlapY(other);
             else
                 y = y + getOverlapY(other);
         }
         else{
-            if (vx > 0)
+            if (x + (width / 2) < other.getX() + (other.getWidth() /2))
                 x = x - getOverlapX(other);
             else
                 x = x + getOverlapX(other);

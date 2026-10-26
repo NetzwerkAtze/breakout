@@ -18,18 +18,17 @@ public class CollisionHandler {
         }
         if (ball.hitsEdge(other)) {
             ball.resolveCollision(other, true, false);
-            ball.setVy(-ball.getVy());
-            ball.setVx(-ball.getVx());
+            if (((ball.getCenterY() < other.getY() + other.getHeight() / 2) && ball.getVy() > 0) || (ball.getCenterY() > other.getY() + other.getHeight() / 2) && ball.getVy() <= 0)
+                ball.setVy(-ball.getVy());
+            if (((ball.getCenterX() < other.getX() + other.getWidth() / 2) && ball.getVx() > 0) || (ball.getCenterX() > other.getX() + other.getWidth() / 2) && ball.getVx() <= 0)
+                ball.setVx(-ball.getVx());
         } else if (ball.hitsOnY(other)) {
             ball.resolveCollision(other, false, true);
             onStraightHit.run();
         } else {
             ball.resolveCollision(other, false, false);
-            ball.setVx(-ball.getVx());
-        }
-        if (ball.getBallState() == Ball.BallState.FREE) {
-            ball.setBallState(Ball.BallState.IMMUN);
-            ball.setImmunTimer(3);
+            if (((ball.getCenterX() < other.getX() + other.getWidth() / 2) && ball.getVx() > 0) || (ball.getCenterX() > other.getX() + other.getWidth() / 2) && ball.getVx() <= 0)
+               ball.setVx(-ball.getVx());
         }
     }
 }

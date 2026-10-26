@@ -14,7 +14,6 @@ public class PowerUpHandler {
     private int powerUpDuration;
     private int powerUpSize;
     private double fallingSpeed;
-    private double dropChance;
     private boolean stickyPaddle = false;
     private Random random = new Random();
     private List<PowerUp> powerUps = new ArrayList<>();
@@ -25,16 +24,15 @@ public class PowerUpHandler {
      * Constructor with default values.
      */
     public  PowerUpHandler(Scene scene, Game game) {
-        this(scene, game, 3, 360, 6, 0.1);
+        this(scene, game, 3, 360, 6);
     }
 
-    public PowerUpHandler(Scene scene, Game game, int fallingSpeed, int  powerUpDuration, int powerUpSize, double dropChance) {
+    public PowerUpHandler(Scene scene, Game game, int fallingSpeed, int  powerUpDuration, int powerUpSize) {
         this.scene = scene;
         this.game = game;
         this.fallingSpeed = fallingSpeed;
         this.powerUpDuration = powerUpDuration;
         this.powerUpSize = powerUpSize;
-        this.dropChance = dropChance;
         init();
     }
     public void update() {
