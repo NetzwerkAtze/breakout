@@ -47,14 +47,9 @@ public class    Game {
         buildBricks();
     }
     public void update() {
-        if (inputHandler.wasPressed(KeyCode.P))
-            gameState.setPaused(!gameState.isPaused());
-        if (inputHandler.wasPressed(KeyCode.SPACE))
-            gameState.setIdle(false);
+        checkInputs();
         if (gameState.isPaused())
             return;
-        if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
-            paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
         if (!gameState.isIdle()) {
             updateBalls();
         }
@@ -68,28 +63,9 @@ public class    Game {
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
             Ball ball = it.next();
-            if (inputHandler.wasPressed(KeyCode.SPACE)) //releaseBalls
-                ball.setBallState(Ball.BallState.FREE);
             ball.update(paddle);
-            for (Brick brick : bricks) {
-                if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                    collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
-                    brick.hit();
-                    if (brick.isDestroyed()) {
-                        powerUpHandler.onBrickDestroyed(brick);
-                        gameState.increaseScore();
-                    }
-                }
-            }
-            if (ball.collidesWith(paddle)) {
-                collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
-                    ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
-                    if (ball.getY() + ball.getHeight() / 2 < paddle.getY() + paddle.getHeight() / 2)
-                        ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
-                    else
-                        ball.setVy(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle)));
-                });
-            }
+            checkBrickCollision(ball);
+            checkPaddleCollision(ball);
             for (GameObject wall : walls) {
                 if (ball.collidesWith(wall))
                     collisionHandler.resolveBallCollision(ball, wall, false, () -> { ball.setVy(-ball.getVy());});
@@ -102,9 +78,7 @@ public class    Game {
                     gameState.setIdle(true);
                 }
                 if (gameState.isAlive() && balls.size() == 1) {
-                    ball.setY(scene.getHeight() / 2);
-                    ball.setX(scene.getWidth() / 2);
-                    ball.setVy(-ball.getVy());
+                    resetBall(ball);
                 }
             }
         }
@@ -182,6 +156,51 @@ public class    Game {
         walls.add(new GameObject(playfield.right(), playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
         // top wall
         walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + BRICK_GAP,(levelConfig.mapWidth() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
+    }
+
+    private void checkInputs() {
+        if (inputHandler.wasPressed(KeyCode.P))
+            gameState.setPaused(!gameState.isPaused());
+        if (inputHandler.wasPressed(KeyCode.SPACE))
+            gameState.setIdle(false);
+        if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
+            paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
+        if (inputHandler.wasPressed(KeyCode.SPACE)) {
+            for (Ball ball : balls)
+                ball.setBallState(Ball.BallState.FREE);
+        }
+    }
+    private void checkBrickCollision(Ball ball) {
+        for (Brick brick : bricks) {
+            if (ball.collidesWith(brick) && !brick.isDestroyed()) {
+                collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
+                brick.hit();
+                if (brick.isDestroyed()) {
+                    powerUpHandler.onBrickDestroyed(brick);
+                    gameState.increaseScore();
+                }
+            }
+        }
+    }
+
+    private void checkPaddleCollision(Ball ball) {
+        if (ball.collidesWith(paddle)) {
+            collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
+                ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
+                if (ball.getY() + ball.getHeight() / 2 < paddle.getY() + paddle.getHeight() / 2)
+                    ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
+                else
+                    ball.setVy(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle)));
+            });
+        }
+    }
+    private void checkBallInPlay(Iterator<Ball> it) {
+
+    }
+    private void resetBall(Ball ball) {
+        ball.setY(scene.getHeight() / 2);
+        ball.setX(scene.getWidth() / 2);
+        ball.setVy(-ball.getVy());
     }
 }
 
