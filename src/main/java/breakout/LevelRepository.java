@@ -45,7 +45,7 @@ public class LevelRepository {
                 "...1...",
                 "..111..",
                 ".11111.",
-                "1111111"
+                "2222222"
         ), smallPlayfieldMaxCol, smallPlayfieldWidth, defaultBrickWidth, defaultBrickHeight, firstWorldPuPWeigh));
     }
 

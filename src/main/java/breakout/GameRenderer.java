@@ -123,8 +123,7 @@ public class GameRenderer {
     private void updateBallShapeAmount() {
         for (Ball ball : game.getBalls()) {
             if (!ballMap.containsKey(ball)) {
-                Ball currentBall = game.getBalls().get(game.getBalls().indexOf(ball));
-                Circle ballShape = new Circle(currentBall.getCenterX(), currentBall.getCenterY(), currentBall.getRadius(), currentBall.getColor());
+                Circle ballShape = new Circle(ball.getCenterX(), ball.getCenterY(), ball.getRadius(), ball.getColor());
                 ballShape.setEffect(dropShadow);
                 ballMap.put(ball, ballShape);
                 playLayer.getChildren().add(ballShape);

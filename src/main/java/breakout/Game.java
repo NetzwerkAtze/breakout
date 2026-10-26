@@ -31,8 +31,8 @@ public class    Game {
 
     public Game(Scene scene, int startLives, LevelConfig levelConfig, InputHandler inputHandler) {
         this.scene = scene;
-        this.paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());;
-        balls.add(new Ball(scene.getWidth() / 2, scene.getHeight() / 2, 4, -4, 5, Color.WHITE));
+        this.paddle = new Paddle((scene.getWidth() - 80) / 2, scene.getHeight() - 20, 5, 80, 15, Color.GREY, scene.getWidth());
+        balls.add(new Ball(scene.getWidth() / 2, scene.getHeight() / 2, Math.random() > 0.5 ? 4 : -4, -4, 5, Color.WHITE));
         this.levelConfig = levelConfig;
         this.playfield = initPlayfield(levelConfig);
         this.inputHandler = inputHandler;
@@ -70,17 +70,8 @@ public class    Game {
                 if (ball.collidesWith(wall))
                     collisionHandler.resolveBallCollision(ball, wall, false, () -> { ball.setVy(-ball.getVy());});
             }
-            if (ball.getY() > scene.getHeight()) {
-                if (balls.size() > 1)
+            if (handleBallLoss(ball))
                     it.remove();
-                else if (gameState.isAlive()) {
-                    gameState.loseLife();
-                    gameState.setIdle(true);
-                }
-                if (gameState.isAlive() && balls.size() == 1) {
-                    resetBall(ball);
-                }
-            }
         }
     }
 
@@ -194,13 +185,34 @@ public class    Game {
             });
         }
     }
-  //  private void checkBallInPlay(Iterator<Ball> it) {
 
-    //}
+    /**
+     *
+     * @param ball
+     * @return true if ball needs to be removed from balls.
+     */
+    private boolean handleBallLoss(Ball ball) {
+        if (ball.getY() > scene.getHeight()) {
+            if (balls.size() > 1)
+                return true;
+            else if (gameState.isAlive()) {
+                gameState.loseLife();
+                gameState.setIdle(true);
+            }
+            if (gameState.isAlive() && balls.size() == 1) {
+                resetBall(ball);
+            }
+        }
+        return false;
+    }
+
     private void resetBall(Ball ball) {
         ball.setY(scene.getHeight() / 2);
         ball.setX(scene.getWidth() / 2);
-        ball.setVy(-ball.getVy());
+        if (Math.random() < 0.5)
+            ball.setVy(-ball.getVy());
+        if (Math.random() < 0.5)
+            ball.setVx(-ball.getVx());
     }
 }
 
