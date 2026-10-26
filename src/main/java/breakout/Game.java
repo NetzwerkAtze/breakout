@@ -36,21 +36,15 @@ public class    Game {
         this.levelConfig = levelConfig;
         this.playfield = initPlayfield(levelConfig);
         this.inputHandler = inputHandler;
-        init();
+        buildMap();
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
         collisionHandler = new CollisionHandler(this);
         gameState = new GameState(startLives, levelConfig.level());
     }
-    public void init() {
-        createBricks();
-        //left wall
-        walls.add(new GameObject(playfield.left() - WALL_THICKNESS, playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS,  (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
-        //right wall
-        walls.add(new GameObject(playfield.right(), playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
-        // top wall
-        walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + BRICK_GAP,(levelConfig.mapWidth() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
-
+    public void buildMap() {
+        buildWalls();
+        buildBricks();
     }
     public void update() {
         if (inputHandler.wasPressed(KeyCode.P))
@@ -62,54 +56,57 @@ public class    Game {
         if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
             paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
         if (!gameState.isIdle()) {
-            Iterator<Ball> it = balls.iterator();
-            while (it.hasNext()) {
-                Ball ball = it.next();
-                if (inputHandler.wasPressed(KeyCode.SPACE)) //releaseBalls
-                    ball.setBallState(Ball.BallState.FREE);
-                ball.update(paddle);
-                for (Brick brick : bricks) {
-                    if (ball.collidesWith(brick) && !brick.isDestroyed()) {
-                        collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
-                        brick.hit();
-                        if (brick.isDestroyed()) {
-                            powerUpHandler.onBrickDestroyed(brick);
-                            gameState.increaseScore();
-                        }
-                    }
-                }
-                if (ball.collidesWith(paddle)) {
-                    collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
-                        ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
-                        if (ball.getY() + ball.getHeight() / 2 < paddle.getY() + paddle.getHeight() / 2)
-                            ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
-                        else
-                            ball.setVy(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle)));
-                    });
-                }
-                for (GameObject wall : walls) {
-                    if (ball.collidesWith(wall))
-                        collisionHandler.resolveBallCollision(ball, wall, false, () -> { ball.setVy(-ball.getVy());});
-                }
-                if (ball.getY() > scene.getHeight()) {
-                    if (balls.size() > 1)
-                        it.remove();
-                    else if (gameState.isAlive()) {
-                        gameState.loseLife();
-                        gameState.setIdle(true);
-                    }
-                    if (gameState.isAlive() && balls.size() == 1) {
-                        ball.setY(scene.getHeight() / 2);
-                        ball.setX(scene.getWidth() / 2);
-                        ball.setVy(-ball.getVy());
-                    }
-                }
-            }
+            updateBalls();
         }
         powerUpHandler.update();
         if (bricks.stream().allMatch(Brick::isDestroyed)) {
             gameState.setLevelWon(true);
             gameState.setIdle(true);
+        }
+    }
+    public void updateBalls() {
+        Iterator<Ball> it = balls.iterator();
+        while (it.hasNext()) {
+            Ball ball = it.next();
+            if (inputHandler.wasPressed(KeyCode.SPACE)) //releaseBalls
+                ball.setBallState(Ball.BallState.FREE);
+            ball.update(paddle);
+            for (Brick brick : bricks) {
+                if (ball.collidesWith(brick) && !brick.isDestroyed()) {
+                    collisionHandler.resolveBallCollision(ball, brick, false, () -> ball.setVy(-ball.getVy()));
+                    brick.hit();
+                    if (brick.isDestroyed()) {
+                        powerUpHandler.onBrickDestroyed(brick);
+                        gameState.increaseScore();
+                    }
+                }
+            }
+            if (ball.collidesWith(paddle)) {
+                collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
+                    ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));
+                    if (ball.getY() + ball.getHeight() / 2 < paddle.getY() + paddle.getHeight() / 2)
+                        ball.setVy(-(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle))));
+                    else
+                        ball.setVy(ball.getSpeed() * Math.cos(ball.getRadians(paddle, maxAngle)));
+                });
+            }
+            for (GameObject wall : walls) {
+                if (ball.collidesWith(wall))
+                    collisionHandler.resolveBallCollision(ball, wall, false, () -> { ball.setVy(-ball.getVy());});
+            }
+            if (ball.getY() > scene.getHeight()) {
+                if (balls.size() > 1)
+                    it.remove();
+                else if (gameState.isAlive()) {
+                    gameState.loseLife();
+                    gameState.setIdle(true);
+                }
+                if (gameState.isAlive() && balls.size() == 1) {
+                    ball.setY(scene.getHeight() / 2);
+                    ball.setX(scene.getWidth() / 2);
+                    ball.setVy(-ball.getVy());
+                }
+            }
         }
     }
 
@@ -166,7 +163,7 @@ public class    Game {
     public Playfield getPlayfield() {
         return playfield;
     }
-    private void createBricks() {
+    private void buildBricks() {
         double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
         for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
             for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
@@ -178,7 +175,7 @@ public class    Game {
             }
         }
     }
-    private void createWalls() {
+    private void buildWalls() {
         //left wall
         walls.add(new GameObject(playfield.left() - WALL_THICKNESS, playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS,  (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
         //right wall
