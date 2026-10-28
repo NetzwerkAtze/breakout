@@ -1,7 +1,5 @@
 package breakout;
 
-import javafx.scene.input.KeyCode;
-
 public class GameState {
     private int startingLives;
     private int lives;

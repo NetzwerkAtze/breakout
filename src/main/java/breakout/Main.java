@@ -21,9 +21,8 @@
             private HighscoreManager hsManager;
             private int nextLevelIndex = 0;
             List<LevelConfig> levels = new ArrayList<>();
-            private boolean won = false;
-            private boolean inMenu = true;
             private ScreenState screenState;
+            private int defaultLives = 3;
 
             public enum ScreenState {
                 MENU,
@@ -71,8 +70,8 @@
                                 if (inputHandler.wasPressed(KeyCode.ESCAPE)) {
                                     gameRenderer.clear();
                                     menu.show();
-                                    inMenu = true;
                                     nextLevelIndex = 0;
+                                    screenState = ScreenState.MENU;
                                 }
                             }
                             case VICTORY -> {
@@ -101,7 +100,7 @@
                 else {
                     if (levelIndex > 0)
                         gameRenderer.clear();
-                    game = new Game(scene, 3, levels.get(levelIndex), inputHandler);
+                    game = new Game(scene, defaultLives, levels.get(levelIndex), inputHandler);
                     gameRenderer = new GameRenderer(root, game, hsManager);
                     nextLevelIndex++;
                     screenState = ScreenState.PLAYING;

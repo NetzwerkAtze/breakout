@@ -63,15 +63,15 @@ public class PowerUpHandler {
         powerUps.clear();
         brickPowerUpMap.clear();
         for (Brick brick : game.getBricks())
-            generatePowerUps(brick, game.getLevelConfig().powerUpDropchance());
+            generatePowerUps(brick, game.getLevelConfig().world().powerUpDropChance());
     }
 
     private void init() {
         for (Brick brick : game.getBricks())
-            generatePowerUps(brick, game.getLevelConfig().powerUpDropchance());
+            generatePowerUps(brick, game.getLevelConfig().world().powerUpDropChance());
     }
 
-    private void generatePowerUps(Brick brick, HashMap<PowerUp.PowerUpType, Double> powerUpWeigh) {
+    private void generatePowerUps(Brick brick, Map<PowerUp.PowerUpType, Double> powerUpWeigh) {
         double chance = random.nextDouble() * 100;
         for (Map.Entry<PowerUp.PowerUpType, Double> entry : powerUpWeigh.entrySet()) {
             chance -= entry.getValue();

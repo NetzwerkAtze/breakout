@@ -28,6 +28,7 @@ public class    Game {
     private static final double WALL_THICKNESS = 23.5;
     private static final double MENU_BAR_HEIGHT = 30;
     private static final double BRICK_GAP = 1;
+    private static final double MENU_GAP = 1;
 
     public Game(Scene scene, int startLives, LevelConfig levelConfig, InputHandler inputHandler) {
         this.scene = scene;
@@ -40,16 +41,16 @@ public class    Game {
         ballStartingRadius = balls.getFirst().getRadius();
         powerUpHandler = new PowerUpHandler(scene, this);
         collisionHandler = new CollisionHandler(this);
-        gameState = new GameState(startLives, levelConfig.level());
+        gameState = new GameState(startLives, levelConfig.id() % 10);
     }
     public void buildMap() {
         buildWalls();
         buildBricks();
     }
     public void update() {
-        checkInputs();
         if (gameState.isPaused())
             return;
+        checkInputs();
         if (!gameState.isIdle()) {
             updateBalls();
         }
@@ -117,7 +118,7 @@ public class    Game {
         return gameState;
     }
     private Playfield initPlayfield(LevelConfig config) {
-        double gap = (scene.getWidth() - Math.min(config.mapWidth(), scene.getWidth())) / 2;
+        double gap = (scene.getWidth() - Math.min(config.world().fieldWith(), scene.getWidth())) / 2;
         return new Playfield(0 + gap + WALL_THICKNESS, scene.getWidth() - gap - WALL_THICKNESS, MENU_BAR_HEIGHT + WALL_THICKNESS);
     }
 
@@ -129,12 +130,12 @@ public class    Game {
         return playfield;
     }
     private void buildBricks() {
-        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.maxCol() * (levelConfig.brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
-        for (int row = 0; row < levelConfig.levelLayout().size(); row++) {
-            for (int col = 0; col < levelConfig.levelLayout().get(row).length(); col++) {
-                char currentSymbol = levelConfig.levelLayout().get(row).charAt(col);
+        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.world().maxCol() * (levelConfig.world().brickWidth() + BRICK_GAP) + BRICK_GAP)) / 2;
+        for (int row = 0; row < levelConfig.layout().size(); row++) {
+            for (int col = 0; col < levelConfig.layout().get(row).length(); col++) {
+                char currentSymbol = levelConfig.layout().get(row).charAt(col);
                 if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (levelConfig.brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset + BRICK_GAP, (row * levelConfig.brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.brickWidth(), levelConfig.brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    Brick brick = new Brick(col * (levelConfig.world().brickWidth() + BRICK_GAP) + playfield.left() + brickAllignmentOffset + BRICK_GAP, (row * levelConfig.world().brickHeight()) + MENU_BAR_HEIGHT + BRICK_GAP + WALL_THICKNESS, levelConfig.world().brickWidth(), levelConfig.world().brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }
@@ -146,7 +147,7 @@ public class    Game {
         //right wall
         walls.add(new GameObject(playfield.right(), playfield.top() - WALL_THICKNESS + BRICK_GAP, WALL_THICKNESS, (scene.getHeight() - (MENU_BAR_HEIGHT + BRICK_GAP)), Color.GREY));
         // top wall
-        walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + BRICK_GAP,(levelConfig.mapWidth() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
+        walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + MENU_GAP,(levelConfig.world().fieldWith() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
     }
 
     private void checkInputs() {
