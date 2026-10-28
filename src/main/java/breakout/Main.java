@@ -67,18 +67,15 @@
                                 }
                                 if (inputHandler.wasPressed(KeyCode.Q))     // for debugging
                                     game.getGameState().setLevelWon(true);  // for debugging
-                                if (inputHandler.wasPressed(KeyCode.ESCAPE)) {
-                                    gameRenderer.clear();
-                                    menu.show();
-                                    nextLevelIndex = 0;
-                                    screenState = ScreenState.MENU;
-                                }
+                                if (inputHandler.wasPressed(KeyCode.ESCAPE))
+                                    openMenu();
                             }
                             case VICTORY -> {
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
                                 gameRenderer.displayVictory();
-                                this.stop();
+                                if (inputHandler.wasPressed(KeyCode.ESCAPE))
+                                    openMenu();
                             }
                         }
                         inputHandler.getJustPressed().clear();
@@ -93,7 +90,7 @@
                 launch(args);
             }
 
-            public void loadLevel(int levelIndex) {
+            private void loadLevel(int levelIndex) {
                 menu.hide();
                 if (levelIndex >= levels.size())
                     screenState = ScreenState.VICTORY;
@@ -105,5 +102,12 @@
                     nextLevelIndex++;
                     screenState = ScreenState.PLAYING;
                 }
+            }
+            private void openMenu() {
+
+                gameRenderer.clear();
+                menu.show();
+                nextLevelIndex = 0;
+                screenState = ScreenState.MENU;
             }
         }

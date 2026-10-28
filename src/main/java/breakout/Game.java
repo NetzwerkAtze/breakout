@@ -48,9 +48,9 @@ public class    Game {
         buildBricks();
     }
     public void update() {
+        handleInputs();
         if (gameState.isPaused())
             return;
-        checkInputs();
         if (!gameState.isIdle()) {
             updateBalls();
         }
@@ -66,7 +66,7 @@ public class    Game {
             Ball ball = it.next();
             ball.update(paddle);
             checkBrickCollision(ball);
-            checkPaddleCollision(ball);
+            handlePaddleCollision(ball);
             for (GameObject wall : walls) {
                 if (ball.collidesWith(wall))
                     collisionHandler.resolveBallCollision(ball, wall, false, () -> { ball.setVy(-ball.getVy());});
@@ -85,6 +85,8 @@ public class    Game {
         balls.getFirst().setY(scene.getHeight() / 2);
         balls.getFirst().setX(scene.getWidth() / 2);
         balls.getFirst().setVy(-Math.sqrt(balls.getFirst().getVy()*balls.getFirst().getVy()));
+        while (balls.size() > 1)
+            balls.removeLast();
         paddle.setX((scene.getWidth() - paddle.getWidth()) / 2);
         paddle.setWidth(paddle.getStartingWidth());
         gameState.setIdle(true);
@@ -150,16 +152,17 @@ public class    Game {
         walls.add(new GameObject(playfield.left(), MENU_BAR_HEIGHT + MENU_GAP,(levelConfig.world().fieldWith() - WALL_THICKNESS * 2), WALL_THICKNESS, Color.GREY));
     }
 
-    private void checkInputs() {
+    private void handleInputs() {
         if (inputHandler.wasPressed(KeyCode.P))
             gameState.setPaused(!gameState.isPaused());
-        if (inputHandler.wasPressed(KeyCode.SPACE))
-            gameState.setIdle(false);
-        if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
-            paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
-        if (inputHandler.wasPressed(KeyCode.SPACE)) {
-            for (Ball ball : balls)
-                ball.setBallState(Ball.BallState.FREE);
+        if (!gameState.isPaused()) {
+            if (inputHandler.wasPressed(KeyCode.SPACE)) {
+                gameState.setIdle(false);
+                for (Ball ball : balls)
+                    ball.setBallState(Ball.BallState.FREE);
+            }
+            if (inputHandler.isHeld(KeyCode.RIGHT) || inputHandler.isHeld(KeyCode.LEFT))
+                paddle.move(inputHandler.isHeld(KeyCode.LEFT), playfield.left(), playfield.right());
         }
     }
     private void checkBrickCollision(Ball ball) {
@@ -175,7 +178,7 @@ public class    Game {
         }
     }
 
-    private void checkPaddleCollision(Ball ball) {
+    private void handlePaddleCollision(Ball ball) {
         if (ball.collidesWith(paddle)) {
             collisionHandler.resolveBallCollision(ball, paddle, true, () -> {
                 ball.setVx(ball.getSpeed() * Math.sin(ball.getRadians(paddle, maxAngle)));

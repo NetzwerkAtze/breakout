@@ -85,6 +85,7 @@ public class GameRenderer {
             for (int i = 0; i < crackMap.get(brick).size(); i++)
                 crackMap.get(brick).get(i).setVisible(false);
         }
+        levelCompleteText.setFill(Color.TRANSPARENT);
     }
     public void clear() {
         crackMap.values().forEach(list -> list.forEach(value -> root.getChildren().remove(value)));
@@ -96,11 +97,13 @@ public class GameRenderer {
         root.getChildren().remove(boardLayer);
         root.getChildren().remove(playLayer);
         root.getChildren().remove(hudLayer);
+        root.getChildren().remove(wonText);
     }
     public void displayVictory() {
         clear();
         wonText.setFill(Color.WHITE);
-        root.getChildren().add(wonText);
+        if (!root.getChildren().contains(wonText))
+            root.getChildren().add(wonText);
     }
     public void createPowerUpShapes() {
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {

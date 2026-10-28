@@ -28,6 +28,11 @@ public class Ball extends GameObject {
         FREE,
         STICKING,
     }
+    public enum collisionPoint {
+        EDGE,
+        X_AXIS,
+        Y_AXIS
+    }
 
     public Ball(double x, double y, double vx, double vy, double radius, Color color) {
         super(x, y, 2 * radius, 2 * radius, color);
@@ -131,46 +136,41 @@ public class Ball extends GameObject {
     }
     /**
      * pushes the ball out of the object by the overlapping factor.
-     * edge and hitsY should never be true at the same time
-     * there are three cases
-     * 1. edge true, hitsY false on edge hits
-     * 2. edge false, hitsY true on y axis hits
-     * 3. edge false, hitsY false on x axis hits
-     * @param other other object that the ball hits
-     * @param edge if the ball hits on edge of object
-     * @param hitsY if ball hits on y axis
+     *
      */
-    public void resolveCollision(GameObject other, boolean edge, boolean hitsY) {
-        if (edge) {
-            if (x + (width / 2) < other.getX() + (other.getWidth() /2)) {
-                if (y + (height / 2) < other.getY() + (other.getHeight() / 2)) {  // top left corner
-                    x = x - getOverlapX(other);
-                    y = y - getOverlapY(other);
-                } else {  // bottom left corner
-                    x = x - getOverlapX(other);
-                    y = y + getOverlapY(other);
-                }
-            } else {
-                if (y + (height / 2) > other.getY() + (other.getHeight() / 2)) { // bottom right corner
-                    x = x + getOverlapX(other);
-                    y = y + getOverlapY(other);
-                } else {  // top right corner
-                    x = x + getOverlapX(other);
-                    y = y - getOverlapY(other);
+    public void resolveCollision(GameObject other, collisionPoint collisionPoint) {
+        switch (collisionPoint) {
+            case EDGE -> {
+                if (x + (width / 2) < other.getX() + (other.getWidth() /2)) {
+                    if (y + (height / 2) < other.getY() + (other.getHeight() / 2)) {  // top left corner
+                        x = x - getOverlapX(other);
+                        y = y - getOverlapY(other);
+                    } else {  // bottom left corner
+                        x = x - getOverlapX(other);
+                        y = y + getOverlapY(other);
+                    }
+                } else {
+                    if (y + (height / 2) > other.getY() + (other.getHeight() / 2)) { // bottom right corner
+                        x = x + getOverlapX(other);
+                        y = y + getOverlapY(other);
+                    } else {  // top right corner
+                        x = x + getOverlapX(other);
+                        y = y - getOverlapY(other);
+                    }
                 }
             }
+            case Y_AXIS -> {
+                if (y + (height / 2) < other.getY() + (other.getHeight() / 2))
+                    y = y - getOverlapY(other);
+                else
+                    y = y + getOverlapY(other);
         }
-        else if (hitsY) {
-            if (y + (height / 2) < other.getY() + (other.getHeight() / 2))
-                y = y - getOverlapY(other);
-            else
-                y = y + getOverlapY(other);
-        }
-        else{
-            if (x + (width / 2) < other.getX() + (other.getWidth() /2))
-                x = x - getOverlapX(other);
-            else
-                x = x + getOverlapX(other);
+            case X_AXIS -> {
+                if (x + (width / 2) < other.getX() + (other.getWidth() / 2))
+                    x = x - getOverlapX(other);
+                else
+                    x = x + getOverlapX(other);
+            }
         }
     }
 }

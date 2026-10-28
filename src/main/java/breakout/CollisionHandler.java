@@ -17,16 +17,16 @@ public class CollisionHandler {
             }
         }
         if (ball.hitsEdge(other)) {
-            ball.resolveCollision(other, true, false);
+            ball.resolveCollision(other, Ball.collisionPoint.EDGE);
             if (((ball.getCenterY() < other.getY() + other.getHeight() / 2) && ball.getVy() > 0) || (ball.getCenterY() > other.getY() + other.getHeight() / 2) && ball.getVy() <= 0)
                 ball.setVy(-ball.getVy());
             if (((ball.getCenterX() < other.getX() + other.getWidth() / 2) && ball.getVx() > 0) || (ball.getCenterX() > other.getX() + other.getWidth() / 2) && ball.getVx() <= 0)
                 ball.setVx(-ball.getVx());
         } else if (ball.hitsOnY(other)) {
-            ball.resolveCollision(other, false, true);
+            ball.resolveCollision(other, Ball.collisionPoint.Y_AXIS);
             onStraightHit.run();
         } else {
-            ball.resolveCollision(other, false, false);
+            ball.resolveCollision(other, Ball.collisionPoint.X_AXIS);
             if (((ball.getCenterX() < other.getX() + other.getWidth() / 2) && ball.getVx() > 0) || (ball.getCenterX() > other.getX() + other.getWidth() / 2) && ball.getVx() <= 0)
                ball.setVx(-ball.getVx());
         }

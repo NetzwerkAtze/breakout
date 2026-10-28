@@ -24,10 +24,15 @@ public class Menu {
         overlay.getChildren().add(startText);
         root.getChildren().add(overlay);
     }
+
     public void hide() {
         overlay.setVisible(false);
     }
+
     public void show() {
         overlay.setVisible(true);
+    }
+    public void displayVictory() {
+
     }
 }
