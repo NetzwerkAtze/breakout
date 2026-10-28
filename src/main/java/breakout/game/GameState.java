@@ -1,4 +1,4 @@
-package breakout;
+package breakout.game;
 
 public class GameState {
     private int startingLives;

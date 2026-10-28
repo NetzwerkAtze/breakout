@@ -1,17 +1,18 @@
-package breakout;
+package breakout.input;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  */
 public class InputHandler {
     private Pane root;
-    private ArrayList<KeyCode> held = new ArrayList<>();
-    private ArrayList<KeyCode> justPressed = new ArrayList<>();
+    private Set<KeyCode> held = new HashSet<>();
+    private Set<KeyCode> justPressed = new HashSet<>();
 
     public InputHandler(Pane root) {
         this.root = root;
@@ -71,10 +72,9 @@ public class InputHandler {
     }
     private void removeKey(KeyCode key) {
         held.remove(key);
-        justPressed.remove(key);
     }
 
-    public ArrayList<KeyCode> getJustPressed() {
-        return justPressed;
+    public void clearJustPressed() {
+        justPressed.clear();
     }
 }

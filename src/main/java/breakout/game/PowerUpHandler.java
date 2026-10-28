@@ -1,4 +1,4 @@
-package breakout;
+package breakout.game;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;

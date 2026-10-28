@@ -1,5 +1,6 @@
-package breakout;
+package breakout.ui;
 
+import breakout.input.InputHandler;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -33,6 +34,5 @@ public class Menu {
         overlay.setVisible(true);
     }
     public void displayVictory() {
-
     }
 }

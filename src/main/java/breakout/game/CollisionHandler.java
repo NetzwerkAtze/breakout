@@ -1,21 +1,13 @@
-package breakout;
+package breakout.game;
 
 import breakout.gameObject.Ball;
 import breakout.gameObject.GameObject;
 
 public class CollisionHandler {
-    private Game game;
 
-    public CollisionHandler(Game game) {
-        this.game = game;
+    public CollisionHandler() {
     }
-    public void resolveBallCollision(Ball ball, GameObject other, boolean isPaddle, Runnable onStraightHit) {
-        if (game.getPowerUpHandler().isStickyPaddle() && isPaddle) {
-            if (ball.getBallState() == Ball.BallState.FREE) {
-                ball.setStickOffset(other.getX() - ball.getX());
-                ball.setBallState(Ball.BallState.STICKING);
-            }
-        }
+    public void resolveBallCollision(Ball ball, GameObject other, Runnable onStraightHit) {
         if (ball.hitsEdge(other)) {
             ball.resolveCollision(other, Ball.collisionPoint.EDGE);
             if (((ball.getCenterY() < other.getY() + other.getHeight() / 2) && ball.getVy() > 0) || (ball.getCenterY() > other.getY() + other.getHeight() / 2) && ball.getVy() <= 0)

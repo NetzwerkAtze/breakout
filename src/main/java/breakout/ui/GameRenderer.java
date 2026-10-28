@@ -1,5 +1,7 @@
-package breakout;
+package breakout.ui;
 
+import breakout.storage.HighscoreManager;
+import breakout.game.Game;
 import breakout.gameObject.Ball;
 import breakout.gameObject.Brick;
 import breakout.gameObject.GameObject;

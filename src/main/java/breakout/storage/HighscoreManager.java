@@ -1,4 +1,4 @@
-package breakout;
+package breakout.storage;
 
 import java.io.IOException;
 import java.nio.file.Files;

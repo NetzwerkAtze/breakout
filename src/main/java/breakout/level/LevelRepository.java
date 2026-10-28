@@ -1,11 +1,8 @@
-package breakout;
+package breakout.level;
 
 import breakout.gameObject.PowerUp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LevelRepository {
     private final double defaultBrickWidth = 60;
@@ -17,12 +14,12 @@ public class LevelRepository {
     private final double maximumPlayfieldWidth = 900;
     private final int maximumPlayfieldMaxCol = 14;
 
-    private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = new HashMap<>(Map.of(PowerUp.PowerUpType.BIGGER_PADDLE, 20.));
+    private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = Map.of(PowerUp.PowerUpType.BIGGER_PADDLE, 20., PowerUp.PowerUpType.STICKY_PADDLE, 80.);
     private final World firstWorld = new World(smallPlayfieldWidth, smallPlayfieldMaxCol, defaultBrickWidth, defaultBrickHeight, firstWorldPowerUpDropChance);
     private final List<LevelConfig> levels = new ArrayList<>();
 
     public LevelRepository() {
-        levels.add(new LevelConfig(101, List.of(
+        levels.add(new LevelConfig(new LevelId(1,1), List.of(
                 ".......",
                 ".......",
                 ".......",
@@ -30,7 +27,7 @@ public class LevelRepository {
                 ".11111.",
                 ".11111."
         ), firstWorld));
-        levels.add(new LevelConfig(102, List.of(
+        levels.add(new LevelConfig(new LevelId(1,2), List.of(
                 ".......",
                 ".......",
                 ".......",
@@ -38,14 +35,14 @@ public class LevelRepository {
                 "..111..",
                 ".11111."
         ), firstWorld));
-        levels.add(new LevelConfig(103, List.of(
+        levels.add(new LevelConfig(new LevelId(1,3), List.of(
                 "1111111",
                 ".11111.",
                 "..111..",
                 "...1...",
                 "..111..",
                 ".11111.",
-                "2222222"
+                "1111111"
         ), firstWorld));
     }
 
@@ -55,7 +52,7 @@ public class LevelRepository {
 
     public  LevelConfig getLevelByNumber(int world, int number) {
         for (LevelConfig level : levels) {
-            if (level.id() == world * 100 + number)
+            if (level.id().world() == world && level.id().Level() == number)
                 return level;
         }
         return null;
