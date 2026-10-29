@@ -115,7 +115,7 @@ public class Ball extends GameObject {
     public boolean hitsEdge(GameObject other) {
         double overlapX = Math.min(x + width, other.x + other.width) - Math.max(x, other.x);
         double overlapY = Math.min(y + height, other.y + other.height) - Math.max(y, other.y);
-        return Math.abs(overlapX - overlapY) < 0.001;
+        return Math.abs(overlapX - overlapY) < 0.1;
     }
 
     public double getRadians(Paddle paddle, int maxAngle) {

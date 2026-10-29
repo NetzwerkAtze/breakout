@@ -5,8 +5,6 @@ import breakout.gameObject.GameObject;
 
 public class CollisionHandler {
 
-    public CollisionHandler() {
-    }
     public void resolveBallCollision(Ball ball, GameObject other, Runnable onStraightHit) {
         if (ball.hitsEdge(other)) {
             ball.resolveCollision(other, Ball.collisionPoint.EDGE);

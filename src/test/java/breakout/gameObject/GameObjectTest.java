@@ -3,8 +3,7 @@ package breakout.gameObject;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameObjectTest {
 
@@ -49,5 +48,11 @@ public class GameObjectTest {
         GameObject b = new GameObject(10, 10, 15, 15, Color.RED);
         boolean result = a.hitsEdge(b);
         assertTrue(result);
+    }
+    @Test
+    void ballMovingThroughBrickGap() {
+        GameObject brick = new GameObject(100, 100, 60, 20, Color.GREY);
+        GameObject brickTwo = new GameObject(162, 100, 60, 20, Color.GREY);
+        Ball ball = new Ball(161, 110, 0, -8, 5, Color.WHITE);
     }
 }

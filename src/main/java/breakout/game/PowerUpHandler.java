@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 public class PowerUpHandler {
-    private Scene scene;
     private Game game;
     private int powerUpDuration;
     private int powerUpSize;
@@ -23,12 +22,12 @@ public class PowerUpHandler {
     /**
      * Constructor with default values.
      */
-    public  PowerUpHandler(Scene scene, Game game) {
-        this(scene, game, 3, 360, 6);
+    public  PowerUpHandler(Game game) {
+        this(game, 3, 360, 6);
     }
 
-    public PowerUpHandler(Scene scene, Game game, int fallingSpeed, int  powerUpDuration, int powerUpSize) {
-        this.scene = scene;
+    public PowerUpHandler(Game game, int fallingSpeed, int  powerUpDuration, int powerUpSize) {
+
         this.game = game;
         this.fallingSpeed = fallingSpeed;
         this.powerUpDuration = powerUpDuration;
@@ -45,7 +44,7 @@ public class PowerUpHandler {
             }
             if (powerUp.collidesWith(game.getPaddle())) {
                 applyEffect(powerUp);
-            } else if (powerUp.getY() > scene.getHeight())
+            } else if (powerUp.getY() > game.getPlayfield().bottom())
                 powerUp.setPowerUpState(PowerUp.PowerUpState.REMOVED);
         }
     }

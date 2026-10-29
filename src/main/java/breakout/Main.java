@@ -4,6 +4,7 @@
     import breakout.game.Playfield;
     import breakout.input.InputHandler;
     import breakout.level.LevelConfig;
+    import breakout.level.LevelId;
     import breakout.level.LevelRepository;
     import breakout.storage.HighscoreManager;
     import breakout.ui.GameRenderer;
@@ -15,22 +16,22 @@
     import javafx.scene.layout.Pane;
     import javafx.scene.paint.Color;
     import javafx.stage.Stage;
-    import java.util.ArrayList;
-    import java.util.List;
+
 
     public class Main extends Application {
 
-        private Pane root;
-        private Scene scene;
-        private Menu menu;
-        private Game game;
+        private Pane root = new Pane();
+        private Scene scene = new Scene(root, 900, 600, Color.BLACK);
         private GameRenderer gameRenderer;
-        private InputHandler inputHandler;
-        private HighscoreManager hsManager;
-        private int nextLevelIndex = 0;
-        List<LevelConfig> levels = new ArrayList<>();
-        private ScreenState screenState;
+        private InputHandler inputHandler = new InputHandler(root);
+        private HighscoreManager hsManager = new HighscoreManager();
+        private LevelRepository repository = new LevelRepository();
+        private ScreenState screenState = ScreenState.MENU;
+        private Menu menu = new Menu(root, inputHandler, repository);
+        private Game game;
         private int defaultLives = 3;
+        private int nextLevelIndex = 0;
+        private LevelId nextLevelId;
 
         public enum ScreenState {
             MENU,
@@ -40,14 +41,6 @@
 
         @Override
         public void start(Stage primaryStage) {
-            hsManager = new HighscoreManager();
-            root = new Pane();
-            scene = new Scene(root, 900, 600, Color.BLACK);
-            inputHandler = new InputHandler(root);
-            menu = new Menu(root, inputHandler);
-            levels = new LevelRepository().getLevels();
-            screenState = ScreenState.MENU;
-
 
             AnimationTimer timer = new AnimationTimer() {
                 @Override
@@ -100,12 +93,12 @@
 
         private void loadLevel(int levelIndex) {
             menu.hide();
-            if (levelIndex >= levels.size())
+            if (levelIndex >= repository.getLevels().size())
                 screenState = ScreenState.VICTORY;
             else {
                 if (levelIndex > 0)
                     gameRenderer.clear();
-                game = new Game(scene, defaultLives, levels.get(levelIndex), inputHandler, Playfield.calculatePlayfield(levels.get(levelIndex), scene.getWidth(), scene.getHeight()));
+                game = new Game(defaultLives, repository.getLevels().get(levelIndex), inputHandler, Playfield.calculatePlayfield(repository.getLevels().get(levelIndex), scene.getWidth(), scene.getHeight()));
                 gameRenderer = new GameRenderer(root, game, hsManager);
                 nextLevelIndex++;
                 screenState = ScreenState.PLAYING;

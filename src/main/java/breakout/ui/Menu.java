@@ -1,6 +1,7 @@
 package breakout.ui;
 
 import breakout.input.InputHandler;
+import breakout.level.LevelRepository;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -11,13 +12,13 @@ public class Menu {
     private Pane root;
     private Group overlay = new Group();
 
-    public Menu(Pane root, InputHandler inputHandler) {
+    public Menu(Pane root, InputHandler inputHandler, LevelRepository repository) {
         this.root = root;
         init();
     }
 
     private void init() {
-        Text startText = new Text("Start");
+        Text startText = new Text("World 1");
         startText.setFill(Color.WHITE);
         startText.setFont(new Font(20));
         startText.setX(root.getScene().getWidth()/2 - startText.getLayoutBounds().getCenterX());

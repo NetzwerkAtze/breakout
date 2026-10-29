@@ -11,16 +11,24 @@ public class LevelRepository {
     private final double smallPlayfieldWidth = 550;
     private final int smallPlayfieldMaxCol = 7;
 
+    private final double mediumPlayfieldWidth = 725;
+    private final int mediumPlayfieldMaxCol = 11;
+
     private final double maximumPlayfieldWidth = 900;
     private final int maximumPlayfieldMaxCol = 14;
 
-    private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = Map.of(PowerUp.PowerUpType.BIGGER_PADDLE, 20., PowerUp.PowerUpType.STICKY_PADDLE, 80.);
-    private final World firstWorld = new World(smallPlayfieldWidth, smallPlayfieldMaxCol, defaultBrickWidth, defaultBrickHeight, firstWorldPowerUpDropChance);
+    private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = Map.of();
+    private final Map<PowerUp.PowerUpType, Double> secondWorldPowerUpDropChance = Map.of(PowerUp.PowerUpType.ANOTHER_BALL, 5.);
     private final List<LevelConfig> levels = new ArrayList<>();
+    private final List<World> worlds = new ArrayList<>();
 
     public LevelRepository() {
+        World firstWorld = new World(smallPlayfieldWidth, smallPlayfieldMaxCol, defaultBrickWidth, defaultBrickHeight, firstWorldPowerUpDropChance);
+        World secondWorld = new World(mediumPlayfieldWidth, mediumPlayfieldMaxCol, defaultBrickWidth, defaultBrickHeight, secondWorldPowerUpDropChance );
+
+        // first world
         levels.add(new LevelConfig(new LevelId(1,1), List.of(
-                ".......",
+                ".11111.",
                 ".......",
                 ".......",
                 ".......",
@@ -44,10 +52,37 @@ public class LevelRepository {
                 ".11111.",
                 "1111111"
         ), firstWorld));
+
+        //second World
+        levels.add(new LevelConfig(new LevelId(2,1), List.of(
+                "...........",
+                "...........",
+                "11111111111",
+                "...........",
+                "...........",
+                "...........",
+                "22222222222",
+                "...........",
+                "...........",
+                "...........",
+                "11111111111"
+        ), secondWorld));
+        levels.add(new LevelConfig(new LevelId(2,1), List.of(
+                "...........",
+                "...........",
+                ".1.1.1.1.1.",
+                "1.1.1.1.1.1",
+                ".1.1.1.1.1.",
+                "1.1.1.1.1.1"
+        ), secondWorld));
     }
 
     public List<LevelConfig> getLevels() {
         return levels;
+    }
+
+    public List<World> getWorlds() {
+        return worlds;
     }
 
     public  LevelConfig getLevelByNumber(int world, int number) {
