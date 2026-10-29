@@ -127,7 +127,7 @@ public class    Game {
         return playfield;
     }
     private void buildBricks() {
-        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.world().maxCol() * (levelConfig.world().brickWidth() + Playfield.BRICK_GAP) + Playfield.BRICK_GAP)) / 2;
+        double brickAllignmentOffset = ((playfield.right() - playfield.left()) - (levelConfig.layout().getFirst().length() * (levelConfig.world().brickWidth() + Playfield.BRICK_GAP) + Playfield.BRICK_GAP)) / 2;
         for (int row = 0; row < levelConfig.layout().size(); row++) {
             for (int col = 0; col < levelConfig.layout().get(row).length(); col++) {
                 char currentSymbol = levelConfig.layout().get(row).charAt(col);
