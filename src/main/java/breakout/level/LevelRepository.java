@@ -3,6 +3,7 @@ package breakout.level;
 import breakout.gameObject.PowerUp;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class LevelRepository {
     private final double defaultBrickWidth = 60;
@@ -11,7 +12,9 @@ public class LevelRepository {
 
     private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = Map.of();
     private final Map<PowerUp.PowerUpType, Double> secondWorldPowerUpDropChance = Map.of(PowerUp.PowerUpType.ANOTHER_BALL, 5.);
-    private final List<LevelConfig> levels = new ArrayList<>();
+    private final List<List<LevelConfig>> levels = new ArrayList<>();
+    // mache levels zu list of lists damit jede welt 1 list hat dann easier zugriff
+    private final List<LevelId> levelIds = new ArrayList<>();
     private final List<World> worlds = new ArrayList<>();
 
     public LevelRepository() {
@@ -19,23 +22,37 @@ public class LevelRepository {
         World secondWorld = new World(defaultBrickWidth, defaultBrickHeight, secondWorldPowerUpDropChance );
 
         // first world
-        levels.add(new LevelConfig(new LevelId(1,1), List.of(
-                ".11111.",
+        levels.add(List.of(
+            new LevelConfig(new LevelId(1,1), List.of(
                 ".......",
                 ".......",
                 ".......",
-                ".11111.",
+                ".....1.",
+                "....11.",
+                "...111.",
+                "..1111.",
                 ".11111."
-        ), firstWorld));
-        levels.add(new LevelConfig(new LevelId(1,2), List.of(
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,2), List.of(
+                ".......",
+                ".......",
+                "1111111",
+                ".......",
+                ".......",
+                "1111111",
+                ".......",
+                ".......",
+                "1111111"
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,3), List.of(
                 ".......",
                 ".......",
                 ".......",
                 "...1...",
                 "..111..",
                 ".11111."
-        ), firstWorld));
-        levels.add(new LevelConfig(new LevelId(1,3), List.of(
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,4), List.of(
                 "1111111",
                 ".11111.",
                 "..111..",
@@ -43,11 +60,12 @@ public class LevelRepository {
                 "..111..",
                 ".11111.",
                 "1111111"
-        ), firstWorld));
+            ), firstWorld)));
 
         //second World
-        levels.add(new LevelConfig(new LevelId(2,1), List.of(
-                "...........",
+        levels.add(List.of(
+                new LevelConfig(new LevelId(2,1), List.of(
+                        "...........",
                 "...........",
                 "11111111111",
                 "...........",
@@ -58,29 +76,27 @@ public class LevelRepository {
                 "...........",
                 "...........",
                 "11111111111"
-        ), secondWorld));
-        levels.add(new LevelConfig(new LevelId(2,1), List.of(
+         ), secondWorld),
+            new LevelConfig(new LevelId(2,1), List.of(
                 "...........",
                 "...........",
                 ".1.1.1.1.1.",
                 "1.1.1.1.1.1",
                 ".1.1.1.1.1.",
                 "1.1.1.1.1.1"
-        ), secondWorld));
+            ), secondWorld)));
     }
 
-    public List<LevelConfig> getLevels() {
+    public List<List<LevelConfig>> getLevels() {
         return levels;
     }
 
-    public List<World> getWorlds() {
-        return worlds;
-    }
-
-    public  LevelConfig getLevelByNumber(int world, int number) {
-        for (LevelConfig level : levels) {
-            if (level.id().world() == world && level.id().Level() == number)
-                return level;
+    public  LevelConfig getLevelById(LevelId id) {
+        for (List<LevelConfig> list : levels) {
+            for (LevelConfig conf : list) {
+                if (conf.id().equals(id))
+                    return conf;
+            }
         }
         return null;
     }

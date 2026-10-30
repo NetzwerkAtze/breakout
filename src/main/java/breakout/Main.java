@@ -3,7 +3,6 @@
     import breakout.game.Game;
     import breakout.game.Playfield;
     import breakout.input.InputHandler;
-    import breakout.level.LevelConfig;
     import breakout.level.LevelId;
     import breakout.level.LevelRepository;
     import breakout.storage.HighscoreManager;
@@ -31,7 +30,7 @@
         private Game game;
         private int defaultLives = 3;
         private int nextLevelIndex = 0;
-        private LevelId nextLevelId;
+        private LevelId levelId = new LevelId(1,1);
 
         public enum ScreenState {
             MENU,
@@ -49,7 +48,7 @@
 
                         case MENU ->   {
                             if (inputHandler.wasPressed(KeyCode.ENTER))
-                                loadLevel(nextLevelIndex);
+                                loadLevel(new LevelId(1,1));
                         }
                         case PLAYING -> {
                             if (inputHandler.wasPressed(KeyCode.R)) {
@@ -60,8 +59,10 @@
                                 if (game.getGameState().getScore() > hsManager.getHighscore())
                                     hsManager.writeHighscore(game.getGameState().getScore());
                             } else if (game.getGameState().isLevelWon()) {
-                                if (inputHandler.wasPressed(KeyCode.ENTER))
-                                    loadLevel(nextLevelIndex);
+                                if (inputHandler.wasPressed(KeyCode.ENTER)) {
+                                    gameRenderer.clear();
+                                    loadLevel(levelId);
+                                }
                             } else {
                                 game.update();
                                 gameRenderer.update();
@@ -70,6 +71,7 @@
                                 game.getGameState().setLevelWon(true);  // for debugging
                             if (inputHandler.wasPressed(KeyCode.ESCAPE))
                                 openMenu();
+
                         }
                         case VICTORY -> {
                             if (game.getGameState().getScore() > hsManager.getHighscore())
@@ -91,16 +93,13 @@
             launch(args);
         }
 
-        private void loadLevel(int levelIndex) {
+        private void loadLevel(LevelId id) {
             menu.hide();
-            if (levelIndex >= repository.getLevels().size())
+            if (id.world() > repository.getLevels().size())
                 screenState = ScreenState.VICTORY;
             else {
-                if (levelIndex > 0)
-                    gameRenderer.clear();
-                game = new Game(defaultLives, repository.getLevels().get(levelIndex), inputHandler, Playfield.calculatePlayfield(repository.getLevels().get(levelIndex), scene.getWidth(), scene.getHeight()));
+                game = new Game(defaultLives, repository.getLevelById(levelId), inputHandler, Playfield.calculatePlayfield(repository.getLevelById(levelId), scene.getWidth(), scene.getHeight()));
                 gameRenderer = new GameRenderer(root, game, hsManager);
-                nextLevelIndex++;
                 screenState = ScreenState.PLAYING;
             }
         }
@@ -108,7 +107,7 @@
         private void openMenu() {
             gameRenderer.clear();
             menu.show();
-            nextLevelIndex = 0;
+            levelId = new LevelId(1,1);
             screenState = ScreenState.MENU;
         }
 
