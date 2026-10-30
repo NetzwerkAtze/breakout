@@ -3,7 +3,6 @@ package breakout.level;
 import breakout.gameObject.PowerUp;
 
 import java.util.*;
-import java.util.logging.Level;
 
 public class LevelRepository {
     private final double defaultBrickWidth = 60;
@@ -13,9 +12,6 @@ public class LevelRepository {
     private final Map<PowerUp.PowerUpType, Double> firstWorldPowerUpDropChance = Map.of();
     private final Map<PowerUp.PowerUpType, Double> secondWorldPowerUpDropChance = Map.of(PowerUp.PowerUpType.ANOTHER_BALL, 5.);
     private final List<List<LevelConfig>> levels = new ArrayList<>();
-    // mache levels zu list of lists damit jede welt 1 list hat dann easier zugriff
-    private final List<LevelId> levelIds = new ArrayList<>();
-    private final List<World> worlds = new ArrayList<>();
 
     public LevelRepository() {
         World firstWorld = new World(defaultBrickWidth, defaultBrickHeight, firstWorldPowerUpDropChance);
@@ -87,8 +83,11 @@ public class LevelRepository {
             ), secondWorld)));
     }
 
-    public List<List<LevelConfig>> getLevels() {
+    public List<List<LevelConfig>> getWorlds() {
         return levels;
+    }
+    public List<LevelConfig> getWorld(int world) {
+        return levels.get(world - 1);
     }
 
     public  LevelConfig getLevelById(LevelId id) {

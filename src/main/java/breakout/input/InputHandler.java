@@ -34,6 +34,10 @@ public class InputHandler {
                 addKey(KeyCode.P);
             } else if (event.getCode() == KeyCode.ESCAPE) {
                 addKey(KeyCode.ESCAPE);
+            } else if (event.getCode() == KeyCode.UP) {
+                addKey(KeyCode.UP);
+            } else if (event.getCode() == KeyCode.DOWN) {
+                addKey(KeyCode.DOWN);
             } else if (event.getCode() == KeyCode.Q) {
                 addKey(KeyCode.Q);// debug button
             }
@@ -53,6 +57,10 @@ public class InputHandler {
                 removeKey(KeyCode.P);
             } else if (event.getCode() == KeyCode.ESCAPE) {
                 removeKey(KeyCode.ESCAPE);
+            } else if (event.getCode() == KeyCode.UP) {
+                removeKey(KeyCode.UP);
+            } else if (event.getCode() == KeyCode.DOWN) {
+                removeKey(KeyCode.DOWN);
             } else if (event.getCode() == KeyCode.Q) {
                 removeKey(KeyCode.Q);
             }

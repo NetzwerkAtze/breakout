@@ -25,15 +25,16 @@
         private InputHandler inputHandler = new InputHandler(root);
         private HighscoreManager hsManager = new HighscoreManager();
         private LevelRepository repository = new LevelRepository();
-        private ScreenState screenState = ScreenState.MENU;
+        private ScreenState screenState = ScreenState.TITLE;
         private Menu menu = new Menu(root, inputHandler, repository);
         private Game game;
         private int defaultLives = 3;
-        private int nextLevelIndex = 0;
         private LevelId levelId = new LevelId(1,1);
 
         public enum ScreenState {
-            MENU,
+            TITLE,
+            WORLD_SELECTION,
+            LEVEL_SELECTION,
             PLAYING,
             VICTORY
         }
@@ -45,10 +46,30 @@
                 @Override
                 public void handle(long l) {
                     switch (screenState) {
-
-                        case MENU ->   {
+                        case TITLE -> {
+                            if (inputHandler.wasPressed(KeyCode.ENTER)) {
+                                menu.displayWorldSelection(repository.getWorlds().size());
+                                screenState = ScreenState.WORLD_SELECTION;
+                            }
+                        }
+                        case WORLD_SELECTION ->  {
+                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.world() < repository.getWorlds().size())
+                                levelId = levelId.withWorld(levelId.world() + 1);
+                            if (inputHandler.wasPressed(KeyCode.UP) && levelId.world() > 1)
+                                levelId = levelId.withWorld(levelId.world() - 1);
                             if (inputHandler.wasPressed(KeyCode.ENTER))
-                                loadLevel(new LevelId(1,1));
+                                screenState = ScreenState.LEVEL_SELECTION;
+                        }
+                        case LEVEL_SELECTION ->  {
+                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.Level() < repository.getWorld(levelId.world()).size())
+                                levelId = levelId.withLevel(levelId.Level() + 1);
+                            if (inputHandler.wasPressed(KeyCode.UP) && levelId.Level() > 1)
+                                levelId = levelId.withLevel(levelId.Level() - 1);
+                            if (inputHandler.wasPressed(KeyCode.ENTER)) {
+                                screenState = ScreenState.PLAYING;
+                                loadLevel(levelId);
+                                System.out.println(levelId);
+                            }
                         }
                         case PLAYING -> {
                             if (inputHandler.wasPressed(KeyCode.R)) {
@@ -95,7 +116,7 @@
 
         private void loadLevel(LevelId id) {
             menu.hide();
-            if (id.world() > repository.getLevels().size())
+            if (id.world() > repository.getWorlds().size())
                 screenState = ScreenState.VICTORY;
             else {
                 game = new Game(defaultLives, repository.getLevelById(levelId), inputHandler, Playfield.calculatePlayfield(repository.getLevelById(levelId), scene.getWidth(), scene.getHeight()));
@@ -108,7 +129,7 @@
             gameRenderer.clear();
             menu.show();
             levelId = new LevelId(1,1);
-            screenState = ScreenState.MENU;
+            screenState = ScreenState.WORLD_SELECTION;
         }
 
         private void endFrame() {
