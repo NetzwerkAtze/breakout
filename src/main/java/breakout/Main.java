@@ -48,11 +48,11 @@
                     switch (screenState) {
                         case TITLE -> {
                             if (inputHandler.wasPressed(KeyCode.ENTER)) {
-                                menu.displayWorldSelection(repository.getWorlds().size());
                                 screenState = ScreenState.WORLD_SELECTION;
                             }
                         }
                         case WORLD_SELECTION ->  {
+                            menu.displayWorldSelection(levelId.world());
                             if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.world() < repository.getWorlds().size())
                                 levelId = levelId.withWorld(levelId.world() + 1);
                             if (inputHandler.wasPressed(KeyCode.UP) && levelId.world() > 1)
@@ -61,6 +61,7 @@
                                 screenState = ScreenState.LEVEL_SELECTION;
                         }
                         case LEVEL_SELECTION ->  {
+                            menu.displayLevelSelection(levelId.world(), levelId.Level());
                             if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.Level() < repository.getWorld(levelId.world()).size())
                                 levelId = levelId.withLevel(levelId.Level() + 1);
                             if (inputHandler.wasPressed(KeyCode.UP) && levelId.Level() > 1)
@@ -70,6 +71,8 @@
                                 loadLevel(levelId);
                                 System.out.println(levelId);
                             }
+                            if (inputHandler.wasPressed(KeyCode.ESCAPE))
+                                screenState = ScreenState.WORLD_SELECTION;
                         }
                         case PLAYING -> {
                             if (inputHandler.wasPressed(KeyCode.R)) {

@@ -45,17 +45,28 @@ public class Menu {
         overlay.setVisible(true);
     }
 
-    public void displayWorldSelection(int worldAmount) {
+    public void displayWorldSelection(int worldNumber) {
         overlay.getChildren().clear();
-        for (int i = 0; i < worldAmount; i++) {
-            Text tmp = new Text("World " + (i + 1));
-            tmp.setFill(Color.WHITE);
-            tmp.setFont(new Font(20));
-            tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
-            tmp.setY(root.getScene().getHeight()/4 + 30 * i);
-            overlay.getChildren().add(tmp);
-        }
+        Text tmp = new Text("World " + (worldNumber));
+        tmp.setFill(Color.WHITE);
+        tmp.setFont(new Font(20));
+        tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
+        tmp.setY(root.getScene().getHeight()/2);
+        overlay.getChildren().add(tmp);
     }
-    public void displayVictory() {
+    public void displayLevelSelection(int worldNumber, int levelNumber) {
+        overlay.getChildren().clear();
+        Text tmp = new Text("World " + (worldNumber));
+        tmp.setFill(Color.WHITE);
+        tmp.setFont(new Font(20));
+        tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
+        tmp.setY(root.getScene().getHeight()/2 - 20);
+        overlay.getChildren().add(tmp);
+        Text tmp2 = new Text("Level " + (levelNumber));
+        tmp2.setFill(Color.WHITE);
+        tmp2.setFont(new Font(20));
+        tmp2.setX(root.getScene().getWidth()/2 - tmp2.getLayoutBounds().getCenterX());
+        tmp2.setY(root.getScene().getHeight()/2 + 20);
+        overlay.getChildren().add(tmp2);
     }
 }
