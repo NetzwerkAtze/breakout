@@ -23,11 +23,12 @@ public class LevelRepository {
                 ".......",
                 ".......",
                 ".......",
-                ".....1.",
-                "....11.",
-                "...111.",
-                "..1111.",
-                ".11111."
+                ".......",
+                ".......",
+                "...1...",
+                "..111..",
+                ".11111.",
+                "1111111"
             ), firstWorld),
             new LevelConfig(new LevelId(1,2), List.of(
                 ".......",
@@ -44,11 +45,60 @@ public class LevelRepository {
                 ".......",
                 ".......",
                 ".......",
-                "...1...",
-                "..111..",
-                ".11111."
+                ".......",
+                ".......",
+                "1.....1",
+                "11...11",
+                "111.111",
+                "1111111"
             ), firstWorld),
             new LevelConfig(new LevelId(1,4), List.of(
+                ".......",
+                ".......",
+                "1111111",
+                ".....1.",
+                "....1..",
+                "...1...",
+                "..1....",
+                ".1.....",
+                "1111111"
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,5), List.of(
+                ".......",
+                ".......",
+                "1111111",
+                "..111..",
+                ".11.11.",
+                "1.....1",
+                "11...11",
+                ".11.11.",
+                "..111.."
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,6), List.of(
+                ".......",
+                ".......",
+                "1111111",
+                ".....1.",
+                "....1..",
+                "...1...",
+                "..1....",
+                ".1.....",
+                "1111111"
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,7), List.of(
+                ".......",
+                ".......",
+                ".......",
+                ".......",
+                ".......",
+                "1111111",
+                "1111111",
+                "1111111",
+                "1111111"
+            ), firstWorld),
+            new LevelConfig(new LevelId(1,8), List.of(
+                ".......",
+                ".......",
                 "1111111",
                 ".11111.",
                 "..111..",
@@ -56,7 +106,8 @@ public class LevelRepository {
                 "..111..",
                 ".11111.",
                 "1111111"
-            ), firstWorld)));
+            ), firstWorld)
+        ));
 
         //second World
         levels.add(List.of(
@@ -73,7 +124,7 @@ public class LevelRepository {
                 "...........",
                 "11111111111"
          ), secondWorld),
-            new LevelConfig(new LevelId(2,1), List.of(
+            new LevelConfig(new LevelId(2,2), List.of(
                 "...........",
                 "...........",
                 ".1.1.1.1.1.",

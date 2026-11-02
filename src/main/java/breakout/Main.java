@@ -68,7 +68,7 @@
                                 levelId = levelId.withLevel(levelId.Level() - 1);
                             if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                 screenState = ScreenState.PLAYING;
-                                loadLevel(levelId);
+                                loadLevel();
                                 System.out.println(levelId);
                             }
                             if (inputHandler.wasPressed(KeyCode.ESCAPE))
@@ -85,7 +85,7 @@
                             } else if (game.getGameState().isLevelWon()) {
                                 if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                     gameRenderer.clear();
-                                    loadLevel(levelId);
+                                    loadLevel();
                                 }
                             } else {
                                 game.update();
@@ -117,15 +117,11 @@
             launch(args);
         }
 
-        private void loadLevel(LevelId id) {
+        private void loadLevel() {
             menu.hide();
-            if (id.world() > repository.getWorlds().size())
-                screenState = ScreenState.VICTORY;
-            else {
-                game = new Game(defaultLives, repository.getLevelById(levelId), inputHandler, Playfield.calculatePlayfield(repository.getLevelById(levelId), scene.getWidth(), scene.getHeight()));
-                gameRenderer = new GameRenderer(root, game, hsManager);
-                screenState = ScreenState.PLAYING;
-            }
+            game = new Game(defaultLives, repository.getLevelById(levelId), inputHandler, Playfield.calculatePlayfield(repository.getLevelById(levelId), scene.getWidth(), scene.getHeight()));
+            gameRenderer = new GameRenderer(root, game, hsManager);
+            screenState = ScreenState.PLAYING;
         }
 
         private void openMenu() {
