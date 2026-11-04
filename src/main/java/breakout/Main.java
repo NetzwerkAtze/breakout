@@ -16,8 +16,6 @@
     import javafx.scene.layout.Pane;
     import javafx.scene.paint.Color;
     import javafx.stage.Stage;
-    import java.util.ArrayList;
-    import java.util.List;
 
 
     public class Main extends Application {
@@ -57,7 +55,7 @@
                         }
                         case WORLD_SELECTION ->  {
                             menu.displayWorldSelection(levelId.world());
-                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.world() < repository.getWorlds().size())
+                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.world() < progressManager.getHighestUnlockedWorld())
                                 levelId = levelId.withWorld(levelId.world() + 1);
                             if (inputHandler.wasPressed(KeyCode.UP) && levelId.world() > 1)
                                 levelId = levelId.withWorld(levelId.world() - 1);
@@ -66,7 +64,7 @@
                         }
                         case LEVEL_SELECTION ->  {
                             menu.displayLevelSelection(levelId.world(), levelId.Level());
-                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.Level() < repository.getWorld(levelId.world()).size())
+                            if (inputHandler.wasPressed(KeyCode.DOWN) && levelId.Level() < progressManager.getHighestUnlockedLevelFromWorld(levelId.world()))
                                 levelId = levelId.withLevel(levelId.Level() + 1);
                             if (inputHandler.wasPressed(KeyCode.UP) && levelId.Level() > 1)
                                 levelId = levelId.withLevel(levelId.Level() - 1);
@@ -97,6 +95,7 @@
                             }
                             if (inputHandler.wasPressed(KeyCode.Q)) {     // for debugging
                                 game.getGameState().setLevelWon(true);// for debugging
+                                progressManager.unlockAll(repository);
                                 gameRenderer.clear();
                                 loadNextLevel();
                             }
@@ -143,9 +142,12 @@
         }
 
         private void loadNextLevel() {
-            if (levelId.Level() == repository.getWorld(levelId.world()).size())
+            if (levelId.Level() == repository.getWorld(levelId.world()).size()) {
+                progressManager.unlockLevel(new LevelId(levelId.world()  + 1, 1));
                 openMenu();
+            }
             else {
+                progressManager.unlockLevel(levelId.withLevel(levelId.Level() + 1));
                 levelId = levelId.withLevel(levelId.Level() + 1);
                 loadLevel();
             }
