@@ -22,7 +22,7 @@ public class    Game {
     private CollisionHandler collisionHandler;
     private InputHandler inputHandler;
     private GameState gameState;
-    private Color[] rowColors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.LIME, Color.LIGHTBLUE, Color.TEAL, Color.DARKBLUE, Color.PURPLE};
+    private Color[] brickColor = {Color.TEAL, Color.RED, Color.BLUE};
     private LevelConfig levelConfig;
     private Playfield playfield;
     private static final double MENU_GAP = 1;
@@ -132,7 +132,7 @@ public class    Game {
             for (int col = 0; col < levelConfig.layout().get(row).length(); col++) {
                 char currentSymbol = levelConfig.layout().get(row).charAt(col);
                 if (Character.isDigit(currentSymbol)) {
-                    Brick brick = new Brick(col * (levelConfig.world().brickWidth() + Playfield.BRICK_GAP) + playfield.left() + brickAllignmentOffset + Playfield.BRICK_GAP, (row * levelConfig.world().brickHeight()) + Playfield.BRICK_GAP + playfield.top(), levelConfig.world().brickWidth(), levelConfig.world().brickHeight(), rowColors[row % rowColors.length], Character.getNumericValue(currentSymbol));
+                    Brick brick = new Brick(col * (levelConfig.world().brickWidth() + Playfield.BRICK_GAP) + playfield.left() + brickAllignmentOffset + Playfield.BRICK_GAP, (row * levelConfig.world().brickHeight()) + Playfield.BRICK_GAP + playfield.top(), levelConfig.world().brickWidth(), levelConfig.world().brickHeight(), brickColor[Character.getNumericValue(currentSymbol) - 1], Character.getNumericValue(currentSymbol));
                     bricks.add(brick);
                 }
             }

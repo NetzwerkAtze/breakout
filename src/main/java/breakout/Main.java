@@ -2,6 +2,7 @@
 
     import breakout.game.Game;
     import breakout.game.Playfield;
+    import breakout.game.ProgressManager;
     import breakout.input.InputHandler;
     import breakout.level.LevelId;
     import breakout.level.LevelRepository;
@@ -15,6 +16,8 @@
     import javafx.scene.layout.Pane;
     import javafx.scene.paint.Color;
     import javafx.stage.Stage;
+    import java.util.ArrayList;
+    import java.util.List;
 
 
     public class Main extends Application {
@@ -25,6 +28,7 @@
         private InputHandler inputHandler = new InputHandler(root);
         private HighscoreManager hsManager = new HighscoreManager();
         private LevelRepository repository = new LevelRepository();
+        private ProgressManager progressManager = new ProgressManager();
         private ScreenState screenState = ScreenState.TITLE;
         private Menu menu = new Menu(root, inputHandler, repository);
         private Game game;
@@ -85,14 +89,17 @@
                             } else if (game.getGameState().isLevelWon()) {
                                 if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                     gameRenderer.clear();
-                                    loadLevel();
+                                    loadNextLevel();
                                 }
                             } else {
                                 game.update();
                                 gameRenderer.update();
                             }
-                            if (inputHandler.wasPressed(KeyCode.Q))     // for debugging
-                                game.getGameState().setLevelWon(true);  // for debugging
+                            if (inputHandler.wasPressed(KeyCode.Q)) {     // for debugging
+                                game.getGameState().setLevelWon(true);// for debugging
+                                gameRenderer.clear();
+                                loadNextLevel();
+                            }
                             if (inputHandler.wasPressed(KeyCode.ESCAPE))
                                 openMenu();
 
@@ -133,5 +140,14 @@
 
         private void endFrame() {
             inputHandler.clearJustPressed();
+        }
+
+        private void loadNextLevel() {
+            if (levelId.Level() == repository.getWorld(levelId.world()).size())
+                openMenu();
+            else {
+                levelId = levelId.withLevel(levelId.Level() + 1);
+                loadLevel();
+            }
         }
     }
