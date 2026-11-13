@@ -8,6 +8,7 @@ import breakout.gameObject.GameObject;
 import breakout.gameObject.PowerUp;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.BlurType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
@@ -129,7 +130,7 @@ public class GameRenderer {
     private void updateBallShapeAmount() {
         for (Ball ball : game.getBalls()) {
             if (!ballMap.containsKey(ball)) {
-                Circle ballShape = new Circle(ball.getCenterX(), ball.getCenterY(), ball.getRadius(), ball.getColor());
+                Circle ballShape = new Circle(ball.getCenterX(), ball.getCenterY(), ball.getRadius(), makeRadialGradient(ball.getColor()));
                 ballMap.put(ball, ballShape);
                 playLayer.getChildren().add(ballShape);
             }
@@ -252,7 +253,8 @@ public class GameRenderer {
         tmp.setFont(new Font(20));
         tmp.setY(y);
         tmp.setX(x);
-        tmp.setFill(color);
+        tmp.setFill(Color.web("#e8f0ff"));
+        tmp.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         hudLayer.getChildren().add(tmp);
         return tmp;
     }
@@ -304,7 +306,7 @@ public class GameRenderer {
         }
     }
     public void createPaddleShape() {
-        paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), game.getPaddle().getColor());
+        paddleShape = new Rectangle(game.getPaddle().getWidth(), game.getPaddle().getHeight(), makeRadialGradient(game.getPaddle().getColor().brighter()));
         paddleShape.setX(game.getPaddle().getX());
         paddleShape.setY(game.getPaddle().getY());
         paddleShape.setArcWidth(8);
@@ -324,7 +326,7 @@ public class GameRenderer {
         double wallWidth = isHorizontal ? wall.getWidth() / wallAmount : wall.getWidth();
         double wallHeight = isHorizontal ? wall.getHeight() : wall.getHeight() / wallAmount ;
         for (int i = 0; i < wallAmount; i++) {
-            Rectangle wallShape = new Rectangle(wallWidth, wallHeight, wall.getColor());
+            Rectangle wallShape = new Rectangle(wallWidth, wallHeight);
             wallShape.setFill(makeRadialGradient(wall.getColor()));
             if (isHorizontal) {
                 wallShape.setX(wall.getX() + wallWidth * i);
@@ -335,12 +337,11 @@ public class GameRenderer {
             }
             wallShape.setArcHeight(8);
             wallShape.setArcWidth(8);
-            wallShape.setEffect(new DropShadow(50, Color.rgb(0,0,0)));
             boardLayer.getChildren().add(wallShape);
         }
     }
     private void createShadow() {
-        shadow = new DropShadow(50, Color.color(0,0,0));
+        shadow = new DropShadow(5, Color.BLACK);
     }
     private void createGlow() {
         glow = new DropShadow(25, Color.rgb(255,255,255));

@@ -2,6 +2,8 @@ package breakout.ui;
 
 import breakout.level.LevelRepository;
 import javafx.scene.Group;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -23,6 +25,8 @@ public class Menu {
         Text xTremeBreakoutX = new Text("xTreme BREAKOUT");
         xTremeBreakoutX.setFill(Color.BLACK);
         xTremeBreakoutX.setFont(new Font(40));
+        xTremeBreakoutX.setFill(Color.web("#e8f0ff"));
+        xTremeBreakoutX.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         xTremeBreakoutX.setX((root.getScene().getWidth()/2 - xTremeBreakoutX.getLayoutBounds().getCenterX()));
         xTremeBreakoutX.setY(root.getScene().getHeight()/2);
         Text startText = new Text("- press Enter -");
@@ -30,9 +34,10 @@ public class Menu {
         startText.setFont(new Font(20));
         startText.setX(root.getScene().getWidth()/2 - startText.getLayoutBounds().getCenterX());
         startText.setY(root.getScene().getHeight()/2 + 30);
+        startText.setFill(Color.web("#e8f0ff"));
+        startText.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         overlay.getChildren().add(xTremeBreakoutX);
         overlay.getChildren().add(startText);
-        overlay.getChildren().forEach(node -> node.setEffect(new Glow(10000)));
         root.getChildren().add(overlay);
     }
 
@@ -47,9 +52,9 @@ public class Menu {
     public void displayWorldSelection(int worldNumber) {
         overlay.getChildren().clear();
         Text tmp = new Text("World " + (worldNumber));
-        tmp.setFill(Color.BLACK);
         tmp.setFont(new Font(fontSize));
-        tmp.setEffect(new Glow(10000));
+        tmp.setFill(Color.web("#e8f0ff"));
+        tmp.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
         tmp.setY(root.getScene().getHeight()/2);
         overlay.getChildren().add(tmp);
@@ -57,18 +62,18 @@ public class Menu {
     public void displayLevelSelection(int worldNumber, int levelNumber) {
         overlay.getChildren().clear();
         Text tmp = new Text("World " + (worldNumber));
-        tmp.setFill(Color.BLACK);
         tmp.setFont(new Font(fontSize));
         tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
         tmp.setY(root.getScene().getHeight()/2 - fontSize);
-        tmp.setEffect(new Glow(10000));
+        tmp.setFill(Color.web("#e8f0ff"));
+        tmp.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         overlay.getChildren().add(tmp);
         Text tmp2 = new Text("Level " + (levelNumber));
-        tmp2.setFill(Color.BLACK);
         tmp2.setFont(new Font(fontSize));
         tmp2.setX(root.getScene().getWidth()/2 - tmp2.getLayoutBounds().getCenterX());
         tmp2.setY(root.getScene().getHeight()/2 + fontSize);
-        tmp2.setEffect(new Glow(10000));
+        tmp2.setFill(Color.web("#e8f0ff"));
+        tmp2.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         overlay.getChildren().add(tmp2);
     }
 }

@@ -29,7 +29,7 @@ public class    Game {
 
     public Game(int startLives, LevelConfig levelConfig, InputHandler inputHandler, Playfield playfield) {
         this.paddle = new Paddle((playfield.right() + playfield.left() - 80) / 2, playfield.bottom() - 20, 5, 80, 15, Color.GREY, playfield.right() - playfield.left());
-        balls.add(new Ball((playfield.right() + playfield.left()) / 2 - 2.5, (playfield.bottom() + playfield.top()) / 2, Math.random() > 0.5 ? -4 : 4, -4, 5, Color.WHITE));
+        balls.add(new Ball((playfield.right() + playfield.left()) / 2 - 2.5, (playfield.bottom() + playfield.top()) / 2, Math.random() > 0.5 ? -4 : 4, -4, 5, Color.web("#fff4d6")));
         this.levelConfig = levelConfig;
         this.inputHandler = inputHandler;
         this.playfield = playfield;

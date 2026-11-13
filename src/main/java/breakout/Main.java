@@ -14,17 +14,16 @@
     import javafx.scene.Scene;
     import javafx.scene.input.KeyCode;
     import javafx.scene.layout.Pane;
-    import javafx.scene.paint.Color;
-    import javafx.scene.paint.CycleMethod;
-    import javafx.scene.paint.LinearGradient;
-    import javafx.scene.paint.Stop;
+    import javafx.scene.paint.*;
     import javafx.stage.Stage;
 
 
     public class Main extends Application {
 
         private Pane root = new Pane();
-        private Scene scene = new Scene(root, 900, 600, new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop[] {new Stop(0, Color.DARKVIOLET.darker().darker()), new Stop(1, Color.DARKVIOLET.darker().darker().darker().darker())}));
+        RadialGradient t = new RadialGradient(0,0,0,1,1,true,CycleMethod.REFLECT, new Stop[] {new Stop(0, Color.BLUE), new Stop(1, Color.RED)});
+        RadialGradient bg = new RadialGradient(0, 0, 0.5, 0.5, 0.9, true, CycleMethod.NO_CYCLE, new Stop(0.0, Color.web("#1e2a44")), new Stop(1.0, Color.web("#0b0f1a")));
+        private Scene scene = new Scene(root, 900, 600, bg);
         private GameRenderer gameRenderer;
         private InputHandler inputHandler = new InputHandler(root);
         private HighscoreManager hsManager = new HighscoreManager();
