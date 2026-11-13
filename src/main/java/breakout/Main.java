@@ -140,6 +140,8 @@
 
         private void endFrame() {
             inputHandler.clearJustPressed();
+            if (screenState == ScreenState.TITLE)
+                menu.endFrame();
         }
 
         private void loadNextLevel() {

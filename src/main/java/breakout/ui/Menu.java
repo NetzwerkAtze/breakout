@@ -14,6 +14,9 @@ public class Menu {
     private Pane root;
     private Group overlay = new Group();
     private static int fontSize = 50;
+    private Text startText = new Text("- press Enter -");
+    private int frameTimer = 10;
+    private double opacitiyValue = -0.01;
 
 
     public Menu(Pane root, LevelRepository repository) {
@@ -29,7 +32,6 @@ public class Menu {
         xTremeBreakoutX.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         xTremeBreakoutX.setX((root.getScene().getWidth()/2 - xTremeBreakoutX.getLayoutBounds().getCenterX()));
         xTremeBreakoutX.setY(root.getScene().getHeight()/2);
-        Text startText = new Text("- press Enter -");
         startText.setFill(Color.BLACK);
         startText.setFont(new Font(20));
         startText.setX(root.getScene().getWidth()/2 - startText.getLayoutBounds().getCenterX());
@@ -75,5 +77,10 @@ public class Menu {
         tmp2.setFill(Color.web("#e8f0ff"));
         tmp2.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         overlay.getChildren().add(tmp2);
+    }
+    public void endFrame() {
+        if (startText.getOpacity() <= 0 || startText.getOpacity() >= 1.1)
+            opacitiyValue = -opacitiyValue;
+        startText.setOpacity(startText.getOpacity() + opacitiyValue);
     }
 }

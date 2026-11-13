@@ -24,7 +24,7 @@ public class GameRenderer {
     private Map<Brick, Rectangle> brickMap = new HashMap<>();
     private Map<PowerUp, Circle> powerUpMap = new HashMap<>();
     private Map<Ball, Circle> ballMap = new HashMap<>();
-    private List<Polygon> heartShapes = new ArrayList<>();
+    private List<SVGPath> heartShapes = new ArrayList<>();
     private Map<Brick, List<Group>> crackMap = new HashMap<>();
     private Text scoreText;
     private Text wonText;
@@ -82,7 +82,7 @@ public class GameRenderer {
             playLayer.getChildren().remove(powerUpMap.get(powerUp));
         powerUpMap.clear();
         createPowerUpShapes();
-        for (Polygon heart : heartShapes)
+        for (SVGPath heart : heartShapes)
             heart.setFill(Color.RED);
         for (Brick brick : game.getBricks()) {
             brickMap.get(brick).setFill(makeGradient(brick.getColor()));
@@ -272,17 +272,23 @@ public class GameRenderer {
     }
 
     private void createHeartShapes() {
+        String HEART = "M10 18 C2 12 0 7 4 3 C6.5 0.5 9.5 2 10 4.5 C10.5 2 13.5 0.5 16 3 C20 7 18 12 10 18 Z";
+
         for (int i = 0; i < game.getGameState().getLives(); i++) {
-            Polygon heart = new Polygon();
+            SVGPath heart = new SVGPath();
+            heart.setContent(HEART);
+            heart.setLayoutX(livesText.getLayoutBounds().getMaxX() + 20 + 25 * i);
+            heart.setLayoutY(livesText.getLayoutBounds().getMinY() + 5);
+            /**
             heart.getPoints().addAll(new Double[] {
                     livesText.getLayoutBounds().getMaxX() + 20 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
                     livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 15,
                     livesText.getLayoutBounds().getMaxX() + 20 * 2 + 25 * i, livesText.getLayoutBounds().getMinY() + 5,
                     livesText.getLayoutBounds().getMaxX() + 20 * 3 / 2 + 25 * i, livesText.getLayoutBounds().getMaxY(),
             });
-            heart.setFill(Color.RED);
+             */
+            heart.setFill(makeRadialGradient(Color.RED));
             heartShapes.add(heart);
-            heart.setFill(Color.RED);
             hudLayer.getChildren().add(heart);
         }
     }
