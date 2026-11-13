@@ -7,11 +7,9 @@ import breakout.gameObject.Brick;
 import breakout.gameObject.GameObject;
 import breakout.gameObject.PowerUp;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
+import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -38,7 +36,8 @@ public class GameRenderer {
     private Text pausedText;
     private Text highscoreText;
     private HighscoreManager hsManager;
-    private DropShadow dropShadow;
+    private DropShadow glow;
+    private DropShadow shadow;
     Group boardLayer = new Group();
     Group playLayer = new Group();
     Group hudLayer = new Group();
@@ -53,7 +52,8 @@ public class GameRenderer {
     }
 
     private void init() {
-        createDropShadow();
+        createGlow();
+        createShadow();
         createTexts();
         createHeartShapes();
         createWalls(8);
@@ -61,12 +61,13 @@ public class GameRenderer {
         createPowerUpShapes();
         updateBallShapes();
         createPaddleShape();
+        initShadows();
         root.getChildren().addAll(boardLayer);
         root.getChildren().addAll(playLayer);
         root.getChildren().addAll(hudLayer);
     }
     public void update() {
-        updateDropShadow();
+        updatePaddleGlow();
         updateBallShapes();
         updateTexts();
         updateBrickShapes();
@@ -129,7 +130,6 @@ public class GameRenderer {
         for (Ball ball : game.getBalls()) {
             if (!ballMap.containsKey(ball)) {
                 Circle ballShape = new Circle(ball.getCenterX(), ball.getCenterY(), ball.getRadius(), ball.getColor());
-                ballShape.setEffect(dropShadow);
                 ballMap.put(ball, ballShape);
                 playLayer.getChildren().add(ballShape);
             }
@@ -315,13 +315,17 @@ public class GameRenderer {
         for (GameObject wall : game.getWalls())
             buildWall(wall,wall.getWidth() > wall.getHeight(), numberOfBricks);
     }
+    public RadialGradient makeRadialGradient(Color color) {
+        Stop[] stops = new Stop[] { new Stop(0, color), new Stop(1, color.darker().darker())};
+        return new RadialGradient(0, 0, 0, 0, 1,true, CycleMethod.REFLECT, stops);
+    }
 
     private void buildWall(GameObject wall, boolean isHorizontal, int wallAmount) {
         double wallWidth = isHorizontal ? wall.getWidth() / wallAmount : wall.getWidth();
         double wallHeight = isHorizontal ? wall.getHeight() : wall.getHeight() / wallAmount ;
         for (int i = 0; i < wallAmount; i++) {
             Rectangle wallShape = new Rectangle(wallWidth, wallHeight, wall.getColor());
-            wallShape.setFill(makeGradient(wall.getColor()));
+            wallShape.setFill(makeRadialGradient(wall.getColor()));
             if (isHorizontal) {
                 wallShape.setX(wall.getX() + wallWidth * i);
                 wallShape.setY(wall.getY());
@@ -331,20 +335,27 @@ public class GameRenderer {
             }
             wallShape.setArcHeight(8);
             wallShape.setArcWidth(8);
+            wallShape.setEffect(new DropShadow(50, Color.rgb(0,0,0)));
             boardLayer.getChildren().add(wallShape);
         }
     }
-
-    private void createDropShadow() {
-        dropShadow = new DropShadow(25, Color.rgb(255,255,255));
-        dropShadow.setSpread(0.5);
+    private void createShadow() {
+        shadow = new DropShadow(50, Color.color(0,0,0));
+    }
+    private void createGlow() {
+        glow = new DropShadow(25, Color.rgb(255,255,255));
+        glow.setSpread(0.5);
     }
 
-    private void updateDropShadow() {
+    private void updatePaddleGlow() {
         if (game.getPowerUpHandler().isStickyPaddle())
-            paddleShape.setEffect(dropShadow);
+            paddleShape.setEffect(glow);
 
         else
-            paddleShape.setEffect(null);
+            paddleShape.setEffect(shadow);
+    }
+    private void initShadows() {
+        playLayer.getChildren().forEach(node -> node.setEffect(shadow));
+        boardLayer.getChildren().forEach(node -> node.setEffect(shadow));
     }
 }

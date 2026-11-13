@@ -15,20 +15,23 @@
     import javafx.scene.input.KeyCode;
     import javafx.scene.layout.Pane;
     import javafx.scene.paint.Color;
+    import javafx.scene.paint.CycleMethod;
+    import javafx.scene.paint.LinearGradient;
+    import javafx.scene.paint.Stop;
     import javafx.stage.Stage;
 
 
     public class Main extends Application {
 
         private Pane root = new Pane();
-        private Scene scene = new Scene(root, 900, 600, Color.BLACK);
+        private Scene scene = new Scene(root, 900, 600, new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop[] {new Stop(0, Color.DARKVIOLET.darker().darker()), new Stop(1, Color.DARKVIOLET.darker().darker().darker().darker())}));
         private GameRenderer gameRenderer;
         private InputHandler inputHandler = new InputHandler(root);
         private HighscoreManager hsManager = new HighscoreManager();
         private LevelRepository repository = new LevelRepository();
         private ProgressManager progressManager = new ProgressManager();
         private ScreenState screenState = ScreenState.TITLE;
-        private Menu menu = new Menu(root, inputHandler, repository);
+        private Menu menu = new Menu(root, repository);
         private Game game;
         private int defaultLives = 3;
         private LevelId levelId = new LevelId(1,1);
@@ -87,7 +90,7 @@
                             } else if (game.getGameState().isLevelWon()) {
                                 if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                     gameRenderer.clear();
-                                    loadNextLevel();
+                                        loadNextLevel();
                                 }
                             } else {
                                 game.update();

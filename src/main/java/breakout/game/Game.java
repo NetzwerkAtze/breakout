@@ -22,7 +22,7 @@ public class    Game {
     private CollisionHandler collisionHandler;
     private InputHandler inputHandler;
     private GameState gameState;
-    private Color[] brickColor = {Color.TEAL, Color.RED, Color.BLUE};
+    private Color[] brickColor = {Color.TEAL, Color.RED, Color.BLUE, Color.BLACK};
     private LevelConfig levelConfig;
     private Playfield playfield;
     private static final double MENU_GAP = 1;
