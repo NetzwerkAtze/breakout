@@ -74,7 +74,6 @@
                             if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                 screenState = ScreenState.PLAYING;
                                 loadLevel();
-                                System.out.println(levelId);
                             }
                             if (inputHandler.wasPressed(KeyCode.ESCAPE))
                                 screenState = ScreenState.WORLD_SELECTION;
@@ -137,7 +136,7 @@
             gameRenderer.clear();
             menu.show();
             levelId = new LevelId(1,1);
-            screenState = ScreenState.WORLD_SELECTION;
+            screenState = ScreenState.LEVEL_SELECTION;
         }
 
         private void endFrame() {

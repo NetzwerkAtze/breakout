@@ -1,11 +1,8 @@
 package breakout.ui;
 
-import breakout.input.InputHandler;
 import breakout.level.LevelRepository;
 import javafx.scene.Group;
-import javafx.scene.effect.Bloom;
 import javafx.scene.effect.Glow;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
