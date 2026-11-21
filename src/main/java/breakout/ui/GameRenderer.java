@@ -245,10 +245,11 @@ public class GameRenderer {
         tmp.setY(y - tmp.getLayoutBounds().getCenterY());
         tmp.setX(x - tmp.getLayoutBounds().getCenterX());
         tmp.setFill(Color.TRANSPARENT);
+        tmp.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         hudLayer.getChildren().add(tmp);
         return tmp;
     }
-    private Text generateText(double x, double y, String text, Color color) {
+    private Text generateMenuText(double x, double y, String text) {
         Text tmp = new Text(text);
         tmp.setFont(new Font(20));
         tmp.setY(y);
@@ -259,16 +260,17 @@ public class GameRenderer {
         return tmp;
     }
     private void createTexts() {
-        scoreText = generateText(15,20,"Score: " + Integer.toString(game.getGameState().getScore()),  Color.WHITE);
-        highscoreText = generateText((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore(), Color.WHITE);
-        levelText = generateText((root.getScene().getWidth() / 4) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()), Color.WHITE);
+        scoreText = generateMenuText(15,20,"Score: " + Integer.toString(game.getGameState().getScore()));
+        highscoreText = generateMenuText((root.getScene().getWidth() / 4) + 15,20, "Highscore: " + hsManager.getHighscore());
+        levelText = generateMenuText((root.getScene().getWidth() / 4) * 2 + 15,20, "Level: " + Integer.toString(game.getGameState().getLevel()));
+        livesText = generateMenuText((root.getScene().getWidth() / 4) * 3 + 15,  20, "Lives: ");
         wonText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"You Won!");
         levelCompleteText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"Level Complete!");
         loseText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"You Lost!");
         restartText = generateText(root.getScene().getWidth() / 2,loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()),"- Press R to restart -");
         nextLevelText = generateText(root.getScene().getWidth() / 2,loseText.getY() - (loseText.getLayoutBounds().getCenterY() * 3 - 3 * loseText.getY()),"- Press Enter for next level -");
         pausedText = generateText(root.getScene().getWidth() / 2,root.getScene().getHeight() / 2,"- Paused. Press P to unpause. -");
-        livesText = generateText((root.getScene().getWidth() / 4) * 3 + 15,  20, "Lives: ", Color.WHITE);
+
     }
 
     private void createHeartShapes() {
