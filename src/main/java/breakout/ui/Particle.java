@@ -3,13 +3,13 @@ package breakout.ui;
 import javafx.scene.paint.Color;
 
 public class Particle {
-    double x;
-    double y;
-    double vx;
-    double vy;
-    int maxLifeDuration;
-    int remainingLifeDuration;
-    Color color;
+    private double x;
+    private double y;
+    private double vx;
+    private double vy;
+    private int maxLifeDuration;
+    private int remainingLifeDuration;
+    private Color color;
 
     public Particle(double x, double y, double vx, double vy, int maxLifeDuration, Color color) {
         this.x = x;
@@ -27,5 +27,17 @@ public class Particle {
     }
     public boolean isAlive() {
         return remainingLifeDuration > 0;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

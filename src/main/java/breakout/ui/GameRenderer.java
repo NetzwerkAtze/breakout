@@ -26,6 +26,7 @@ public class GameRenderer {
     private Map<Ball, Circle> ballMap = new HashMap<>();
     private List<SVGPath> heartShapes = new ArrayList<>();
     private Map<Brick, List<Group>> crackMap = new HashMap<>();
+    private Map<Particle, Circle> particleCircleMap = new HashMap<>();
     private Text scoreText;
     private Text wonText;
     private Text levelCompleteText;
@@ -39,6 +40,7 @@ public class GameRenderer {
     private HighscoreManager hsManager;
     private DropShadow glow;
     private DropShadow shadow;
+    ParticleSystem particleSystem = new ParticleSystem();
     Group boardLayer = new Group();
     Group playLayer = new Group();
     Group hudLayer = new Group();
@@ -72,6 +74,7 @@ public class GameRenderer {
         updateBallShapes();
         updateTexts();
         updateBrickShapes();
+        particleSystem.update();
         updatePowerUpShapes();
         updateHeartShapes();
         updatePaddleShape();
@@ -164,6 +167,7 @@ public class GameRenderer {
             if (brick.isDestroyed()) {
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
                 crackMap.getOrDefault(brick, List.of()).forEach(value -> value.setVisible(false));
+                particleSystem.burst(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, brick.getColor());
                 continue;
             }
             if (brick.getMaxHits() > brick.getHitsRemaining()) {
@@ -171,7 +175,23 @@ public class GameRenderer {
                     crackMap.get(brick).get(i).setVisible(true);
             }
         }
+    } /**
+    private void updateParticleShapes() {
+        for (Particle particle : particleCircleMap.keySet()) {
+            if particleSystem.getParticleList(). /// wen particle nicht in List ist dann entfernen
+        }
+        for (Particle particle : particleSystem.getParticleList()) {
+            if (!particleCircleMap.containsKey(particle))
+                particleCircleMap.put(particle, new Circle(0.5, particle.getX(), particle.getY(), particle.getColor()));
+            else {
+                Circle particleCircle = particleCircleMap.get(particle);
+                particleCircle.setCenterX(particle.getX());
+                particleCircle.setCenterY(particle.getY());
+                particleCircle.setFill(particleCircle.getStroke().brighter());
+            }
+        }
     }
+     */
     private void updatePowerUpShapes() {
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
