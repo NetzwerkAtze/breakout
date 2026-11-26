@@ -6,6 +6,7 @@ public class Brick extends GameObject {
 
     private int maxHits;
     private int hitsRemaining;
+    private boolean burst = false;
 
     public Brick (double x, double y, double width, double height, Color color, int maxHits) {
         super(x, y, width, height, color);
@@ -26,9 +27,18 @@ public class Brick extends GameObject {
 
     public void repair() {
         hitsRemaining = maxHits;
+        burst = false;
     }
 
     public boolean isDestroyed(){
         return hitsRemaining <= 0;
+    }
+
+    public boolean isBurst() {
+        return burst;
+    }
+
+    public void setBurst(boolean burst) {
+        this.burst = burst;
     }
 }

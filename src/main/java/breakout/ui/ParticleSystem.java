@@ -10,11 +10,11 @@ public class ParticleSystem {
     private List<Particle> particleList = new ArrayList<>();
 
     public void burst(double x, double y, Color color) {
-        int random = (int) (Math.random() * 10);
-        for (int i = 0; i < random; i++) {
-            double vxRandom = (Math.random() * 10);
-            double vyRandom = (Math.random() * 10);
-            int lifeSpanRandom = (int) (Math.random() * 10);
+        for (int i = 0; i < 50; i++) {
+            double random = Math.random() * 360;
+            double vxRandom = Math.cos(2 * Math.PI * random) * 2;
+            double vyRandom = Math.sin(2 * Math.PI * random) * 2;
+            int lifeSpanRandom = (int) Math.max((Math.random() * 50), 1);
             particleList.add(new Particle(x, y, vxRandom, vyRandom, lifeSpanRandom, color));
         }
     }

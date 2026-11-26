@@ -75,6 +75,7 @@ public class GameRenderer {
         updateTexts();
         updateBrickShapes();
         particleSystem.update();
+        updateParticleShapes();
         updatePowerUpShapes();
         updateHeartShapes();
         updatePaddleShape();
@@ -92,6 +93,9 @@ public class GameRenderer {
             for (int i = 0; i < crackMap.get(brick).size(); i++)
                 crackMap.get(brick).get(i).setVisible(false);
         }
+        for (Particle particle : particleCircleMap.keySet())
+            boardLayer.getChildren().remove(particleCircleMap.get(particle));
+        particleCircleMap.clear();
         levelCompleteText.setFill(Color.TRANSPARENT);
     }
     public void clear() {
@@ -167,7 +171,10 @@ public class GameRenderer {
             if (brick.isDestroyed()) {
                 brickMap.get(brick).setFill(Color.TRANSPARENT);
                 crackMap.getOrDefault(brick, List.of()).forEach(value -> value.setVisible(false));
-                particleSystem.burst(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, brick.getColor());
+                if (!brick.isBurst()) {
+                    particleSystem.burst(brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2, brick.getColor());
+                    brick.setBurst(true);
+                }
                 continue;
             }
             if (brick.getMaxHits() > brick.getHitsRemaining()) {
@@ -175,23 +182,24 @@ public class GameRenderer {
                     crackMap.get(brick).get(i).setVisible(true);
             }
         }
-    } /**
+    }
     private void updateParticleShapes() {
-        for (Particle particle : particleCircleMap.keySet()) {
-            if particleSystem.getParticleList(). /// wen particle nicht in List ist dann entfernen
-        }
+        particleCircleMap.keySet().stream().filter(particle -> !particle.isAlive()).toList().forEach(particle -> particle.setColor(Color.TRANSPARENT));
+        particleCircleMap.keySet().removeIf(key -> !particleSystem.getParticleList().contains(key));
         for (Particle particle : particleSystem.getParticleList()) {
-            if (!particleCircleMap.containsKey(particle))
-                particleCircleMap.put(particle, new Circle(0.5, particle.getX(), particle.getY(), particle.getColor()));
-            else {
+            if (!particleCircleMap.containsKey(particle)) {
+                Circle circle = new Circle(particle.getX(), particle.getY(), 0.5, particle.getColor());
+                particleCircleMap.put(particle, circle);
+                boardLayer.getChildren().add(circle);
+            } else {
                 Circle particleCircle = particleCircleMap.get(particle);
                 particleCircle.setCenterX(particle.getX());
                 particleCircle.setCenterY(particle.getY());
-                particleCircle.setFill(particleCircle.getStroke().brighter());
+                particle.setColor(particle.getColor().brighter().brighter());
+                particleCircle.setFill(particle.getColor());
             }
         }
     }
-     */
     private void updatePowerUpShapes() {
         for (PowerUp pUp : game.getPowerUpHandler().getPowerUps()) {
             powerUpMap.get(pUp).setCenterX(pUp.getX() + pUp.getWidth() / 2);
