@@ -184,8 +184,17 @@ public class GameRenderer {
         }
     }
     private void updateParticleShapes() {
-        particleCircleMap.keySet().stream().filter(particle -> !particle.isAlive()).toList().forEach(particle -> particle.setColor(Color.TRANSPARENT));
-        particleCircleMap.keySet().removeIf(key -> !particleSystem.getParticleList().contains(key));
+        Iterator<Particle> it = particleCircleMap.keySet().iterator();
+        while (it.hasNext()) {
+            Particle particle = it.next();
+           if (!particleSystem.getParticleList().contains(particle)) {
+               particle.setColor(Color.TRANSPARENT);
+               boardLayer.getChildren().remove(particleCircleMap.get(particle));
+               it.remove();
+           }
+        }
+     //   particleCircleMap.keySet().stream().filter(particle -> !particleSystem.getParticleList().contains(particle)).toList().forEach(particle -> particle.setColor(Color.TRANSPARENT));
+     //   particleCircleMap.keySet().removeIf(key -> !particleSystem.getParticleList().contains(key));
         for (Particle particle : particleSystem.getParticleList()) {
             if (!particleCircleMap.containsKey(particle)) {
                 Circle circle = new Circle(particle.getX(), particle.getY(), 0.5, particle.getColor());
