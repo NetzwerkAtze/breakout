@@ -6,7 +6,12 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -78,9 +83,43 @@ public class Menu {
         tmp2.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
         overlay.getChildren().add(tmp2);
     }
+    public void showControlls() {
+        // test muss af keycaps geändert werden
+        Text tmp = new Text("TESTESTESTESTETS");
+        tmp.setFont(new Font(fontSize));
+        tmp.setX(root.getScene().getWidth()/2 - tmp.getLayoutBounds().getCenterX());
+        tmp.setY(root.getScene().getHeight()/2 - fontSize);
+        tmp.setFill(Color.web("#e8f0ff"));
+        tmp.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.web("#4da3ff"), 20, 0.3, 0, 0));
+        overlay.getChildren().add(tmp);
+        StackPane keyR     = createKeyIcon("R", fontSize * 1.4);
+        StackPane keyP     = createKeyIcon("P", fontSize * 1.4);
+        StackPane keyLeft  = createKeyIcon("←", fontSize * 1.4);
+        StackPane keyRight = createKeyIcon("→", fontSize * 1.4);
+        StackPane keySpace = createKeyIcon("SPACE", fontSize * 4);
+        StackPane keyEnter = createKeyIcon("ENTER", fontSize * 3);
+    }
     public void endFrame() {
         if (startText.getOpacity() <= 0 || startText.getOpacity() >= 1.1)
             opacitiyValue = -opacitiyValue;
         startText.setOpacity(startText.getOpacity() + opacitiyValue);
+    }
+    private StackPane createKeyIcon(String label, double width) {
+        Rectangle cap = new Rectangle(width, fontSize * 1.4);
+        cap.setArcWidth(10);
+        cap.setArcHeight(10);
+        cap.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web("#2a3a5c")),
+                new Stop(1, Color.web("#141c30"))));
+        cap.setStroke(Color.web("#4da3ff"));
+        cap.setStrokeWidth(1.5);
+
+        Text text = new Text(label);
+        text.setFont(new Font(fontSize * 0.6));
+        text.setFill(Color.web("#e8f0ff"));
+
+        StackPane key = new StackPane(cap, text);
+        key.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(0, 0, 0, 0.6), 0, 0, 0, 3));
+        return key;
     }
 }

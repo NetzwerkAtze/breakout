@@ -37,6 +37,7 @@
 
         public enum ScreenState {
             TITLE,
+            CONTROLLS,
             WORLD_SELECTION,
             LEVEL_SELECTION,
             PLAYING,
@@ -51,6 +52,12 @@
                 public void handle(long l) {
                     switch (screenState) {
                         case TITLE -> {
+                            if (inputHandler.wasPressed(KeyCode.ENTER)) {
+                                screenState = ScreenState.CONTROLLS;
+                            }
+                        }
+                        case CONTROLLS -> {
+                            menu.showControlls();
                             if (inputHandler.wasPressed(KeyCode.ENTER)) {
                                 screenState = ScreenState.WORLD_SELECTION;
                             }
